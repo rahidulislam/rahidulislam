@@ -19,8 +19,8 @@ I'm a passionate Python/Django developer with a year of experience in crafting w
 ### Project 1: E-Commerce Website
 A fully functional e-commerce platform built with Django, featuring product listings, shopping cart functionality, and secure payment processing.
 
-### Project 2: Blogging Platform
-Developed a blogging website where users can create, edit, and delete articles. Implemented user authentication and authorization for managing content.
+### Project 2: Laundry Management Platform
+Developed a laundry website where users can order to wash, and iron dresses. Implemented user authentication and authorization for managing content.
 
 ### Project 3: Portfolio Website
 Designed and developed a personal portfolio website to showcase my projects and skills using HTML, CSS, and a touch of JavaScript.
@@ -32,6 +32,5 @@ Designed and developed a personal portfolio website to showcase my projects and 
 
 Feel free to reach out for collaborations, discussions, or just to say hi!
 
-![Profile Stats](https://github-readme-stats.vercel.app/api?username=rahidulislam&show_icons=true&count_private=true&hide_title=true)
 
 
