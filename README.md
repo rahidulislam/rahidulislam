@@ -32,6 +32,6 @@ Designed and developed a personal portfolio website to showcase my projects and 
 
 Feel free to reach out for collaborations, discussions, or just to say hi!
 
-![Profile Stats](https://github-readme-stats.vercel.app/api?username=your-username&show_icons=true&count_private=true&hide_title=true)
+![Profile Stats](https://github-readme-stats.vercel.app/api?username=rahidulislam&show_icons=true&count_private=true&hide_title=true)
 
 
