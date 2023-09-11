@@ -22,11 +22,9 @@
             <i class="bx bx-share-alt"></i>
             <h3>Social Profiles</h3>
             <div class="social-links">
-              <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
-              <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-              <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-              <a href="#" class="google-plus"><i class="bi bi-skype"></i></a>
-              <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+              {% for social_item in social_items %}
+                <a href="{{social_item.social_link}}" class="twitter"><i class="bi bi-{{social_item.name}}"></i></a>
+              {% endfor %}
             </div>
           </div>
         </div>
