@@ -15,6 +15,17 @@ I'm a passionate Python/Django developer with a year of experience in crafting w
 - Version Control: Git
 - Tools: VS Code, PyCharm, Git/GitHub
 
+## Work Experience
+###Django Developer | Meektec IT
+Apr 2022-Present 
+
+###Backend Developer
+Research Rider
+
+
+
+
+
 ## Projects
 ### Project 1: E-Commerce Website
 A fully functional e-commerce platform built with Django, featuring product listings, shopping cart functionality, and secure payment processing.
@@ -29,8 +40,5 @@ Designed and developed a personal portfolio website to showcase my projects and 
 - LinkedIn: [LinkedIn Profile](https://www.linkedin.com/in/rahidulislam2023)
 - Twitter: [@rahidulislam89](https://twitter.com/rahidulislam89)
 - Portfolio: [Your Portfolio Website](https://www.your-portfolio-website.com)
-
-Feel free to reach out for collaborations, discussions, or just to say hi!
-
 
 
