@@ -30,7 +30,19 @@ class PersonalInfo(models.Model):
     
     def get_image_url(self):
         return self.image.url if self.image else None
+
+
+
+class InformationCounter(models.Model):
+    happy_client =  models.PositiveIntegerField()
+    project = models.PositiveIntegerField()
+    support = models.PositiveIntegerField()
+    awards = models.PositiveIntegerField()
+
+    def __str__(self):
+        return str(self.happy_client)
     
+
 class Skill(models.Model):
     name = models.CharField(max_length=50)
     value = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
