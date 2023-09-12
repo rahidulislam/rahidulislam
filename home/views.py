@@ -1,7 +1,9 @@
 from typing import Any
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from .models import (InformationCounter, Interest, SocialMedia,
-                     PersonalInfo, Skill, Testimonial, Education,Experience,Service)
+                     PersonalInfo, Skill, Testimonial, Education, Experience, Service,
+                     Category, Project)
+
 # Create your views here.
 
 
@@ -19,4 +21,13 @@ class HomeView(TemplateView):
         data['educations'] = Education.objects.all().order_by('-id')
         data['experiences'] = Experience.objects.all().order_by('-id')
         data['services'] = Service.objects.all()
+        categories = Category.objects.all()[:7]
+        data['categories'] = categories
+        data['projects'] = Project.objects.filter(category__in=categories)
         return data
+
+
+class ProjectDetailView(DetailView):
+    queryset = Project.objects.prefetch_related('project_image')
+    template_name = "home/project_detail.html"
+    context_object_name = "project"

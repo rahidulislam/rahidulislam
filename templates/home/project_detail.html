@@ -1,0 +1,51 @@
+
+{% extends 'base_project.html' %}
+{% load static %}
+
+{% block title %}{{project.name}}{% endblock title %}
+
+{% block content %}
+<!-- ======= Portfolio Details ======= -->
+<div id="portfolio-details" class="portfolio-details">
+    <div class="container">
+
+      <div class="row">
+
+        <div class="col-lg-8">
+          <h2 class="portfolio-title">{{project.name}}</h2>
+
+          <div class="portfolio-details-slider swiper">
+            <div class="swiper-wrapper align-items-center">
+              
+              {% for image in project.project_image.all %}
+              <div class="swiper-slide">
+                  <img src="{{image.get_image_url}}" alt="{{project.name}}">
+                </div>
+              {% endfor %}
+
+            </div>
+            <div class="swiper-pagination"></div>
+          </div>
+
+        </div>
+
+        <div class="col-lg-4 portfolio-info">
+          <h3>Project information</h3>
+          <ul>
+            <li><strong>Category</strong>: {{project.category.name}}</li>
+            <li><strong>Client</strong>: {{project.client_name}}</li>
+            <li><strong>Project date</strong>: {{project.date}}</li>
+            <li><strong>Project URL</strong>: <a href="#">{{project.url}}</a></li>
+          </ul>
+
+          <p>
+            {{project.short_desc}}
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </div><!-- End Portfolio Details -->
+
+{% endblock content %}

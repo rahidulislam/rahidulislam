@@ -71,8 +71,7 @@ class Testimonial(models.Model):
     def __str__(self):
         return self.client_name
 
-# resume section
-# education-> degree name, duration, details, institution_name, address
+
 class Education(models.Model):
     degree_name = models.CharField(max_length=50)
     start_year = models.PositiveSmallIntegerField()
@@ -83,7 +82,7 @@ class Education(models.Model):
 
     def __str__(self):
         return self.degree_name
-    
+
 
 class Experience(models.Model):
     designation = models.CharField(max_length=50)
@@ -95,7 +94,8 @@ class Experience(models.Model):
 
     def __str__(self):
         return self.designation
-    
+
+
 class Service(models.Model):
     name = models.CharField(max_length=50)
     icon_name = models.CharField(max_length=20)
@@ -103,9 +103,50 @@ class Service(models.Model):
 
     def __str__(self):
         return self.name
-# service
-# service -> name, details, icon_name
 
-# portfolio
-# category -> category_name
-# project -> project name, short_dec, image, url, client name, project date, project image for slider
+
+class Category(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+
+class Project(models.Model):
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name='project_category')
+    name = models.CharField(max_length=100)
+    short_desc = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='images/', blank=True)
+    url = models.URLField(blank=True)
+    client_name = models.CharField(max_length=100)
+    date = models.DateField()
+    image = models.ImageField(upload_to='images/', blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_image_url(self):
+        return self.image.url if self.image else None
+
+
+class ProjectImage(models.Model):
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name='project_image')
+    image = models.ImageField(upload_to='project/', blank=True)
+
+    def __str__(self):
+        return self.project.name
+
+    def get_image_url(self):
+        return self.image.url if self.image else None
+
+
+class Contact(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    subject = models.CharField(max_length=100)
+    message = models.TextField()
+
+    def __str__(self):
+        return self.email
