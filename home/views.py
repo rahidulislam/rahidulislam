@@ -1,6 +1,6 @@
 from typing import Any
 from django.views.generic import TemplateView
-from .models import Interest, SocialMedia,PersonalInfo,Skill
+from .models import Interest, SocialMedia,PersonalInfo,Skill,Testimonial
 # Create your views here.
 
 class HomeView(TemplateView):
@@ -12,5 +12,6 @@ class HomeView(TemplateView):
         data['personal_info'] = PersonalInfo.objects.first()
         data['skills']= Skill.objects.all()
         data['interests'] = Interest.objects.all()
+        data['testimonials'] = Testimonial.objects.all()
         return data
 
