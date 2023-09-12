@@ -77,7 +77,7 @@ class Education(models.Model):
     degree_name = models.CharField(max_length=50)
     start_year = models.PositiveSmallIntegerField()
     end_year = models.PositiveSmallIntegerField()
-    description = models.TextField()
+    description = HTMLField()
     institute = models.CharField(max_length=100)
     address = models.CharField(max_length=100)
 
@@ -96,8 +96,6 @@ class Experience(models.Model):
     def __str__(self):
         return self.designation
     
-# experience -> designation, duration, details, company_name, address
-# experience content-> company, bullet_point
 
 # service
 # service -> name, details, icon_name
