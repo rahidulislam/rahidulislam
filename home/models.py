@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.core.validators import MinValueValidator, MaxValueValidator
 # Create your models here.
 
 
@@ -32,6 +32,15 @@ class PersonalInfo(models.Model):
     
     def get_image_url(self):
         return self.image.url if self.image else None
+    
+class Skill(models.Model):
+    name = models.CharField(max_length=50)
+    value = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+
+
+
+    def __str__(self):
+        return self.name
 
 # skill-> name, percentage
 # interest -> interest name, icon name
