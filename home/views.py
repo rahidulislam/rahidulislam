@@ -1,7 +1,7 @@
 from typing import Any
 from django.views.generic import TemplateView
 from .models import (InformationCounter, Interest, SocialMedia,
-                     PersonalInfo, Skill, Testimonial, Education,Experience)
+                     PersonalInfo, Skill, Testimonial, Education,Experience,Service)
 # Create your views here.
 
 
@@ -18,4 +18,5 @@ class HomeView(TemplateView):
         data['counter'] = InformationCounter.objects.first()
         data['educations'] = Education.objects.all().order_by('-id')
         data['experiences'] = Experience.objects.all().order_by('-id')
+        data['services'] = Service.objects.all()
         return data

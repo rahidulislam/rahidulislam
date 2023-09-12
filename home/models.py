@@ -96,7 +96,13 @@ class Experience(models.Model):
     def __str__(self):
         return self.designation
     
+class Service(models.Model):
+    name = models.CharField(max_length=50)
+    icon_name = models.CharField(max_length=20)
+    description = models.TextField()
 
+    def __str__(self):
+        return self.name
 # service
 # service -> name, details, icon_name
 
