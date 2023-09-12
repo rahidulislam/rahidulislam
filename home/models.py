@@ -10,8 +10,6 @@ class SocialMedia(models.Model):
     def __str__(self):
         return self.name
 
-# about section
-# Personal Info-> profession, short_desc, desc, dob, phone, email, is_available, city, website, degree, age
 class PersonalInfo(models.Model):
     name = models.CharField(max_length=100)
     profession = models.CharField(max_length=50)
@@ -37,12 +35,16 @@ class Skill(models.Model):
     name = models.CharField(max_length=50)
     value = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
 
-
-
     def __str__(self):
         return self.name
 
-# skill-> name, percentage
+class Interest(models.Model):
+    name = models.CharField(max_length=50)
+    icon_name = models.CharField(max_length=50)
+    icon_color = models.CharField(max_length=7)
+
+    def __str__(self):
+        return self.name
 # interest -> interest name, icon name
 # testimonial -> client name, designation, review, client image
 
