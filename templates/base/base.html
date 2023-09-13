@@ -11,13 +11,16 @@
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="{% static 'img/favicon.png' %}" rel="icon">
-  <link href="{% static 'img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32x32.png' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16x16.png' %}">
+  <link rel="manifest" href="{% static 'img/site.webmanifest' %}">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
-  {% include 'style.html' %}
+  {% include 'base/style.html' %}
 
   <!-- =======================================================
   * Template Name: Personal
@@ -29,14 +32,15 @@
 </head>
 
 <body>
-{% include 'header.html' %}
-
+  {% include 'base/messages.html' %}
+  
+  {% include 'layout/header.html' %}
 
   {% block content %}{% endblock content %}
 
-  {% include 'footer.html' %}
+  {% include 'layout/footer.html' %}
 
-{% include 'script.html' %}
+  {% include 'base/script.html' %}
 
 </body>
 

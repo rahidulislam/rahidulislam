@@ -1,16 +1,17 @@
-from typing import Any
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import DetailView, FormView
 from .models import (InformationCounter, Interest, SocialMedia,
                      PersonalInfo, Skill, Testimonial, Education, Experience, Service,
                      Category, Project)
+from .forms import ContactForm
+from django.contrib import messages
 
 # Create your views here.
-
-
-class HomeView(TemplateView):
+class HomeView(FormView):
+    form_class = ContactForm
     template_name = "home/index.html"
+    success_url = "."
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         data['social_items'] = SocialMedia.objects.all()
         data['personal_info'] = PersonalInfo.objects.first()
@@ -25,6 +26,12 @@ class HomeView(TemplateView):
         data['categories'] = categories
         data['projects'] = Project.objects.filter(category__in=categories)
         return data
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(
+            self.request, "Your message has been sent. Thank you!")
+        return super().form_valid(form)
 
 
 class ProjectDetailView(DetailView):
