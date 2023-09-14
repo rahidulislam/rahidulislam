@@ -74,8 +74,8 @@ class Testimonial(models.Model):
 
 class Education(models.Model):
     degree_name = models.CharField(max_length=50)
-    start_year = models.PositiveSmallIntegerField()
-    end_year = models.PositiveSmallIntegerField()
+    start_year = models.CharField(max_length=10)
+    end_year = models.CharField(max_length=10)
     description = HTMLField()
     institute = models.CharField(max_length=100)
     address = models.CharField(max_length=100)

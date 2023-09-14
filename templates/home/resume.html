@@ -29,7 +29,7 @@
             <h4>{{education.degree_name}}</h4>
             <h5>{{education.start_year}} - {{education.end_year}}</h5>
             <p><em>{{education.institute}}, {{education.address}}</em></p>
-            <p>{{education.description}}</p>
+            <p>{{education.description|safe}}</p>
           </div>
           {% endfor %}
             
