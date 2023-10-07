@@ -34,7 +34,6 @@ I'm a passionate Python/Django developer with a year of experience in crafting w
 - Research Rider | Dhaka, Bangladesh
 - Dec 2021 - Mar 2023
 
-
 ## Projects
 
 ### API for Hotel Mobile App
@@ -53,12 +52,8 @@ Developed a laundry website where users can order to wash, and iron dresses. Imp
 
 Designed and developed a personal portfolio website to showcase my projects and skills using HTML, CSS, and a touch of JavaScript.
 
-
-
 ## Let's Connect
 
 - LinkedIn: [LinkedIn Profile](https://www.linkedin.com/in/rahidulislam2023)
 - Twitter: [@rahidulislam89](https://twitter.com/rahidulislam89)
 - Portfolio: [Your Portfolio Website](https://www.rahidulislam.pythonanywhere.com)
-
-
