@@ -27,12 +27,12 @@ I'm a passionate Python/Django developer with a year of experience in crafting w
 ### Django Developer
 
 - Meektec IT | Cumilla, Bangladesh
-- Apr 2022-Jan 2023
+- Apr 2022 - Jan 2023
 
 ### Web Developer
 
 - Research Rider | Dhaka, Bangladesh
-- Dec 2021 - Mar 2023
+- Dec 2021 - Mar 2022
 
 ## Projects
 
@@ -47,6 +47,10 @@ A fully functional e-commerce platform built with Django, featuring product list
 ### Laundry Management Platform
 
 Developed a laundry website where users can order to wash, and iron dresses. Implemented user authentication and authorization for managing content.
+
+### ISP Website
+
+Developed an ISP website for a client requirement where ISP company manage their customer and staff using HTML, CSS, JavaScript, Python, Django
 
 ### Portfolio Website
 
