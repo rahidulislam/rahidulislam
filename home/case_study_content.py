@@ -2,17 +2,19 @@
 CASE_STUDIES = {
     "TalentBridge": {
         "problem": "Recruitment involves connected records: candidates, employers, vacancies, shortlists, and interviews. The backend needs to represent that workflow together with milestones and audit events.",
-        "contribution": "Mid Level Python Developer at TalentBridge, working remotely with the Germany-based team since June 2026.",
+        "contribution": "As a Mid Level Python Developer, I implemented and hardened employer onboarding, partner company updates, self-service profiles, password changes, and invitation recovery flows. I also contributed deployment, CI, demo-data, and API documentation improvements.",
         "technical_decisions": "Django REST Framework exposes the recruitment domain through an API, with drf-spectacular providing its OpenAPI contract. This gives frontend integration a documented interface.\n\nRedis and Celery support asynchronous jobs and scheduled tasks alongside the web service. Running workers separately adds operational dependencies that must be configured with the application.\n\nPostgreSQL is used in shared environments, while SQLite supports local work. Environment-specific configuration separates development setup from deployment.",
         "outcome": "The repository contains the recruitment API, background-job infrastructure, API documentation, and Docker deployment configuration.",
     },
     "Smart Document Vault": {
         "problem": "A document service must keep each workspace’s files separate and prevent unscanned uploads from becoming downloadable. These boundaries affect both data queries and file storage.",
+        "contribution": "I implemented tenant-scoped data access and object authorization across document and folder operations, added role and tenant test matrices, and aligned API response and error contracts with the published OpenAPI schema.",
         "technical_decisions": "Requests select workspace context through X-Workspace-ID. Workspace-scoped access and policy-based authorization provide the boundaries for document operations.\n\nUploads remain in private quarantine until ClamAV scanning succeeds. Celery handles scanning work; unavailable workers or scanners leave files unavailable for download. This favors controlled access over immediate file availability.\n\nDocument and version uploads support idempotency keys, so retries can replay an existing response rather than repeat the operation.",
         "outcome": "Authentication, workspace, folder, and document routes are mounted. The repository also contains tenant-isolation tests and an OpenAPI contract. Sharing, subscriptions, and other supporting modules remain outside the completed launch scope.",
     },
     "HotelMotel": {
         "problem": "Hotel operations need to connect reservations, guests, rooms, prices, and actual stays while controlling who may perform sensitive booking actions.",
+        "contribution": "I implemented hotel and room endpoints, booking creation, listing and detail APIs, and later expanded the booking lifecycle with confirmation, cancellation, check-in, checkout, no-show flows, hotel-context permissions, and automated tests.",
         "technical_decisions": "Booking, BookingRoom, and Stay are separate models. BookingRoom connects a reservation to rooms and nightly prices; Stay records actual check-in and check-out independently of planned dates.\n\nExplicit permissions cover actions such as confirmation, cancellation, check-in, refunds, and price access. This provides finer authorization vocabulary than a single general editing permission.\n\nSeparate Django applications organize bookings, rooms, guests, billing, and housekeeping, giving each domain a clear place in the backend.",
         "outcome": "The backend includes reservation and stay records, room associations, monetary fields, and booking-action permission definitions. These form the foundation for the hotel operations API.",
     },

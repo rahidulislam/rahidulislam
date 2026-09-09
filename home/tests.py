@@ -192,6 +192,22 @@ class ManagedProjectTests(TestCase):
 
 
 class StructuredCaseStudyTests(TestCase):
+    def test_seeded_project_uses_real_static_evidence_when_no_upload_exists(self):
+        category = Category.objects.create(name="Recruitment")
+        project = Project.objects.create(
+            category=category,
+            name="TalentBridge",
+            short_desc="Recruitment API",
+        )
+        response = self.client.get(reverse("home:project_detail", args=[project.pk]))
+        self.assertContains(response, "/static/img/projects/talentbridge-login.png")
+        self.assertContains(response, "TalentBridge authentication interface")
+        project.name = "HotelMotel"
+        project.save(update_fields=["name"])
+        response = self.client.get(reverse("home:project_detail", args=[project.pk]))
+        self.assertContains(response, "/static/img/projects/hotelmotel-api.png")
+        self.assertContains(response, "HotelMotel generated OpenAPI contract")
+
     def test_sections_render_safely_and_empty_sections_are_omitted(self):
         category = Category.objects.create(name="Backend")
         project = Project.objects.create(

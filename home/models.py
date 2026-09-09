@@ -2,6 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import (FileExtensionValidator, MaxValueValidator,
                                     MinValueValidator)
+from django.templatetags.static import static
 # Create your models here.
 
 
@@ -114,6 +115,11 @@ class Category(models.Model):
 
 
 class Project(models.Model):
+    EVIDENCE_IMAGES = {
+        'TalentBridge': ('img/projects/talentbridge-login.png', 'TalentBridge authentication interface'),
+        'Smart Document Vault': ('img/projects/document-vault-hero.png', 'Smart Document Vault product interface'),
+        'HotelMotel': ('img/projects/hotelmotel-api.png', 'HotelMotel generated OpenAPI contract'),
+    }
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name='project_category')
     name = models.CharField(max_length=100)
@@ -141,7 +147,15 @@ class Project(models.Model):
         return self.name
 
     def get_image_url(self):
-        return self.image.url if self.image else None
+        if self.image:
+            return self.image.url
+        evidence = self.EVIDENCE_IMAGES.get(self.name)
+        return static(evidence[0]) if evidence else None
+
+    @property
+    def image_alt(self):
+        evidence = self.EVIDENCE_IMAGES.get(self.name)
+        return evidence[1] if evidence else f'{self.name} project preview'
 
 
 class ProjectImage(models.Model):
