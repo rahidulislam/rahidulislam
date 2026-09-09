@@ -120,6 +120,7 @@ class Project(models.Model):
         'Smart Document Vault': ('img/projects/document-vault-hero.png', 'Smart Document Vault product interface'),
         'HotelMotel': ('img/projects/hotelmotel-api.png', 'HotelMotel generated OpenAPI contract'),
         'TheProperty': ('img/projects/realestate-marketplace.png', 'TheProperty marketplace search interface'),
+        'Homeopathic Management API': ('img/projects/homeopathic-api.png', 'Homeopathic Management generated OpenAPI contract'),
     }
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name='project_category')

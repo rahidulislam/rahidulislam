@@ -202,6 +202,25 @@ class ManagedProjectTests(TestCase):
 
 
 class StructuredCaseStudyTests(TestCase):
+    def test_homeopathic_case_study_is_available_to_site_and_cv(self):
+        from .portfolio_data import get_portfolio_data
+
+        category = Category.objects.create(name="Clinic management")
+        project = Project.objects.create(
+            category=category,
+            name="Homeopathic Management API",
+            short_desc="Role-aware clinic API",
+            problem="Coordinate clinic workflows.",
+            contribution="Implemented appointments and clinical records.",
+            repository_url="https://github.com/rahidulislam/homeopathic_ms",
+        )
+        detail = self.client.get(reverse("home:project_detail", args=[project.pk]))
+        self.assertContains(detail, "Coordinate clinic workflows.")
+        self.assertContains(detail, "/static/img/projects/homeopathic-api.png")
+        self.assertContains(detail, "Homeopathic Management generated OpenAPI contract")
+        self.assertContains(self.client.get(reverse("home:projects")), "Homeopathic Management API")
+        self.assertIn("Homeopathic Management API", [item["name"] for item in get_portfolio_data()["cv_projects"]])
+
     def test_theproperty_case_study_is_available_to_site_and_cv(self):
         from .portfolio_data import get_portfolio_data
 

@@ -16,6 +16,7 @@ I build REST APIs and Django applications for recruitment, document management, 
 | [Smart Document Vault](https://github.com/rahidulislam/dms_saas) | Document-management API with workspace isolation, JWT authentication, document versions, and file scan states. Python and Django REST Framework. |
 | [HotelMotel](https://github.com/rahidulislam/hotelmotel_saas) | Hotel operations backend covering rooms, guests, bookings, housekeeping, billing, and role-based access control. Python and Django. |
 | [TheProperty](https://github.com/rahidulislam/realestate_property) | Multi-role marketplace with reviewed listings, buyer engagement, seller and agent workspaces, private identity documents, and production operations. Python, Django, and PostgreSQL. |
+| [Homeopathic Management API](https://github.com/rahidulislam/homeopathic_ms) | Role-aware clinic backend for appointments, medical histories, prescriptions, medicine inventory, and billing. Python, Django REST Framework, and JWT. |
 | [Developer portfolio](https://github.com/rahidulislam/rahidulislam) | Django website with project case studies, admin-managed content, contact forms, and a downloadable CV. |
 
 ## Core skills
