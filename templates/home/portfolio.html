@@ -1,5 +1,5 @@
 <section id="portfolio" class="section container" aria-labelledby="work-title">
-  <div class="section-heading"><div><p class="eyebrow">{% if project_index %}Project library{% else %}01 / Selected work{% endif %}</p>{% if project_index %}<h1 id="work-title">Projects.</h1>{% else %}<h2 id="work-title">Selected projects.</h2>{% endif %}</div><p>Recruitment, document management, and hotel operations. A selection of the systems I work on.</p></div>
+  <div class="section-heading"><div><p class="eyebrow">{% if project_index %}Project library{% else %}01 / Selected work{% endif %}</p>{% if project_index %}<h1 id="work-title">Projects.</h1>{% else %}<h2 id="work-title">Selected projects.</h2>{% endif %}</div><p>Recruitment, document management, hospitality, property, and healthcare systems. A selection of the products I build.</p></div>
 
   <div class="project-grid">{% for project in fallback_projects %}<article class="project-card curated-project">
     <span class="project-number mono">{{ forloop.counter|stringformat:"02d" }} / PROJECT</span>

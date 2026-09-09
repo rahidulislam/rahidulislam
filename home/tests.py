@@ -17,10 +17,10 @@ class PortfolioViewTests(TestCase):
     def test_empty_home_exposes_readme_fallbacks(self):
         response = self.client.get(reverse("home:home"))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context["fallback_projects"], fallback_projects[:3])
-        listing = self.client.get(reverse("home:projects"))
         database_names = {name.casefold() for name in Project.objects.values_list("name", flat=True)}
         expected_fallbacks = [item for item in fallback_projects if item["name"].casefold() not in database_names]
+        self.assertEqual(response.context["fallback_projects"], expected_fallbacks[:5])
+        listing = self.client.get(reverse("home:projects"))
         self.assertEqual(listing.context["fallback_projects"], expected_fallbacks)
         self.assertTrue({"slug", "category", "description", "technical_notes", "tags", "short_desc", "visual_label"}.issubset(fallback_projects[0]))
         self.assertEqual(response.context["fallback_experiences"], fallback_experiences)
@@ -30,7 +30,7 @@ class PortfolioViewTests(TestCase):
         category = Category.objects.create(name="Additional")
         project = Project.objects.create(
             category=category, name="Database project", short_desc="A project",
-            client_name="Client", date="2024-01-01",
+            client_name="Client", date="2024-01-01", is_featured=True,
         )
         Skill.objects.create(name="Python", value=90)
         Experience.objects.create(
@@ -41,6 +41,24 @@ class PortfolioViewTests(TestCase):
         self.assertIn(project, response.context["projects"])
         self.assertEqual([skill.name for skill in response.context["backend_skills"]], ["Python"])
         self.assertEqual(response.context["experiences"].count(), 1)
+
+    def test_homepage_can_show_five_selected_projects(self):
+        Project.objects.all().delete()
+        category = Category.objects.create(name="Selected work")
+        names = ["TalentBridge", "Smart Document Vault", "HotelMotel", "TheProperty", "Homeopathic Management API"]
+        for order, name in enumerate(names):
+            Project.objects.create(
+                category=category,
+                name=name,
+                short_desc=f"{name} case study",
+                is_featured=True,
+                order=order,
+            )
+
+        response = self.client.get(reverse("home:home"))
+        self.assertEqual([project.name for project in response.context["projects"]], names)
+        self.assertContains(response, "TheProperty")
+        self.assertContains(response, "Homeopathic Management API")
 
     def test_detail_url_includes_profile_and_social_context(self):
         category = Category.objects.create(name="Web")
@@ -131,7 +149,7 @@ class LiveCVTests(TestCase):
         from .portfolio_data import get_portfolio_data
         category = Category.objects.create(name='API')
         Project.objects.create(category=category, name='New project', short_desc='Fresh content',
-                               client_name='Client', date='2026-06-01')
+                               client_name='Client', date='2026-06-01', is_featured=True)
         Skill.objects.create(name='New skill', value=50)
         data = get_portfolio_data()
         self.assertIn('New project', [item['name'] for item in data['cv_projects']])

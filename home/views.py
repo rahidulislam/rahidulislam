@@ -34,8 +34,8 @@ class HomeView(FormView):
         data['contact_profile'] = data['cv_profile']
         data['home_preview'] = True
         featured = [project for project in data['projects'] if project.is_featured]
-        data['projects'] = (featured or data['projects'])[:3]
-        data['fallback_projects'] = data['fallback_projects'][:3]
+        data['projects'] = (featured or data['projects'])[:5]
+        data['fallback_projects'] = data['fallback_projects'][:5]
         return data
 
     def form_valid(self, form):
