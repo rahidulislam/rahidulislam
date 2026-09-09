@@ -19,7 +19,9 @@ class PortfolioViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["fallback_projects"], fallback_projects[:3])
         listing = self.client.get(reverse("home:projects"))
-        self.assertEqual(listing.context["fallback_projects"], fallback_projects)
+        database_names = {name.casefold() for name in Project.objects.values_list("name", flat=True)}
+        expected_fallbacks = [item for item in fallback_projects if item["name"].casefold() not in database_names]
+        self.assertEqual(listing.context["fallback_projects"], expected_fallbacks)
         self.assertTrue({"slug", "category", "description", "technical_notes", "tags", "short_desc", "visual_label"}.issubset(fallback_projects[0]))
         self.assertEqual(response.context["fallback_experiences"], fallback_experiences)
         self.assertTrue(response.context["backend_skills"])
@@ -74,8 +76,16 @@ class CaseStudyTests(TestCase):
         from .portfolio_content import fallback_projects
         for project in fallback_projects:
             response = self.client.get(reverse('home:case_study', args=[project['slug']]))
-            self.assertContains(response, project['name'])
-            self.assertContains(response, project['description'])
+            database_project = Project.objects.filter(name__iexact=project['name']).first()
+            if database_project:
+                self.assertRedirects(
+                    response,
+                    reverse('home:project_detail', args=[database_project.pk]),
+                    fetch_redirect_response=False,
+                )
+            else:
+                self.assertContains(response, project['name'])
+                self.assertContains(response, project['description'])
         response = self.client.get(reverse('home:case_study', args=['missing-project']))
         self.assertEqual(response.status_code, 404)
 
@@ -192,6 +202,24 @@ class ManagedProjectTests(TestCase):
 
 
 class StructuredCaseStudyTests(TestCase):
+    def test_theproperty_case_study_is_available_to_site_and_cv(self):
+        from .portfolio_data import get_portfolio_data
+
+        category = Category.objects.create(name="Real estate marketplace")
+        project = Project.objects.create(
+            category=category,
+            name="TheProperty",
+            short_desc="Role-aware property marketplace",
+            problem="Keep draft inventory private.",
+            contribution="Implemented role workspaces.",
+            repository_url="https://github.com/rahidulislam/realestate_property",
+        )
+        detail = self.client.get(reverse("home:project_detail", args=[project.pk]))
+        self.assertContains(detail, "Keep draft inventory private.")
+        self.assertContains(detail, "/static/img/projects/realestate-marketplace.png")
+        self.assertContains(self.client.get(reverse("home:projects")), "TheProperty")
+        self.assertIn("TheProperty", [item["name"] for item in get_portfolio_data()["cv_projects"]])
+
     def test_seeded_project_uses_real_static_evidence_when_no_upload_exists(self):
         category = Category.objects.create(name="Recruitment")
         project = Project.objects.create(

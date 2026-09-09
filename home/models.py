@@ -119,6 +119,7 @@ class Project(models.Model):
         'TalentBridge': ('img/projects/talentbridge-login.png', 'TalentBridge authentication interface'),
         'Smart Document Vault': ('img/projects/document-vault-hero.png', 'Smart Document Vault product interface'),
         'HotelMotel': ('img/projects/hotelmotel-api.png', 'HotelMotel generated OpenAPI contract'),
+        'TheProperty': ('img/projects/realestate-marketplace.png', 'TheProperty marketplace search interface'),
     }
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name='project_category')
