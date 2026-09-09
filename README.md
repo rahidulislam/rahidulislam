@@ -8,6 +8,8 @@ I build REST APIs and Django applications for recruitment, document management, 
 
 [Email](mailto:rahidulislam247@gmail.com) · [LinkedIn](https://www.linkedin.com/in/rahidulislam2023/) · [CV (PDF)](output/pdf/Rahidul_Islam_Python_Developer_CV.pdf)
 
+[PythonAnywhere deployment guide](docs/deploy-pythonanywhere.md)
+
 ## Selected work
 
 | Project | Technical focus |

@@ -1,5 +1,7 @@
 # Deployment
 
+For a step-by-step PythonAnywhere setup, see [Deploy to PythonAnywhere](deploy-pythonanywhere.md).
+
 The portfolio requires Python 3.12+, persistent storage for SQLite and uploaded
 project media, and HTTPS. A host with a persistent disk is the simplest fit.
 PythonAnywhere is suitable for this small Django portfolio; a VPS is appropriate
