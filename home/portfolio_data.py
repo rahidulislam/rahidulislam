@@ -58,10 +58,10 @@ def get_portfolio_data():
                                 for item in education]
     skills = list(Skill.objects.values_list('name', flat=True))
     profile['skills'] = skills or profile['skills']
-    projects = list(Project.objects.select_related('category').all())
-    existing_names = {item.name.casefold() for item in projects}
+    projects = list(Project.objects.filter(is_published=True).select_related('category').all())
+    existing_names = {name.casefold() for name in Project.objects.values_list('name', flat=True)}
     curated = [item for item in fallback_projects if item['name'].casefold() not in existing_names]
     cv_projects = curated + [{'name': item.name, 'category': item.category.name,
-                              'short_desc': item.short_desc, 'technical_notes': []} for item in projects]
+                              'short_desc': item.short_desc, 'technical_notes': item.features.splitlines()} for item in projects]
     return {'cv_profile': profile, 'cv_projects': cv_projects, 'social_items': social_items,
             'personal_info': person, 'projects': projects, 'fallback_projects': curated}

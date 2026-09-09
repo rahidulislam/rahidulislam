@@ -7,3 +7,7 @@ fallback_projects = [
  {"slug":"portfolio-website","name":"Portfolio Website","category":"Personal site","short_desc":"Django portfolio site for projects, experience, and contact.","description":"A Django-powered personal portfolio with database-backed profile content, projects, experience, and a contact form.","technical_notes":["Django class-based views","Database-backed content","Contact form persistence"],"tags":["Python","Django","HTML","CSS"],"visual_label":"Developer portfolio"},
 ]
 fallback_experiences = [{"designation":"Backend Developer","company":"Wege LLC","period":"September 2023 - June 2024","address":"Ajman, UAE"},{"designation":"Django Developer","company":"Meektec IT","period":"Apr 2022 – Jan 2023","address":"Cumilla, Bangladesh"},{"designation":"Web Developer","company":"Research Rider","period":"Dec 2021 – Mar 2022","address":"Dhaka, Bangladesh"}]
+
+from .case_study_content import CASE_STUDIES
+for project in fallback_projects:
+    project.update(CASE_STUDIES.get(project["name"], {}))

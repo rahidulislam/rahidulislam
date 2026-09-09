@@ -1,6 +1,7 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
-from tinymce.models import HTMLField
+from django.core.exceptions import ValidationError
+from django.core.validators import (FileExtensionValidator, MaxValueValidator,
+                                    MinValueValidator)
 # Create your models here.
 
 
@@ -76,7 +77,7 @@ class Education(models.Model):
     degree_name = models.CharField(max_length=50)
     start_year = models.CharField(max_length=10)
     end_year = models.CharField(max_length=10)
-    description = HTMLField()
+    description = models.TextField()
     institute = models.CharField(max_length=100)
     address = models.CharField(max_length=100)
 
@@ -88,7 +89,7 @@ class Experience(models.Model):
     designation = models.CharField(max_length=50)
     start_year = models.CharField(max_length=10)
     end_year = models.CharField(max_length=10)
-    description = HTMLField()
+    description = models.TextField()
     company = models.CharField(max_length=100)
     address = models.CharField(max_length=100)
 
@@ -117,11 +118,24 @@ class Project(models.Model):
         Category, on_delete=models.CASCADE, related_name='project_category')
     name = models.CharField(max_length=100)
     short_desc = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='images/', blank=True)
-    url = models.URLField(blank=True)
-    client_name = models.CharField(max_length=100)
-    date = models.DateField()
-    image = models.ImageField(upload_to='images/', blank=True)
+    image = models.ImageField('Featured image', upload_to='images/', blank=True)
+    url = models.URLField('Live URL', blank=True)
+    description = models.TextField(blank=True)
+    features = models.TextField(blank=True, help_text='Enter one feature per line.')
+    problem = models.TextField(blank=True, help_text='Who needed this and what problem did it address?')
+    contribution = models.TextField(blank=True, help_text='Describe your own responsibilities, not the whole team’s work.')
+    technical_decisions = models.TextField(blank=True, help_text='Explain implementation choices and tradeoffs. One decision per paragraph.')
+    outcome = models.TextField(blank=True, help_text='Describe delivered capabilities. Include metrics only when verified.')
+    lessons = models.TextField(blank=True, help_text='What did you learn or what would you improve next?')
+    repository_url = models.URLField(blank=True)
+    is_published = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=False)
+    order = models.PositiveIntegerField(default=0)
+    client_name = models.CharField(max_length=100, blank=True)
+    date = models.DateField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['order', '-date', '-pk']
 
     def __str__(self):
         return self.name
@@ -134,12 +148,43 @@ class ProjectImage(models.Model):
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name='project_image')
     image = models.ImageField(upload_to='project/', blank=True)
+    caption = models.CharField(max_length=200, blank=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order', 'pk']
 
     def __str__(self):
         return self.project.name
 
     def get_image_url(self):
         return self.image.url if self.image else None
+
+
+def validate_video_size(value):
+    if value.size > 50 * 1024 * 1024:
+        raise ValidationError('Video files must be 50 MiB or smaller.')
+
+
+class ProjectVideo(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='videos')
+    file = models.FileField(
+        upload_to='project/videos/',
+        validators=[FileExtensionValidator(allowed_extensions=['mp4', 'webm', 'ogv']), validate_video_size],
+    )
+    caption = models.CharField(max_length=200, blank=True)
+    order = models.PositiveIntegerField(default=0)
+
+    def clean(self):
+        super().clean()
+        if not self.file:
+            raise ValidationError({'file': 'A video file is required.'})
+
+    class Meta:
+        ordering = ['order', 'pk']
+
+    def __str__(self):
+        return self.project.name
 
 
 class Contact(models.Model):

@@ -12,10 +12,10 @@ I build REST APIs and Django applications for recruitment, document management, 
 
 | Project | Technical focus |
 | --- | --- |
-| **TalentBridge** | Recruitment backend for candidates, employers, vacancies, shortlisting, and interviews. Python, Django REST Framework, PostgreSQL, Redis, and Celery. |
-| **Smart Document Vault** | Document-management API with workspace isolation, JWT authentication, document versions, and file scan states. Python and Django REST Framework. |
-| **HotelMotel** | Hotel operations backend covering rooms, guests, bookings, housekeeping, billing, and role-based access control. Python and Django. |
-| **Developer portfolio** | Django website with project case studies, admin-managed content, contact forms, and a downloadable CV. Source available in this repository. |
+| [TalentBridge](https://github.com/rahidulislam/talentbridge) | Recruitment backend for candidates, employers, vacancies, shortlisting, and interviews. Python, Django REST Framework, PostgreSQL, Redis, and Celery. |
+| [Smart Document Vault](https://github.com/rahidulislam/dms_saas) | Document-management API with workspace isolation, JWT authentication, document versions, and file scan states. Python and Django REST Framework. |
+| [HotelMotel](https://github.com/rahidulislam/hotelmotel_saas) | Hotel operations backend covering rooms, guests, bookings, housekeeping, billing, and role-based access control. Python and Django. |
+| [Developer portfolio](https://github.com/rahidulislam/rahidulislam) | Django website with project case studies, admin-managed content, contact forms, and a downloadable CV. |
 
 ## Core skills
 

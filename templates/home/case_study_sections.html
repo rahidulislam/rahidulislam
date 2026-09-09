@@ -1,0 +1,7 @@
+<div class="case-study-sections">
+{% if project.problem %}<section class="project-description"><p class="eyebrow">01 / Context</p><h2>The problem</h2>{{ project.problem|linebreaks }}</section>{% endif %}
+{% if project.contribution %}<section class="project-description"><h2>My role</h2>{{ project.contribution|linebreaks }}</section>{% endif %}
+{% if project.technical_decisions %}<section class="project-description"><p class="eyebrow">02 / Engineering</p><h2>Technical decisions</h2>{{ project.technical_decisions|linebreaks }}</section>{% endif %}
+{% if project.outcome %}<section class="project-description"><p class="eyebrow">03 / Delivery</p><h2>What the project delivers</h2>{{ project.outcome|linebreaks }}</section>{% endif %}
+{% if project.lessons %}<section class="project-description"><h2>Lessons and next steps</h2>{{ project.lessons|linebreaks }}</section>{% endif %}
+</div>

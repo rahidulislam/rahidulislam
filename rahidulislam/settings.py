@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,13 +21,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-9mdh94wimj-$^my20q_ni9%u^u=x1rk5ou7_at%toxid0)1cd6'
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-local-development-key-change-before-deploying',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'true').lower() in ('1', 'true', 'yes')
 
-ALLOWED_HOSTS = ['rahidulislam.pythonanywhere.com',
-                 '127.0.0.1', 'www.rahidulislam.pythonanywhere.com']
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get(
+    'DJANGO_ALLOWED_HOSTS',
+    '127.0.0.1,localhost,rahidulislam.pythonanywhere.com,www.rahidulislam.pythonanywhere.com',
+).split(',') if host.strip()]
+CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in os.environ.get(
+    'DJANGO_CSRF_TRUSTED_ORIGINS', ''
+).split(',') if origin.strip()]
 
 
 # Application definition
@@ -39,7 +48,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'home',
-    'tinymce',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +87,7 @@ WSGI_APPLICATION = 'rahidulislam.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': Path(os.environ.get('DJANGO_DATABASE_PATH', BASE_DIR / 'db.sqlite3')),
     }
 }
 
@@ -124,12 +132,23 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = Path(os.environ.get('DJANGO_MEDIA_ROOT', BASE_DIR / 'media'))
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-X_FRAME_OPTIONS = 'SAMEORIGIN'
+X_FRAME_OPTIONS = 'DENY'
+
+if not DEBUG:
+    if SECRET_KEY.startswith('django-insecure-'):
+        raise RuntimeError('DJANGO_SECRET_KEY must be set to a strong production value.')
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = False
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 XS_SHARING_ALLOWED_METHODS = ['GET', 'OPTIONS',]

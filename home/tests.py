@@ -6,10 +6,20 @@ from .portfolio_content import fallback_experiences, fallback_projects
 
 
 class PortfolioViewTests(TestCase):
+    def test_theme_switch_is_icon_only_and_accessible(self):
+        response = self.client.get(reverse("home:home"))
+        self.assertContains(response, 'class="theme-toggle"')
+        self.assertContains(response, 'aria-label="Enable dark mode"')
+        self.assertContains(response, 'class="theme-moon"')
+        self.assertContains(response, 'class="theme-sun"')
+        self.assertNotContains(response, 'class="theme-label"')
+
     def test_empty_home_exposes_readme_fallbacks(self):
         response = self.client.get(reverse("home:home"))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context["fallback_projects"], fallback_projects)
+        self.assertEqual(response.context["fallback_projects"], fallback_projects[:3])
+        listing = self.client.get(reverse("home:projects"))
+        self.assertEqual(listing.context["fallback_projects"], fallback_projects)
         self.assertTrue({"slug", "category", "description", "technical_notes", "tags", "short_desc", "visual_label"}.issubset(fallback_projects[0]))
         self.assertEqual(response.context["fallback_experiences"], fallback_experiences)
         self.assertTrue(response.context["backend_skills"])
@@ -119,3 +129,81 @@ class LiveCVTests(TestCase):
         response = self.client.get(reverse('home:home'))
         self.assertContains(response, 'New skill')
         self.assertContains(response, 'New project')
+
+
+class ManagedProjectTests(TestCase):
+    def setUp(self):
+        self.category = Category.objects.create(name='Backend')
+
+    def test_published_detail_renders_links_description_and_media(self):
+        from .models import ProjectImage, ProjectVideo
+        project = Project.objects.create(
+            category=self.category, name='Managed project', short_desc='Summary',
+            description='Detailed implementation', features='Authentication\nReporting',
+            url='https://example.com/demo', repository_url='https://example.com/source')
+        ProjectImage.objects.create(project=project, image='project/one.png', caption='Dashboard')
+        ProjectVideo.objects.create(project=project, file='project/videos/demo.mp4', caption='Walkthrough')
+        response = self.client.get(reverse('home:project_detail', args=[project.pk]))
+        for value in ['Detailed implementation', 'https://example.com/demo', 'https://example.com/source',
+                      'Dashboard', 'Walkthrough', '<video', '/media/project/videos/demo.mp4']:
+            self.assertContains(response, value)
+        self.assertContains(self.client.get(reverse('home:projects')), project.name)
+
+    def test_drafts_are_private_in_listing_detail_and_cv(self):
+        from .portfolio_data import get_portfolio_data
+        project = Project.objects.create(category=self.category, name='TalentBridge',
+                                         short_desc='Private draft', is_published=False)
+        self.assertNotContains(self.client.get(reverse('home:projects')), 'Private draft')
+        self.assertEqual(self.client.get(reverse('home:project_detail', args=[project.pk])).status_code, 404)
+        self.assertEqual(self.client.get(reverse('home:case_study', args=['talentbridge'])).status_code, 404)
+        self.assertNotIn('TalentBridge', [p['name'] for p in get_portfolio_data()['cv_projects']])
+
+    def test_video_validation_and_admin_inlines(self):
+        from django.core.exceptions import ValidationError
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from django.contrib.auth import get_user_model
+        from .models import ProjectVideo, validate_video_size
+        project = Project.objects.create(category=self.category, name='Media project', short_desc='Summary')
+        video = ProjectVideo(project=project, file=SimpleUploadedFile('invalid.html', b'bad'))
+        with self.assertRaises(ValidationError):
+            video.full_clean()
+        class LargeFile:
+            size = 51 * 1024 * 1024
+        with self.assertRaises(ValidationError):
+            validate_video_size(LargeFile())
+        self.client.force_login(get_user_model().objects.create_superuser('admin-test', 'admin@example.com', 'test-password'))
+        response = self.client.get(reverse('admin:home_project_change', args=[project.pk]))
+        self.assertContains(response, 'project_image-TOTAL_FORMS')
+        self.assertContains(response, 'videos-TOTAL_FORMS')
+        self.assertContains(response, 'Featured image')
+
+    def test_import_is_repeatable_and_preserves_admin_edits(self):
+        from django.core.management import call_command
+        from io import StringIO
+        call_command('import_portfolio_projects', stdout=StringIO())
+        project = Project.objects.get(name='TalentBridge')
+        project.description = 'Edited in admin'
+        project.save()
+        total = Project.objects.count()
+        call_command('import_portfolio_projects', stdout=StringIO())
+        project.refresh_from_db()
+        self.assertEqual(project.description, 'Edited in admin')
+        self.assertEqual(Project.objects.count(), total)
+
+
+class StructuredCaseStudyTests(TestCase):
+    def test_sections_render_safely_and_empty_sections_are_omitted(self):
+        category = Category.objects.create(name="Backend")
+        project = Project.objects.create(
+            category=category, name="Case study", short_desc="API project",
+            problem="Separate customer data.",
+            technical_decisions="<script>alert(1)</script>",
+            outcome="Workspace-scoped endpoints.",
+        )
+        response = self.client.get(reverse("home:project_detail", args=[project.pk]))
+        self.assertContains(response, "The problem")
+        self.assertContains(response, "Workspace-scoped endpoints.")
+        self.assertContains(response, "&lt;script&gt;")
+        self.assertNotContains(response, "<script>alert(1)</script>")
+        self.assertNotContains(response, "<h2>My role</h2>")
+        self.assertNotContains(response, "<h2>Lessons and next steps</h2>")

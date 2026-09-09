@@ -32,6 +32,10 @@ class HomeView(FormView):
         from .portfolio_data import get_portfolio_data
         data.update(get_portfolio_data())
         data['contact_profile'] = data['cv_profile']
+        data['home_preview'] = True
+        featured = [project for project in data['projects'] if project.is_featured]
+        data['projects'] = (featured or data['projects'])[:3]
+        data['fallback_projects'] = data['fallback_projects'][:3]
         return data
 
     def form_valid(self, form):
@@ -42,7 +46,7 @@ class HomeView(FormView):
 
 
 class ProjectDetailView(DetailView):
-    queryset = Project.objects.select_related('category').prefetch_related('project_image')
+    queryset = Project.objects.filter(is_published=True).select_related('category').prefetch_related('project_image', 'videos')
     template_name = "home/project_detail.html"
     context_object_name = "project"
 
@@ -54,6 +58,18 @@ class ProjectDetailView(DetailView):
 
 
 class CaseStudyView(TemplateView):
+    def dispatch(self, request, *args, **kwargs):
+        from django.http import Http404
+        from django.shortcuts import redirect
+        item = next((item for item in fallback_projects if item['slug'] == kwargs['slug']), None)
+        if item:
+            project = Project.objects.filter(name__iexact=item['name']).first()
+            if project:
+                if not project.is_published:
+                    raise Http404('Project not found')
+                return redirect('home:project_detail', pk=project.pk)
+        return super().dispatch(request, *args, **kwargs)
+
     template_name = "home/case_study.html"
 
     def get_context_data(self, **kwargs):
@@ -80,3 +96,15 @@ def download_cv(request):
                             content_type='application/pdf')
     response['Cache-Control'] = 'no-store'
     return response
+
+
+class ProjectListView(TemplateView):
+    template_name = 'home/projects.html'
+
+    def get_context_data(self, **kwargs):
+        from .portfolio_data import get_portfolio_data
+        data = super().get_context_data(**kwargs)
+        data.update(get_portfolio_data())
+        data['categories'] = Category.objects.filter(project_category__is_published=True).distinct()
+        data['project_index'] = True
+        return data
