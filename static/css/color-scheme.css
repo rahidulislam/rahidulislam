@@ -1,0 +1,46 @@
+/* Follow the visitor's OS preference, including changes while the page is open. */
+:root { color-scheme: light; }
+
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --paper: #101a23;
+    --ink: #e7eef4;
+    --muted: #b3c0cb;
+    --green: #79d2c3;
+    --clay: #79d2c3;
+    --line: #354650;
+  }
+
+  .site-header { background: rgba(16, 26, 35, .98); }
+  .system-card, .experience-section, .case-note, .identity-art,
+  .detail-cover { background: #172530; }
+  .system-node, .curated-project, .contact-form, .shared-skills span {
+    background: #1b2c38;
+  }
+  .featured-node { background: #174f49; border-color: #428d80; }
+  .featured-node small { color: #deeee9; }
+  .node-symbol { background: #263e46; }
+  .primary, .filter.active, .skip-link {
+    background: #79d2c3;
+    color: #102a28;
+  }
+  .primary:hover { background: #a1e6da; }
+  .cv-button:hover { background: #263a48; }
+  .status-dot { box-shadow: 0 0 0 4px #253c40; }
+  .visual-green, .visual-sage { background: #233b39; color: #a0d3bd; }
+  .visual-clay, .visual-sand { background: #3a3330; color: #e5bda6; }
+  .stack-strip .mono, .timeline-top, .footer-bottom,
+  .system-node small, .connector span { color: var(--muted); }
+  .featured-node small { color: #deeee9; }
+  input, textarea { background: #13232e; border-color: #536773; }
+  input::placeholder, textarea::placeholder { color: #a9b9c5; }
+  .form-heading { color: var(--ink); }
+  .form-errors, .errorlist { color: #ffb4a7; }
+  .form-errors { background: #442a2b; }
+  .notification { background: #203e36; border-color: #658f7e; }
+  .text-link, .contact-email, .cv-button { border-color: #778f9d; }
+}
+
+/* Browser printing and the CV remain suitable for white paper. */
+@media print { :root { color-scheme: light; } }
