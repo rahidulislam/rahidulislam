@@ -1,63 +1,35 @@
-# Hi there, I'm Md. Rahidul Islam 👋
+# Md. Rahidul Islam
 
-## About Me
+**Mid Level Python Developer at TalentBridge**
 
-I'm a passionate Python/Django developer with a year of experience in crafting web applications that solve real-world problems. I'm dedicated to writing clean, efficient code and constantly learning about new technologies.
+Remote, Germany · June 2026–Present · Based in Bangladesh
 
-- 💼 Currently working on: Exciting projects using Django to build scalable web applications.
-- 🌱 Learning: Exploring advanced Django techniques and diving into front-end technologies like React.
-- 🚀 Looking to collaborate on: Open-source projects that contribute to the developer community.
+I build REST APIs and Django applications for recruitment, document management, and hotel operations. My work focuses on data models, authentication, access control, and business workflows.
 
-## Tech Stack
+[Email](mailto:rahidulislam247@gmail.com) · [LinkedIn](https://www.linkedin.com/in/rahidulislam2023/) · [CV (PDF)](output/pdf/Rahidul_Islam_Python_Developer_CV.pdf)
 
-- Languages: Python
-- Frameworks: Django
-- Front-end: HTML, CSS, JavaScript (learning React)
-- Databases: PostgreSQL, SQLite
-- Version Control: Git
-- Tools: VS Code, PyCharm, Git/GitHub
+## Selected work
 
-## Work Experience
+| Project | Technical focus |
+| --- | --- |
+| **TalentBridge** | Recruitment backend for candidates, employers, vacancies, shortlisting, and interviews. Python, Django REST Framework, PostgreSQL, Redis, and Celery. |
+| **Smart Document Vault** | Document-management API with workspace isolation, JWT authentication, document versions, and file scan states. Python and Django REST Framework. |
+| **HotelMotel** | Hotel operations backend covering rooms, guests, bookings, housekeeping, billing, and role-based access control. Python and Django. |
+| **Developer portfolio** | Django website with project case studies, admin-managed content, contact forms, and a downloadable CV. Source available in this repository. |
 
-### Backend Developer
+## Core skills
 
-- Wege | Ajman, UAE
-- Sep 2023 - Present
+- **Backend:** Python, Django, Django REST Framework, REST APIs, JWT authentication
+- **Data:** PostgreSQL, SQLite, Django ORM
+- **Background tasks:** Celery, Redis
+- **Web and tooling:** HTML, CSS, JavaScript, Git, GitHub
 
-### Django Developer
+## Education
 
-- Meektec IT | Cumilla, Bangladesh
-- Apr 2022 - Jan 2023
+**Diploma in Computer Technology**
 
-### Web Developer
+Noakhali Ideal Polytechnic Institute, Bangladesh · 2011–2015
 
-- Research Rider | Dhaka, Bangladesh
-- Dec 2021 - Mar 2022
+## Opportunities
 
-## Projects
-
-### API for Hotel Mobile App
-
-Design and developed API for hotel booking android app using Python, Django, Django REST Framework, JWT Token, Bkash Payment Gateway Integration
-
-### E-Commerce Website
-
-A fully functional e-commerce platform built with Django, featuring product listings, shopping cart functionality, and secure payment processing.
-
-### Laundry Management Platform
-
-Developed a laundry website where users can order to wash, and iron dresses. Implemented user authentication and authorization for managing content.
-
-### ISP Website
-
-Developed an ISP website for a client requirement where ISP company manage their customer and staff using HTML, CSS, JavaScript, Python, Django
-
-### Portfolio Website
-
-Designed and developed a personal portfolio website to showcase my projects and skills using HTML, CSS, and a touch of JavaScript.
-
-## Let's Connect
-
-- LinkedIn: [LinkedIn Profile](https://www.linkedin.com/in/rahidulislam2023)
-- Twitter: [@rahidulislam89](https://twitter.com/rahidulislam89)
-- Portfolio: [Your Portfolio Website](https://www.rahidulislam.pythonanywhere.com)
+Interested in mid-level Python and Django roles with teams in Germany. For opportunities or questions about my work, contact [rahidulislam247@gmail.com](mailto:rahidulislam247@gmail.com).
