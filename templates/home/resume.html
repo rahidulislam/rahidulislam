@@ -1,54 +1,5 @@
-<!-- ======= Resume Section ======= -->
-<section id="resume" class="resume">
-    <div class="container">
-
-      <div class="section-title">
-        <h2>Resume</h2>
-        <p>Check My Resume</p>
-      </div>
-
-      <div class="row">
-        <div class="col-lg-6">
-          <h3 class="resume-title">Sumary</h3>
-          <div class="resume-item pb-0">
-            <h4>{{personal_info.name}}</h4>
-            <p><em>{{personal_info.short_bio}}</em></p>
-            <p>
-            <ul>
-              <li>{{personal_info.address}}</li>
-              <li>{{personal_info.phone}}</li>
-              <li>{{personal_info.email}}</li>
-            </ul>
-            </p>
-          </div>
-
-          <h3 class="resume-title">Education</h3>
-          
-          {% for education in educations %}
-          <div class="resume-item">
-            <h4>{{education.degree_name}}</h4>
-            <h5>{{education.start_year}} - {{education.end_year}}</h5>
-            <p><em>{{education.institute}}, {{education.address}}</em></p>
-            <p>{{education.description|safe}}</p>
-          </div>
-          {% endfor %}
-            
-        </div>
-        <div class="col-lg-6">
-          <h3 class="resume-title">Professional Experience</h3>
-          
-          {% for experience in experiences %}
-          <div class="resume-item">
-            <h4>{{experience.designation}}</h4>
-            <h5>{{experience.start_year}} - {{experience.end_year}}</h5>
-            <p><em>{{experience.company}}, {{experience.address}} </em></p>
-            <p>
-            {{experience.description|safe}}
-            </p>
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-
-    </div>
-  </section><!-- End Resume Section -->
+<section id="resume" class="section experience-section" aria-labelledby="experience-title"><div class="container split-section">
+  <div class="section-sidebar"><p class="eyebrow">02 / Experience</p><h2 id="experience-title">Professional experience.</h2><p>My path in web and backend development.</p><a class="text-link" href="{% url 'home:download_cv' %}" download>Download CV (PDF) <span aria-hidden="true">↓</span></a></div>
+  <div class="timeline">{% for experience in cv_profile.experience %}<article class="timeline-item"><div class="timeline-top"><span class="mono">{{ experience.dates }}</span><span>{{ experience.location }}</span></div><h3>{{ experience.role }}</h3><p class="company">{{ experience.company }}</p>{% if experience.description %}<div class="rich-text">{{ experience.description|linebreaks }}</div>{% endif %}</article>{% endfor %}
+  {% if cv_profile.education %}<div class="education"><p class="eyebrow">Education</p>{% for education in cv_profile.education %}<article><p>{{ education }}</p></article>{% endfor %}</div>{% endif %}</div>
+</div></section>

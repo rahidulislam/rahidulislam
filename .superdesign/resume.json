@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "targets": {
+    "/": {
+      "targetKind": "new-ui",
+      "projectId": "c262efda-d8c9-4b5d-920c-c20ba7defbe5",
+      "activeDraftId": "fcae7921-154b-4c2a-ae4b-277f1da6bce4",
+      "contextFiles": [".superdesign/design-system.md"],
+      "fingerprints": {},
+      "drafts": {
+        "fcae7921-154b-4c2a-ae4b-277f1da6bce4": {
+          "title": "Thoughtful Backends Portfolio",
+          "visualDirection": "warm editorial systems portfolio",
+          "currentVersion": 1
+        }
+      },
+      "updatedAt": "2026-09-08T00:00:00Z"
+    }
+  }
+}

@@ -1,31 +1,12 @@
-  <!-- ======= Header ======= -->
-  <header id="header">
-    <div class="container">
-
-      <h1><a href="{% url 'home:home' %}">{{personal_info.name}}</a></h1>
-      <!-- Uncomment below if you prefer to use an image logo -->
-      <!-- <a href="index.html" class="mr-auto"><img src="assets/img/logo.png" alt="" class="img-fluid"></a> -->
-      <h2>I'm a passionate <span>{{personal_info.profession}}</span> from Bangladesh</h2>
-
-      <nav id="navbar" class="navbar">
-        <ul>
-          <li><a class="nav-link active" href="#header">Home</a></li>
-          <li><a class="nav-link" href="#about">About</a></li>
-          <li><a class="nav-link" href="#resume">Resume</a></li>
-          <li><a class="nav-link" href="#services">Services</a></li>
-          <li><a class="nav-link" href="#portfolio">Portfolio</a></li>
-          <li><a class="nav-link" href="#contact">Contact</a></li>
-        </ul>
-        <i class="bi bi-list mobile-nav-toggle"></i>
-      </nav><!-- .navbar -->
-
-      <div class="social-links">
-        
-        {% for social_item in social_items %}
-          <a href="{{social_item.social_link}}" class="twitter"><i class="bi bi-{{social_item.name}}"></i></a>
-        {% endfor %}
-          
-      </div>
-
-    </div>
-  </header><!-- End Header -->
+<header class="site-header">
+  <div class="container nav-wrap">
+    <a class="wordmark" href="{% url 'home:home' %}" aria-label="Rahidul Islam home">rahidul<span>.</span></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" hidden>Menu <span aria-hidden="true">+</span></button>
+    <nav id="site-nav" aria-label="Main navigation">
+      <a href="{% url 'home:home' %}#portfolio">Selected work</a>
+      <a href="{% url 'home:home' %}#resume">Experience</a>
+      <a href="{% url 'home:home' %}#about">About</a>
+      <a class="nav-contact" href="{% url 'home:home' %}#contact">Let’s talk <span aria-hidden="true">↗</span></a>
+    </nav>
+  </div>
+</header>

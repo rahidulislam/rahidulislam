@@ -1,0 +1,57 @@
+{
+  "name": "Md. Rahidul Islam",
+  "role": "Mid Level Python Developer",
+  "location": "Bangladesh",
+  "email": "rahidulislam247@gmail.com",
+  "phone": "",
+  "linkedin": "https://www.linkedin.com/in/rahidulislam2023/",
+  "website": "",
+  "summary": "Python and Django developer building REST APIs and web applications for recruitment, document management, and hotel operations. Seeking mid-level Python / Django opportunities in Germany.",
+  "education": [],
+  "languages": [
+    "English: beginner (self-described; CEFR level not assessed)",
+    "German: no proficiency yet"
+  ],
+  "experience": [
+    {
+      "role": "Mid Level Python Developer",
+      "company": "TalentBridge",
+      "location": "Remote, Germany",
+      "dates": "June 2026 - Present"
+    },
+    {
+      "role": "Backend Developer",
+      "company": "Wege LLC",
+      "location": "Ajman, UAE",
+      "dates": "September 2023 - June 2024"
+    },
+    {
+      "role": "Django Developer",
+      "company": "Meektec IT",
+      "location": "Cumilla, Bangladesh",
+      "dates": "April 2022 - January 2023"
+    },
+    {
+      "role": "Web Developer",
+      "company": "Research Rider",
+      "location": "Dhaka, Bangladesh",
+      "dates": "December 2021 - March 2022"
+    }
+  ],
+  "github": "https://github.com/rahidulislam",
+  "skills": [
+    "Python",
+    "Django",
+    "Django REST Framework",
+    "REST APIs",
+    "JWT authentication",
+    "PostgreSQL",
+    "SQLite",
+    "Django ORM",
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "Git",
+    "GitHub"
+  ]
+}

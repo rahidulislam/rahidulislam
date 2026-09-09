@@ -1,11 +1,28 @@
 {% extends 'base/base.html' %}
-
-{% block title %}Welcome to My Portfolio{% endblock title %}
 {% block content %}
-        
-    {% include 'home/about.html' %}
-    {% include 'home/resume.html' %}
-    {% include 'home/services.html' %}
-    {% include 'home/portfolio.html' %}
-    {% include 'home/contact.html' %} 
-{% endblock content %}
+<section class="hero container" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="status-dot"></span> {{ cv_profile.name }}</div>
+    <h1 id="hero-title">{{ cv_profile.role }}</h1>
+    <p class="hero-intro">{{ cv_profile.summary }}</p>
+    <div class="hero-actions"><a class="button primary" href="#portfolio">Explore my work <span aria-hidden="true">↗</span></a><a class="button cv-button" href="{% url 'home:download_cv' %}" download>Download CV (PDF) <span aria-hidden="true">↓</span></a></div>
+    <p class="opportunity"><span aria-hidden="true">◎</span> Seeking mid-level Python / Django roles in Germany</p>
+  </div>
+  <aside class="system-card" aria-label="Illustration of my backend focus">
+    <div class="system-top"><span class="mono">BACKEND DEVELOPMENT</span><span class="mini-dots" aria-hidden="true">● ● ●</span></div>
+    <div class="system-body"><p class="system-caption">A clear path from request to response.</p>
+      <div class="system-node"><span class="node-symbol" aria-hidden="true">↗</span><div><strong>Web & mobile clients</strong><small>The starting point</small></div><span class="mono node-label">01</span></div>
+      <div class="connector" aria-hidden="true"><span>HTTP request</span></div>
+      <div class="system-node featured-node"><span class="node-symbol" aria-hidden="true">{ }</span><div><strong>Python + Django</strong><small>APIs · authentication · business logic</small></div><span class="mono node-label">02</span></div>
+      <div class="connector" aria-hidden="true"><span>Data layer</span></div>
+      <div class="system-node"><span class="node-symbol" aria-hidden="true">≡</span><div><strong>PostgreSQL</strong><small>Structured, connected data</small></div><span class="mono node-label">03</span></div>
+    </div><div class="system-bottom"><span class="status-dot"></span><span>Python · Django REST Framework · PostgreSQL</span><span aria-hidden="true">↳</span></div>
+  </aside>
+</section>
+<div class="stack-strip"><div class="container"><span class="mono">CORE TOOLKIT</span><span>Python</span><span>Django</span><span>Django REST Framework</span><span>PostgreSQL</span><span>Git</span></div></div>
+{% include 'home/portfolio.html' %}
+{% include 'home/resume.html' %}
+{% include 'home/services.html' %}
+{% include 'home/about.html' %}
+{% include 'home/contact.html' %}
+{% endblock %}

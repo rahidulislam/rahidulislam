@@ -1,0 +1,2 @@
+# PDF generation is included in the application dependencies.
+-r requirements.txt
