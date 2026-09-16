@@ -31,6 +31,7 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+  <!-- Custom Design Template -->
 </head>
 
 <body>
@@ -81,6 +82,7 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+  <!-- Custom Design Template -->
 </head>
 
 <body>
@@ -145,6 +147,8 @@
     <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/personal-free-resume-bootstrap-template/ -->
     Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
   </div>
+  <span>© {% now "Y" %} {{ personal_info.name }} · Handcrafted with Python & Django</span>
+</div>
 ```
 
 ## templates/base/style.html

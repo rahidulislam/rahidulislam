@@ -3,3 +3,26 @@
   <p>Built with Python, Django & a little attention to detail.</p>
   <a href="#main">Back to top ↑</a>
 </div><div class="container footer-bottom"><span>© {% now "Y" %} {{ personal_info.name|default:"Md. Rahidul Islam" }}</span><span>Original template: <a href="https://bootstrapmade.com/">BootstrapMade</a> · Redesigned with Django</span></div></footer>
+<footer class="site-footer">
+  <div class="container footer-top">
+    <div class="footer-brand">
+      <a class="wordmark" href="{% url 'home:home' %}">rahidul<span>.</span></a>
+      <p class="footer-tagline">Python & Django Developer · Crafting robust APIs, scalable architectures, and clean software solutions.</p>
+    </div>
+    <div class="footer-nav">
+      <a href="{% url 'home:projects' %}">Projects</a>
+      <a href="{% url 'home:home' %}#resume">Experience</a>
+      <a href="{% url 'home:home' %}#services">Skills</a>
+      <a href="{% url 'home:home' %}#about">About</a>
+      <a href="{% url 'home:home' %}#contact">Contact</a>
+    </div>
+    <a class="back-to-top" href="#main" aria-label="Back to top">
+      <span>Back to top</span>
+      <span aria-hidden="true">↑</span>
+    </a>
+  </div>
+  <div class="container footer-bottom">
+    <span class="copyright">© {% now "Y" %} {{ personal_info.name|default:"Md. Rahidul Islam" }} · All rights reserved.</span>
+    <span class="footer-built">Handcrafted with Python & Django</span>
+  </div>
+</footer>
