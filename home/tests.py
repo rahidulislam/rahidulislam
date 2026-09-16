@@ -6,6 +6,14 @@ from .portfolio_content import fallback_experiences, fallback_projects
 
 
 class PortfolioViewTests(TestCase):
+    def test_bootstrap_538_assets_and_responsive_nav_are_loaded(self):
+        response = self.client.get(reverse("home:home"))
+        self.assertContains(response, "vendor/bootstrap/css/bootstrap.min.css")
+        self.assertContains(response, "vendor/bootstrap/js/bootstrap.bundle.min.js")
+        self.assertContains(response, 'class="site-header navbar navbar-expand-md"')
+        self.assertContains(response, 'data-bs-toggle="collapse"')
+        self.assertContains(response, 'class="collapse navbar-collapse"')
+
     def test_theme_switch_is_icon_only_and_accessible(self):
         response = self.client.get(reverse("home:home"))
         self.assertContains(response, 'class="theme-toggle"')

@@ -401,6 +401,7 @@ em {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--line);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.035);
   transition: background-color var(--transition-base), border-color var(--transition-base);
 }
 
@@ -408,8 +409,19 @@ em {
   height: 80px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 24px;
+}
+
+.site-header.navbar {
+  padding: 0;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .wordmark {
@@ -431,6 +443,9 @@ nav#site-nav {
   gap: 28px;
   font-size: 14px;
   font-weight: 500;
+  justify-content: flex-end;
+  margin-left: auto;
+  flex-grow: 0;
 }
 
 nav#site-nav a {
@@ -438,11 +453,30 @@ nav#site-nav a {
   padding: 6px 10px;
   border-radius: var(--radius-sm);
   transition: color var(--transition-fast), background-color var(--transition-fast);
+  position: relative;
 }
 
 nav#site-nav a:hover {
   color: var(--ink);
   background-color: var(--surface-alt);
+}
+
+nav#site-nav a:not(.nav-contact)::after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  bottom: 1px;
+  left: 10px;
+  height: 1px;
+  background: var(--green);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--transition-fast);
+}
+
+nav#site-nav a:not(.nav-contact):hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
 .nav-contact {
@@ -501,6 +535,22 @@ nav#site-nav a:hover {
   grid-template-columns: 1.25fr 1fr;
   gap: 64px;
   align-items: center;
+  position: relative;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 8%;
+  right: 20%;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-glow), transparent 68%);
+  filter: blur(16px);
+  opacity: .55;
+  pointer-events: none;
 }
 
 .hero-copy {
@@ -729,9 +779,13 @@ nav#site-nav a:hover {
    Core Toolkit Strip
    -------------------------------------------------------------------------- */
 .stack-strip {
-  border-block: 1px solid var(--line);
+  border: 1px solid var(--line);
   background: var(--surface);
   margin-bottom: var(--space-3xl);
+  border-radius: var(--radius-lg);
+  width: min(1200px, calc(100% - 64px));
+  margin-inline: auto;
+  box-shadow: var(--shadow-sm);
 }
 
 .stack-strip .container {
@@ -954,7 +1008,18 @@ nav#site-nav a:hover {
    -------------------------------------------------------------------------- */
 .experience-section {
   background: var(--surface-alt);
-  border-block: 1px solid var(--line);
+  border: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.experience-section::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: linear-gradient(180deg, transparent, var(--green), transparent);
+  opacity: .65;
 }
 
 .split-section {
@@ -1091,8 +1156,8 @@ nav#site-nav a:hover {
    About Section
    -------------------------------------------------------------------------- */
 .about-section {
-  border-block: 1px solid var(--line);
-  background: var(--surface);
+  border: 0;
+  background: linear-gradient(180deg, transparent, var(--surface-alt) 50%, transparent);
 }
 
 .about-grid {
@@ -1624,6 +1689,10 @@ textarea::placeholder {
     width: calc(100% - 32px);
   }
 
+  .stack-strip {
+    width: calc(100% - 32px);
+  }
+
   .section {
     padding-block: 64px;
   }
@@ -1632,7 +1701,7 @@ textarea::placeholder {
     height: 70px;
   }
 
-  .menu-toggle:not([hidden]) {
+  .menu-toggle {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -1645,12 +1714,12 @@ textarea::placeholder {
     font-weight: 500;
   }
 
-  .menu-toggle:not([hidden]) + nav#site-nav {
+  nav#site-nav.collapse:not(.show) {
     display: none;
   }
 
-  .menu-toggle:not([hidden]) + nav#site-nav.is-open {
-    display: flex;
+  nav#site-nav.collapsing,
+  nav#site-nav.collapse.show {
     position: absolute;
     top: 70px;
     left: 0;
@@ -1662,6 +1731,15 @@ textarea::placeholder {
     align-items: stretch;
     gap: 12px;
     box-shadow: var(--shadow-lg);
+  }
+
+  nav#site-nav.collapsing {
+    display: flex;
+  }
+
+  :root[data-theme="dark"] nav#site-nav.collapsing,
+  :root[data-theme="dark"] nav#site-nav.collapse.show {
+    background: #172530;
   }
 
   .hero {
