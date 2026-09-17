@@ -10,6 +10,8 @@ I build REST APIs and Django applications for recruitment, document management, 
 
 [PythonAnywhere deployment guide](docs/deploy-pythonanywhere.md)
 
+[AWS Lightsail deployment guide](docs/deploy-aws-lightsail.md)
+
 ## Selected work
 
 | Project | Technical focus |

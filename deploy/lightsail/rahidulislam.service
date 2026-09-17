@@ -1,0 +1,32 @@
+[Unit]
+Description=Rahidul Islam Django portfolio
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=www-data
+WorkingDirectory=/srv/rahidulislam/current
+EnvironmentFile=/etc/rahidulislam.env
+RuntimeDirectory=rahidulislam
+RuntimeDirectoryMode=0755
+ExecStart=/srv/rahidulislam/venv/bin/gunicorn \
+    --workers 2 \
+    --bind unix:/run/rahidulislam/gunicorn.sock \
+    --umask 007 \
+    --access-logfile - \
+    --error-logfile - \
+    --timeout 60 \
+    rahidulislam.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+KillSignal=SIGQUIT
+TimeoutStopSec=30
+Restart=on-failure
+RestartSec=5
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/var/lib/rahidulislam
+
+[Install]
+WantedBy=multi-user.target

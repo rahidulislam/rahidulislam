@@ -143,10 +143,12 @@ X_FRAME_OPTIONS = 'DENY'
 if not DEBUG:
     if SECRET_KEY.startswith('django-insecure-'):
         raise RuntimeError('DJANGO_SECRET_KEY must be set to a strong production value.')
-    SECURE_SSL_REDIRECT = True
+    SECURE_SSL_REDIRECT = os.environ.get(
+        'DJANGO_SECURE_SSL_REDIRECT', 'true'
+    ).lower() in ('1', 'true', 'yes')
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_SECONDS = int(os.environ.get('DJANGO_SECURE_HSTS_SECONDS', '3600'))
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = False
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
