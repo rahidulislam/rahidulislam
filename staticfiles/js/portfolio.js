@@ -5,27 +5,33 @@
 (() => {
   'use strict';
 
-  // --- Mobile Navigation Drawer ---
+  // --- Mobile Navigation ---
   const toggle = document.querySelector('.menu-toggle');
   const nav = document.querySelector('#site-nav');
   if (toggle && nav) {
-    toggle.hidden = false;
-    const closeMenu = () => {
-      toggle.setAttribute('aria-expanded', 'false');
-      nav.classList.remove('is-open');
+    const mobile = window.matchMedia('(max-width: 768px)');
+    const setOpen = open => {
+      const shouldOpen = mobile.matches && open;
+      nav.classList.toggle('is-open', shouldOpen);
+      nav.toggleAttribute('inert', mobile.matches && !shouldOpen);
+      toggle.setAttribute('aria-expanded', String(shouldOpen));
     };
+    const closeMenu = () => setOpen(false);
+
     toggle.addEventListener('click', () => {
-      const open = toggle.getAttribute('aria-expanded') !== 'true';
-      toggle.setAttribute('aria-expanded', String(open));
-      nav.classList.toggle('is-open', open);
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
     });
-    nav.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+    nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+      if (mobile.matches) closeMenu();
+    }));
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape' && nav.classList.contains('is-open')) {
         closeMenu();
         toggle.focus();
       }
     });
+    mobile.addEventListener('change', closeMenu);
+    closeMenu();
   }
 
   // --- Project Category Filter ---
@@ -35,6 +41,8 @@
     filters.addEventListener('click', event => {
       const button = event.target.closest('[data-filter]');
       if (!button) return;
+      filters.querySelectorAll('button').forEach(item => { const active = item === button; item.classList.toggle('active', active); item.setAttribute('aria-pressed', String(active)); });
+      document.querySelectorAll('[data-category]').forEach(card => { card.hidden = button.dataset.filter !== 'all' && card.dataset.category !== button.dataset.filter; });
       filters.querySelectorAll('button').forEach(item => {
         const active = item === button;
         item.classList.toggle('active', active);
@@ -47,6 +55,7 @@
       });
     });
   }
+  document.querySelectorAll('.print-button').forEach(button => { button.hidden = false; button.addEventListener('click', () => window.print()); });
 
   // --- Print Support ---
   document.querySelectorAll('.print-button').forEach(button => {
