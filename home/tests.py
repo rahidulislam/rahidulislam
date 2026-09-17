@@ -1,14 +1,24 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Category, Contact, Experience, PersonalInfo, Project, Skill
+from .models import (
+    Category, Contact, EngineeringChallenge, Experience, ExperienceBullet,
+    PersonalInfo, Project, ProjectImage, ProjectMetric, Skill,
+)
 from .portfolio_content import fallback_experiences, fallback_projects
 
 
 class PortfolioViewTests(TestCase):
+    def test_seo_endpoints_and_metadata(self):
+        self.assertContains(self.client.get('/robots.txt'), 'Sitemap:')
+        sitemap = self.client.get('/sitemap.xml')
+        self.assertEqual(sitemap['Content-Type'], 'application/xml')
+        self.assertContains(self.client.get(reverse('home:home')), 'rel="canonical"')
+        self.assertContains(self.client.get(reverse('home:home')), 'application/ld+json')
+
     def test_native_responsive_navigation_is_loaded_without_bootstrap(self):
         response = self.client.get(reverse("home:home"))
-        self.assertContains(response, "css/portfolio.css?v=20260917-5")
+        self.assertContains(response, "css/portfolio.css?v=20260917-6")
         self.assertContains(response, "js/portfolio.js?v=20260917-4")
         self.assertContains(response, 'class="site-header"')
         self.assertContains(response, 'class="menu-toggle"')
@@ -76,7 +86,7 @@ class PortfolioViewTests(TestCase):
             category=category, name="Detail project", short_desc="A project",
             client_name="Client", date="2024-01-01",
         )
-        response = self.client.get(reverse("home:project_detail", args=[project.pk]))
+        response = self.client.get(reverse("home:case_study", args=[project.slug]))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["project"], project)
         self.assertIn("personal_info", response.context)
@@ -98,22 +108,43 @@ class PortfolioViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Contact.objects.count(), 0)
 
+    def test_contact_honeypot_and_rate_limit_are_generic(self):
+        for _ in range(3):
+            response = self.client.post(reverse("home:home"), {
+                "name": "Visitor", "email": "visitor@example.com", "subject": "Hello",
+                "message": "hello", "website": "https://spam.example",
+            })
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, "accept that message")
+        self.assertEqual(Contact.objects.count(), 0)
+
 
 class CaseStudyTests(TestCase):
+    def test_every_fallback_case_study_is_complete_and_disclosure_safe(self):
+        required = {
+            'problem', 'contribution', 'architecture_summary',
+            'technical_decisions', 'outcome', 'lessons', 'project_type',
+            'project_role', 'collaboration', 'development_status',
+            'contribution_areas', 'constraints', 'validation',
+        }
+        forbidden = (
+            'X-Workspace-ID', 'BookingRoom', 'Prescription duration',
+            'pending, confirmed', 'draft, review, published',
+            'identity-document storage', 'invitation recovery',
+        )
+        for project in fallback_projects:
+            self.assertTrue(required.issubset(project), project['name'])
+            public_copy = ' '.join(str(project[key]) for key in required)
+            for phrase in forbidden:
+                self.assertNotIn(phrase, public_copy, project['name'])
+
     def test_all_case_studies_render_and_unknown_slug_is_404(self):
         from .portfolio_content import fallback_projects
         for project in fallback_projects:
             response = self.client.get(reverse('home:case_study', args=[project['slug']]))
             database_project = Project.objects.filter(name__iexact=project['name']).first()
-            if database_project:
-                self.assertRedirects(
-                    response,
-                    reverse('home:project_detail', args=[database_project.pk]),
-                    fetch_redirect_response=False,
-                )
-            else:
-                self.assertContains(response, project['name'])
-                self.assertContains(response, project['description'])
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, project['name'])
         response = self.client.get(reverse('home:case_study', args=['missing-project']))
         self.assertEqual(response.status_code, 404)
 
@@ -181,11 +212,22 @@ class ManagedProjectTests(TestCase):
             url='https://example.com/demo', repository_url='https://example.com/source')
         ProjectImage.objects.create(project=project, image='project/one.png', caption='Dashboard')
         ProjectVideo.objects.create(project=project, file='project/videos/demo.mp4', caption='Walkthrough')
-        response = self.client.get(reverse('home:project_detail', args=[project.pk]))
-        for value in ['Detailed implementation', 'https://example.com/demo', 'https://example.com/source',
+        response = self.client.get(reverse('home:case_study', args=[project.slug]))
+        for value in ['Detailed implementation', 'https://example.com/demo',
                       'Dashboard', 'Walkthrough', '<video', '/media/project/videos/demo.mp4']:
             self.assertContains(response, value)
+        self.assertNotContains(response, 'https://example.com/source')
+        self.assertNotContains(response, '>GitHub ↗<')
         self.assertContains(self.client.get(reverse('home:projects')), project.name)
+
+    def test_project_without_live_url_uses_hash_and_hides_repository(self):
+        project = Project.objects.create(
+            category=self.category, name='Private source project', short_desc='Summary',
+            repository_url='https://example.com/private-source',
+        )
+        response = self.client.get(reverse('home:case_study', args=[project.slug]))
+        self.assertContains(response, 'href="#">Live project ↗</a>')
+        self.assertNotContains(response, 'https://example.com/private-source')
 
     def test_drafts_are_private_in_listing_detail_and_cv(self):
         from .portfolio_data import get_portfolio_data
@@ -228,8 +270,87 @@ class ManagedProjectTests(TestCase):
         self.assertEqual(project.description, 'Edited in admin')
         self.assertEqual(Project.objects.count(), total)
 
+    def test_import_dry_run_reports_without_writing(self):
+        from django.core.management import call_command
+        from io import StringIO
+
+        Project.objects.filter(name='TalentBridge').delete()
+        output = StringIO()
+        call_command('import_portfolio_projects', dry_run=True, stdout=output)
+        self.assertFalse(Project.objects.filter(name='TalentBridge').exists())
+        self.assertIn('WOULD CREATE talentbridge', output.getvalue())
+        self.assertIn('(dry run)', output.getvalue())
+
+    def test_import_creates_full_case_study_and_explicit_update_overwrites(self):
+        from django.core.management import call_command
+        from io import StringIO
+
+        Project.objects.filter(name='TalentBridge').delete()
+        call_command('import_portfolio_projects', stdout=StringIO())
+        project = Project.objects.get(slug='talentbridge')
+        self.assertEqual(project.project_type, 'Recruitment platform backend')
+        self.assertTrue(project.constraints)
+        self.assertTrue(project.validation)
+        self.assertEqual(project.engineering_challenges.count(), 2)
+        self.assertTrue(all(item.trade_offs for item in project.engineering_challenges.all()))
+
+        project.description = 'Admin-only edit'
+        project.save(update_fields=['description'])
+        call_command('import_portfolio_projects', update_existing=True, stdout=StringIO())
+        project.refresh_from_db()
+        expected = next(item for item in fallback_projects if item['slug'] == 'talentbridge')
+        self.assertEqual(project.description, expected['description'])
+
 
 class StructuredCaseStudyTests(TestCase):
+    def test_public_case_study_hides_internal_logic_and_unpublished_evidence(self):
+        category = Category.objects.create(name='Recruitment')
+        project = Project.objects.create(
+            category=category, name='Private Logic Project', short_desc='Public summary',
+            architecture_summary='Public architecture only.',
+            project_type='Backend platform', project_role='Backend Developer',
+            collaboration='Product team', development_status='Development',
+            contribution_areas='API design\nValidation',
+            constraints='Keep private rules private.',
+            validation='Validation focused on public behavior.',
+        )
+        EngineeringChallenge.objects.create(
+            project=project, title='Safe boundary', problem='Public context',
+            approach='Public approach', solution='CONFIDENTIAL_POLICY_FORMULA',
+            trade_offs='Public trade-off',
+            verification='Verified by access-control tests.',
+        )
+        EngineeringChallenge.objects.create(
+            project=project, title='Draft secret', solution='UNPUBLISHED_CHALLENGE',
+            is_published=False,
+        )
+        ProjectMetric.objects.create(
+            project=project, label='Private metric', value='9999', is_published=False,
+        )
+
+        response = self.client.get(reverse('home:case_study', args=[project.slug]))
+        self.assertContains(response, 'Safe boundary')
+        self.assertContains(response, 'Public approach')
+        self.assertContains(response, 'Architecture overview')
+        self.assertContains(response, 'Project facts')
+        self.assertContains(response, 'Backend platform')
+        self.assertContains(response, 'Constraints')
+        self.assertContains(response, 'Validation')
+        self.assertContains(response, 'Public trade-off')
+        self.assertContains(response, 'CreativeWork')
+        self.assertNotContains(response, 'CONFIDENTIAL_POLICY_FORMULA')
+        self.assertNotContains(response, 'UNPUBLISHED_CHALLENGE')
+        self.assertNotContains(response, 'Private metric')
+
+    def test_legacy_project_url_redirects_to_canonical_slug(self):
+        category = Category.objects.create(name='Backend')
+        project = Project.objects.create(category=category, name='Canonical Project', short_desc='Summary')
+        response = self.client.get(reverse('home:project_detail', args=[project.pk]))
+        self.assertRedirects(
+            response, reverse('home:case_study', args=[project.slug]),
+            status_code=301, fetch_redirect_response=False,
+        )
+
     def test_homeopathic_case_study_is_available_to_site_and_cv(self):
         from .portfolio_data import get_portfolio_data
 
@@ -242,7 +363,7 @@ class StructuredCaseStudyTests(TestCase):
             contribution="Implemented appointments and clinical records.",
             repository_url="https://github.com/rahidulislam/homeopathic_ms",
         )
-        detail = self.client.get(reverse("home:project_detail", args=[project.pk]))
+        detail = self.client.get(reverse("home:case_study", args=[project.slug]))
         self.assertContains(detail, "Coordinate clinic workflows.")
         self.assertContains(detail, "/static/img/projects/homeopathic-api.png")
         self.assertContains(detail, "Homeopathic Management generated OpenAPI contract")
@@ -261,7 +382,7 @@ class StructuredCaseStudyTests(TestCase):
             contribution="Implemented role workspaces.",
             repository_url="https://github.com/rahidulislam/realestate_property",
         )
-        detail = self.client.get(reverse("home:project_detail", args=[project.pk]))
+        detail = self.client.get(reverse("home:case_study", args=[project.slug]))
         self.assertContains(detail, "Keep draft inventory private.")
         self.assertContains(detail, "/static/img/projects/realestate-marketplace.png")
         self.assertContains(self.client.get(reverse("home:projects")), "TheProperty")
@@ -274,12 +395,12 @@ class StructuredCaseStudyTests(TestCase):
             name="TalentBridge",
             short_desc="Recruitment API",
         )
-        response = self.client.get(reverse("home:project_detail", args=[project.pk]))
+        response = self.client.get(reverse("home:case_study", args=[project.slug]))
         self.assertContains(response, "/static/img/projects/talentbridge-login.png")
         self.assertContains(response, "TalentBridge authentication interface")
         project.name = "HotelMotel"
         project.save(update_fields=["name"])
-        response = self.client.get(reverse("home:project_detail", args=[project.pk]))
+        response = self.client.get(reverse("home:case_study", args=[project.slug]))
         self.assertContains(response, "/static/img/projects/hotelmotel-api.png")
         self.assertContains(response, "HotelMotel generated OpenAPI contract")
 
@@ -291,10 +412,100 @@ class StructuredCaseStudyTests(TestCase):
             technical_decisions="<script>alert(1)</script>",
             outcome="Workspace-scoped endpoints.",
         )
-        response = self.client.get(reverse("home:project_detail", args=[project.pk]))
+        response = self.client.get(reverse("home:case_study", args=[project.slug]))
         self.assertContains(response, "The problem")
         self.assertContains(response, "Workspace-scoped endpoints.")
         self.assertContains(response, "&lt;script&gt;")
         self.assertNotContains(response, "<script>alert(1)</script>")
         self.assertNotContains(response, "<h2>My role</h2>")
         self.assertNotContains(response, "<h2>Lessons and next steps</h2>")
+
+
+class PortfolioModelTests(TestCase):
+    def setUp(self):
+        self.category = Category.objects.create(name='Backend')
+
+    def test_skill_group_and_order_are_stable(self):
+        later = Skill.objects.create(name='Django', value=90, group='Backend', order=2)
+        first = Skill.objects.create(name='Python', value=95, group='Backend', order=1)
+        self.assertEqual(list(Skill.objects.all()), [first, later])
+
+    def test_experience_bullets_are_ordered_and_available_in_admin(self):
+        experience = Experience.objects.create(
+            designation='Engineer', company='Example', start_year='2025', end_year='Present',
+            description='Backend work', address='Remote',
+        )
+        second = ExperienceBullet.objects.create(experience=experience, text='Second responsibility', order=2)
+        first = ExperienceBullet.objects.create(experience=experience, text='First responsibility', order=1)
+        self.assertEqual(list(experience.bullets.all()), [first, second])
+
+    def test_project_slug_is_unique_and_is_backfilled_on_save(self):
+        first = Project.objects.create(category=self.category, name='Smart Document Vault', short_desc='Vault')
+        second = Project.objects.create(category=self.category, name='Smart Document Vault', short_desc='Another vault')
+        self.assertEqual(first.slug, 'smart-document-vault')
+        self.assertEqual(second.slug, 'smart-document-vault-2')
+        self.assertTrue(Project._meta.get_field('slug').null)
+        self.assertTrue(Project._meta.get_field('slug').blank)
+
+    def test_ordered_project_evidence_has_publication_controls_and_image_metadata(self):
+        project = Project.objects.create(category=self.category, name='Evidence project', short_desc='Summary')
+        private_metric = ProjectMetric.objects.create(
+            project=project, label='Private measurement', value='12ms', is_published=False,
+            source_url='https://example.com/measurement', order=2,
+        )
+        public_metric = ProjectMetric.objects.create(
+            project=project, label='Public measurement', value='20ms', is_published=True,
+            source_url='https://example.com/public-measurement', order=1,
+        )
+        challenge = EngineeringChallenge.objects.create(
+            project=project, title='Tenant isolation', problem='Keep tenant data separate.',
+            verification='Covered by isolation tests.', source_url='https://example.com/tests', order=1,
+        )
+        image = ProjectImage.objects.create(
+            project=project, kind=ProjectImage.ARCHITECTURE,
+            alt_text='Workspace boundary diagram', order=1,
+        )
+        self.assertEqual(list(project.metrics.all()), [public_metric, private_metric])
+        self.assertTrue(challenge.is_published)
+        self.assertFalse(private_metric.is_published)
+        self.assertEqual(image.image_alt, 'Workspace boundary diagram')
+
+    def test_admin_exposes_ordered_portfolio_children(self):
+        from django.contrib.auth import get_user_model
+
+        project = Project.objects.create(category=self.category, name='Admin project', short_desc='Summary')
+        experience = Experience.objects.create(
+            designation='Engineer', company='Example', start_year='2025', end_year='Present',
+            description='Backend work', address='Remote',
+        )
+        user = get_user_model().objects.create_superuser(
+            'portfolio-admin', 'portfolio-admin@example.com', 'test-password')
+        self.client.force_login(user)
+        project_response = self.client.get(reverse('admin:home_project_change', args=[project.pk]))
+        experience_response = self.client.get(reverse('admin:home_experience_change', args=[experience.pk]))
+        for prefix in ('project_image', 'videos', 'engineering_challenges', 'metrics'):
+            self.assertContains(project_response, f'{prefix}-TOTAL_FORMS')
+        self.assertContains(experience_response, 'bullets-TOTAL_FORMS')
+
+    def test_project_case_study_facts_are_blank_safe_and_editable_in_admin(self):
+        from django.contrib.auth import get_user_model
+
+        project = Project.objects.create(
+            category=self.category, name='Recruiter facts', short_desc='Summary')
+        for field_name in (
+            'project_type', 'project_role', 'collaboration', 'development_status',
+            'contribution_areas', 'constraints', 'validation',
+        ):
+            field = Project._meta.get_field(field_name)
+            self.assertTrue(field.blank)
+            self.assertEqual(getattr(project, field_name), '')
+
+        user = get_user_model().objects.create_superuser(
+            'facts-admin', 'facts-admin@example.com', 'test-password')
+        self.client.force_login(user)
+        response = self.client.get(reverse('admin:home_project_change', args=[project.pk]))
+        for label in (
+            'Project type', 'Project role', 'Collaboration', 'Development status',
+            'Contribution areas', 'Constraints', 'Validation',
+        ):
+            self.assertContains(response, label)

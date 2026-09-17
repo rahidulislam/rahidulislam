@@ -2,9 +2,9 @@ from django.db import migrations
 
 
 CONTRIBUTIONS = {
-    'TalentBridge': 'As a Mid Level Python Developer, I implemented and hardened employer onboarding, partner company updates, self-service profiles, password changes, and invitation recovery flows. I also contributed deployment, CI, demo-data, and API documentation improvements.',
-    'Smart Document Vault': 'I implemented tenant-scoped data access and object authorization across document and folder operations, added role and tenant test matrices, and aligned API response and error contracts with the published OpenAPI schema.',
-    'HotelMotel': 'I implemented hotel and room endpoints, booking creation, listing and detail APIs, and later expanded the booking lifecycle with confirmation, cancellation, check-in, checkout, no-show flows, hotel-context permissions, and automated tests.',
+    'TalentBridge': 'I contributed backend features, integration contracts, reliability improvements, and deployment support. Internal business rules are omitted.',
+    'Smart Document Vault': 'I contributed tenant-aware access controls, secure processing, contract-aligned API behavior, and isolation-focused tests.',
+    'HotelMotel': 'I contributed backend APIs, lifecycle handling, access controls, and automated tests across the hotel operations domain.',
 }
 
 

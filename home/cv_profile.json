@@ -17,7 +17,12 @@
       "role": "Mid Level Python Developer",
       "company": "TalentBridge",
       "location": "Remote, Germany",
-      "dates": "June 2026 - Present"
+      "dates": "June 2026 - Present",
+      "bullets": [
+        "Contribute backend features and integration contracts for a recruitment platform.",
+        "Support API documentation, reliability improvements, and deployment workflows.",
+        "Keep product-specific workflows and internal business rules confidential."
+      ]
     },
     {
       "role": "Backend Developer",

@@ -5,10 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{{ personal_info.name|default:"Md. Rahidul Islam" }} — Python & Django Developer{% endblock %}</title>
   <meta name="description" content="{% block description %}Python and Django developer building web applications, REST APIs and business tools. Explore Rahidul Islam's projects and experience. Seeking mid-level opportunities in Germany.{% endblock %}">
+  <link rel="canonical" href="{{ request.build_absolute_uri }}">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Rahidul Islam — Python & Django Developer">
   <meta property="og:title" content="{{ project.name|default:'Rahidul Islam — Python & Django Developer' }}">
   <meta property="og:description" content="{% if project %}{{ project.short_desc }}{% else %}Python and Django developer building REST APIs and business applications.{% endif %}">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ project.name|default:'Rahidul Islam — Python & Django Developer' }}">
+  <meta name="twitter:description" content="{% if project %}{{ project.short_desc }}{% else %}Python and Django developer building REST APIs and business applications.{% endif %}">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Md. Rahidul Islam","url":"{{ request.scheme }}://{{ request.get_host }}{% url 'home:home' %}","jobTitle":"Python & Django Developer"}</script>
+  {% if project %}<script type="application/ld+json">{"@context":"https://schema.org","@type":"CreativeWork","name":"{{ project.name|escapejs }}","description":"{{ project.short_desc|default:project.description|escapejs }}","url":"{{ request.build_absolute_uri|escapejs }}","author":{"@type":"Person","name":"Md. Rahidul Islam"}}</script>{% endif %}
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#fafbfc" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#101a23" media="(prefers-color-scheme: dark)">
