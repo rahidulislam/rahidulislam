@@ -413,10 +413,6 @@ em {
   gap: 24px;
 }
 
-.site-header.navbar {
-  padding: 0;
-}
-
 .header-actions {
   display: flex;
   align-items: center;
@@ -1712,14 +1708,19 @@ textarea::placeholder {
     color: var(--ink);
     font-size: 13px;
     font-weight: 500;
+    line-height: 1;
+    appearance: none;
   }
 
-  nav#site-nav.collapse:not(.show) {
-    display: none;
+  .menu-toggle span {
+    transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
-  nav#site-nav.collapsing,
-  nav#site-nav.collapse.show {
+  .menu-toggle[aria-expanded="true"] span {
+    transform: rotate(45deg);
+  }
+
+  nav#site-nav {
     position: absolute;
     top: 70px;
     left: 0;
@@ -1728,17 +1729,32 @@ textarea::placeholder {
     background: var(--surface);
     border-bottom: 1px solid var(--line);
     flex-direction: column;
+    flex-wrap: nowrap;
     align-items: stretch;
+    justify-content: flex-start;
     gap: 12px;
     box-shadow: var(--shadow-lg);
-  }
-
-  nav#site-nav.collapsing {
     display: flex;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px) scale(0.99);
+    transform-origin: top center;
+    transition:
+      opacity 180ms ease-out,
+      transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      visibility 0s linear 180ms;
   }
 
-  :root[data-theme="dark"] nav#site-nav.collapsing,
-  :root[data-theme="dark"] nav#site-nav.collapse.show {
+  nav#site-nav.is-open {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  :root[data-theme="dark"] nav#site-nav {
     background: #172530;
   }
 

@@ -5,13 +5,33 @@
 (() => {
   'use strict';
 
-  // Bootstrap owns the responsive navigation collapse. Close it after a
-  // destination is selected so in-page links reveal their target immediately.
+  // --- Mobile Navigation ---
+  const toggle = document.querySelector('.menu-toggle');
   const nav = document.querySelector('#site-nav');
-  if (nav && window.bootstrap) {
+  if (toggle && nav) {
+    const mobile = window.matchMedia('(max-width: 768px)');
+    const setOpen = open => {
+      const shouldOpen = mobile.matches && open;
+      nav.classList.toggle('is-open', shouldOpen);
+      nav.toggleAttribute('inert', mobile.matches && !shouldOpen);
+      toggle.setAttribute('aria-expanded', String(shouldOpen));
+    };
+    const closeMenu = () => setOpen(false);
+
+    toggle.addEventListener('click', () => {
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
     nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
-      window.bootstrap.Collapse.getInstance(nav)?.hide();
+      if (mobile.matches) closeMenu();
     }));
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && nav.classList.contains('is-open')) {
+        closeMenu();
+        toggle.focus();
+      }
+    });
+    mobile.addEventListener('change', closeMenu);
+    closeMenu();
   }
 
   // --- Project Category Filter ---
