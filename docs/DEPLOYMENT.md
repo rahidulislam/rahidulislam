@@ -1,6 +1,8 @@
 # Deployment
 
 For a step-by-step PythonAnywhere setup, see [Deploy to PythonAnywhere](deploy-pythonanywhere.md).
+For an Ubuntu VPS deployment with Nginx, Gunicorn, systemd, HTTPS, backups,
+and rollback steps, see [Deploy to AWS Lightsail](deploy-aws-lightsail.md).
 
 The portfolio requires Python 3.12+, persistent storage for SQLite and uploaded
 project media, and HTTPS. A host with a persistent disk is the simplest fit.
