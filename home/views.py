@@ -1,7 +1,6 @@
-import json
-from pathlib import Path
-
-from django.views.generic import DetailView, FormView, TemplateView
+from django.views.generic import FormView, RedirectView, TemplateView
+from django.http import HttpResponse
+from django.urls import reverse
 from .models import (InformationCounter, Interest, SocialMedia,
                      PersonalInfo, Skill, Testimonial, Education, Experience, Service,
                      Category, Project)
@@ -14,6 +13,11 @@ class HomeView(FormView):
     form_class = ContactForm
     template_name = "home/index.html"
     success_url = "/#contact"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["request_ip"] = self.request.META.get("REMOTE_ADDR", "unknown")
+        return kwargs
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
@@ -45,38 +49,35 @@ class HomeView(FormView):
         return super().form_valid(form)
 
 
-class ProjectDetailView(DetailView):
-    queryset = Project.objects.filter(is_published=True).select_related('category').prefetch_related('project_image', 'videos')
-    template_name = "home/project_detail.html"
-    context_object_name = "project"
+class LegacyProjectDetailView(RedirectView):
+    permanent = True
 
-    def get_context_data(self, **kwargs):
-        data = super().get_context_data(**kwargs)
-        data['social_items'] = SocialMedia.objects.all()
-        data['personal_info'] = PersonalInfo.objects.first()
-        return data
+    def get_redirect_url(self, *args, **kwargs):
+        from django.shortcuts import get_object_or_404
+        project = get_object_or_404(Project, pk=kwargs['pk'], is_published=True)
+        return reverse('home:case_study', args=[project.slug])
 
 
 class CaseStudyView(TemplateView):
-    def dispatch(self, request, *args, **kwargs):
-        from django.http import Http404
-        from django.shortcuts import redirect
-        item = next((item for item in fallback_projects if item['slug'] == kwargs['slug']), None)
-        if item:
-            project = Project.objects.filter(name__iexact=item['name']).first()
-            if project:
-                if not project.is_published:
-                    raise Http404('Project not found')
-                return redirect('home:project_detail', pk=project.pk)
-        return super().dispatch(request, *args, **kwargs)
-
     template_name = "home/case_study.html"
 
     def get_context_data(self, **kwargs):
         from django.http import Http404
         data = super().get_context_data(**kwargs)
+        project = Project.objects.filter(slug=self.kwargs['slug'], is_published=True).select_related('category').prefetch_related('project_image', 'videos', 'engineering_challenges', 'metrics').first()
+        if project:
+            data.update(
+                project=project,
+                managed_project=True,
+                published_challenges=[item for item in project.engineering_challenges.all() if item.is_published],
+                published_metrics=[item for item in project.metrics.all() if item.is_published],
+                architecture_images=[item for item in project.project_image.all() if item.kind == item.ARCHITECTURE],
+                screenshots=[item for item in project.project_image.all() if item.kind == item.SCREENSHOT],
+                personal_info=PersonalInfo.objects.first(), social_items=SocialMedia.objects.all(),
+            )
+            return data
         project = next((item for item in fallback_projects if item["slug"] == self.kwargs["slug"]), None)
-        if project is None:
+        if project is None or Project.objects.filter(name__iexact=project['name'], is_published=False).exists():
             raise Http404("Project not found")
         data.update(project=project, personal_info=PersonalInfo.objects.first(), social_items=SocialMedia.objects.all())
         return data
@@ -96,6 +97,18 @@ def download_cv(request):
                             content_type='application/pdf')
     response['Cache-Control'] = 'no-store'
     return response
+
+
+def sitemap_xml(request):
+    urls = [request.build_absolute_uri(reverse("home:home")), request.build_absolute_uri(reverse("home:projects"))]
+    urls += [request.build_absolute_uri(reverse("home:case_study", args=[p.slug])) for p in Project.objects.filter(is_published=True).only("slug")]
+    body = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" + "".join(f"<url><loc>{url}</loc></url>" for url in urls) + "</urlset>"
+    return HttpResponse(body, content_type="application/xml")
+
+
+def robots_txt(request):
+    sitemap = request.build_absolute_uri(reverse("home:sitemap"))
+    return HttpResponse(f"User-agent: *\nAllow: /\nDisallow: /admin/\nSitemap: {sitemap}\n", content_type="text/plain")
 
 
 class ProjectListView(TemplateView):

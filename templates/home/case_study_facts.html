@@ -1,0 +1,12 @@
+{% if project.project_type or project.project_role or project.collaboration or project.development_status or project.contribution_areas %}
+<section class="case-facts" aria-labelledby="project-facts-title">
+  <h2 id="project-facts-title">Project facts</h2>
+  <div class="case-facts-grid">
+    {% if project.project_type %}<div><span class="mono">PROJECT TYPE</span><strong>{{ project.project_type }}</strong></div>{% endif %}
+    {% if project.project_role %}<div><span class="mono">MY ROLE</span><strong>{{ project.project_role }}</strong></div>{% endif %}
+    {% if project.collaboration %}<div><span class="mono">COLLABORATION</span><strong>{{ project.collaboration }}</strong></div>{% endif %}
+    {% if project.development_status %}<div><span class="mono">STATUS</span><strong>{{ project.development_status }}</strong></div>{% endif %}
+  </div>
+  {% if project.contribution_areas %}<div class="contribution-areas"><span class="mono">CONTRIBUTION AREAS</span><p>{{ project.contribution_areas|linebreaksbr }}</p></div>{% endif %}
+</section>
+{% endif %}

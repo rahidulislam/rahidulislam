@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import (FileExtensionValidator, MaxValueValidator,
                                     MinValueValidator)
 from django.templatetags.static import static
+from django.utils.text import slugify
 # Create your models here.
 
 
@@ -50,6 +51,11 @@ class Skill(models.Model):
     name = models.CharField(max_length=50)
     value = models.PositiveIntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(100)])
+    group = models.CharField(max_length=50, default='Core')
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['group', 'order', 'name', 'pk']
 
     def __str__(self):
         return self.name
@@ -98,6 +104,19 @@ class Experience(models.Model):
         return self.designation
 
 
+class ExperienceBullet(models.Model):
+    experience = models.ForeignKey(
+        Experience, on_delete=models.CASCADE, related_name='bullets')
+    text = models.TextField()
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order', 'pk']
+
+    def __str__(self):
+        return f'{self.experience}: {self.text[:60]}'
+
+
 class Service(models.Model):
     name = models.CharField(max_length=50)
     icon_name = models.CharField(max_length=20)
@@ -125,6 +144,7 @@ class Project(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name='project_category')
     name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=120, unique=True, null=True, blank=True)
     short_desc = models.CharField(max_length=100)
     image = models.ImageField('Featured image', upload_to='images/', blank=True)
     url = models.URLField('Live URL', blank=True)
@@ -136,6 +156,16 @@ class Project(models.Model):
     outcome = models.TextField(blank=True, help_text='Describe delivered capabilities. Include metrics only when verified.')
     lessons = models.TextField(blank=True, help_text='What did you learn or what would you improve next?')
     repository_url = models.URLField(blank=True)
+    api_docs_url = models.URLField(blank=True)
+    architecture_summary = models.TextField(blank=True)
+    project_type = models.CharField(max_length=120, blank=True)
+    project_role = models.CharField(max_length=120, blank=True)
+    collaboration = models.CharField(max_length=120, blank=True)
+    development_status = models.CharField(max_length=80, blank=True)
+    contribution_areas = models.TextField(
+        blank=True, help_text='Enter one contribution area per line.')
+    constraints = models.TextField(blank=True)
+    validation = models.TextField(blank=True)
     is_published = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=False)
     order = models.PositiveIntegerField(default=0)
@@ -147,6 +177,18 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug and self.name:
+            base_slug = slugify(self.name) or 'project'
+            candidate = base_slug[:120]
+            suffix = 2
+            while Project.objects.exclude(pk=self.pk).filter(slug=candidate).exists():
+                suffix_text = f'-{suffix}'
+                candidate = f'{base_slug[:120 - len(suffix_text)]}{suffix_text}'
+                suffix += 1
+            self.slug = candidate
+        super().save(*args, **kwargs)
 
     def get_image_url(self):
         if self.image:
@@ -161,10 +203,18 @@ class Project(models.Model):
 
 
 class ProjectImage(models.Model):
+    SCREENSHOT = 'screenshot'
+    ARCHITECTURE = 'architecture'
+    KIND_CHOICES = (
+        (SCREENSHOT, 'Screenshot'),
+        (ARCHITECTURE, 'Architecture diagram'),
+    )
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name='project_image')
     image = models.ImageField(upload_to='project/', blank=True)
     caption = models.CharField(max_length=200, blank=True)
+    kind = models.CharField(max_length=20, choices=KIND_CHOICES, default=SCREENSHOT)
+    alt_text = models.CharField(max_length=200, blank=True)
     order = models.PositiveIntegerField(default=0)
 
     class Meta:
@@ -175,6 +225,48 @@ class ProjectImage(models.Model):
 
     def get_image_url(self):
         return self.image.url if self.image else None
+
+    @property
+    def image_alt(self):
+        return self.alt_text or self.caption or self.project.image_alt
+
+
+class EngineeringChallenge(models.Model):
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name='engineering_challenges')
+    title = models.CharField(max_length=120)
+    problem = models.TextField(blank=True)
+    approach = models.TextField(blank=True)
+    solution = models.TextField(blank=True)
+    trade_offs = models.TextField(blank=True)
+    verification = models.TextField(
+        blank=True, help_text='State only results that can be verified.')
+    source_url = models.URLField(blank=True, help_text='Optional source supporting the verification.')
+    is_published = models.BooleanField(default=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order', 'pk']
+
+    def __str__(self):
+        return f'{self.project}: {self.title}'
+
+
+class ProjectMetric(models.Model):
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name='metrics')
+    label = models.CharField(max_length=100)
+    value = models.CharField(max_length=100)
+    explanation = models.TextField(blank=True)
+    source_url = models.URLField(blank=True, help_text='Source or measurement documentation for this metric.')
+    is_published = models.BooleanField(default=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order', 'pk']
+
+    def __str__(self):
+        return f'{self.project}: {self.label}'
 
 
 def validate_video_size(value):

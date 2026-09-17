@@ -44,7 +44,10 @@ def build_cv(profile, projects):
     work=[]
     for x in profile.get('experience',[]):
         work += [p(x.get('dates',''),'small'),Paragraph('<b>%s</b>'%_clean(x.get('role','')),s['body']),p('%s | %s'%(x.get('company',''),x.get('location','')))]
-        if x.get('description'): work.append(p(x['description']))
+        if x.get('bullets'):
+            work.extend(p('• '+bullet) for bullet in x['bullets'])
+        elif x.get('description'):
+            work.append(p(x['description']))
         work.append(Spacer(1,3))
     section('WORK EXPERIENCE',work)
     if profile.get('education'): section('EDUCATION AND TRAINING',[p(x) for x in profile['education']])
