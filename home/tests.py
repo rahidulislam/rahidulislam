@@ -18,8 +18,8 @@ class PortfolioViewTests(TestCase):
 
     def test_native_responsive_navigation_is_loaded_without_bootstrap(self):
         response = self.client.get(reverse("home:home"))
-        self.assertContains(response, "css/portfolio.css?v=20260917-6")
-        self.assertContains(response, "js/portfolio.js?v=20260917-4")
+        self.assertContains(response, "css/portfolio.css?v=20260920-v3")
+        self.assertContains(response, "js/portfolio.js?v=20260920-v3")
         self.assertContains(response, 'class="site-header"')
         self.assertContains(response, 'class="menu-toggle"')
         self.assertContains(response, 'aria-controls="site-nav"')
@@ -39,14 +39,14 @@ class PortfolioViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         database_names = {name.casefold() for name in Project.objects.values_list("name", flat=True)}
         expected_fallbacks = [item for item in fallback_projects if item["name"].casefold() not in database_names]
-        self.assertEqual(response.context["fallback_projects"], expected_fallbacks[:5])
+        self.assertEqual(response.context["fallback_projects"], expected_fallbacks[:3])
         listing = self.client.get(reverse("home:projects"))
         self.assertEqual(listing.context["fallback_projects"], expected_fallbacks)
         self.assertTrue({"slug", "category", "description", "technical_notes", "tags", "short_desc", "visual_label"}.issubset(fallback_projects[0]))
         self.assertEqual(response.context["fallback_experiences"], fallback_experiences)
         self.assertTrue(response.context["backend_skills"])
 
-    def test_database_content_is_preserved_and_all_projects_are_shown(self):
+    def test_database_content_is_preserved_in_project_library(self):
         category = Category.objects.create(name="Additional")
         project = Project.objects.create(
             category=category, name="Database project", short_desc="A project",
@@ -58,11 +58,12 @@ class PortfolioViewTests(TestCase):
             end_year="2025", description="Work", address="Remote",
         )
         response = self.client.get(reverse("home:home"))
-        self.assertIn(project, response.context["projects"])
+        listing = self.client.get(reverse("home:projects"))
+        self.assertIn(project, listing.context["projects"])
         self.assertEqual([skill.name for skill in response.context["backend_skills"]], ["Python"])
         self.assertEqual(response.context["experiences"].count(), 1)
 
-    def test_homepage_can_show_five_selected_projects(self):
+    def test_homepage_shows_only_three_selected_projects(self):
         Project.objects.all().delete()
         category = Category.objects.create(name="Selected work")
         names = ["TalentBridge", "Smart Document Vault", "HotelMotel", "TheProperty", "Homeopathic Management API"]
@@ -76,9 +77,28 @@ class PortfolioViewTests(TestCase):
             )
 
         response = self.client.get(reverse("home:home"))
-        self.assertEqual([project.name for project in response.context["projects"]], names)
-        self.assertContains(response, "TheProperty")
-        self.assertContains(response, "Homeopathic Management API")
+        selected_names = [project["name"] for project in response.context["fallback_projects"]]
+        selected_names += [project.name for project in response.context["projects"]]
+        self.assertCountEqual(selected_names, names[:3])
+        self.assertNotContains(response, "TheProperty")
+        self.assertNotContains(response, "Homeopathic Management API")
+
+    def test_v3_homepage_positioning_and_structure(self):
+        response = self.client.get(reverse("home:home"))
+        self.assertContains(response, "Python &amp; Django engineer building secure business systems")
+        self.assertContains(response, "Open to relocation to Germany and remote opportunities")
+        self.assertContains(response, "View case studies")
+        self.assertNotContains(response, "How I build backend systems")
+        self.assertNotContains(response, 'class="filters"')
+        self.assertContains(response, "02 / Experience")
+        self.assertContains(response, "03 / What I work with")
+
+    def test_v3_social_metadata_uses_branded_card(self):
+        response = self.client.get(reverse("home:home"))
+        self.assertContains(response, "og-portfolio-v3.png")
+        self.assertContains(response, 'name="twitter:card" content="summary_large_image"')
+        self.assertContains(response, '"@type":"WebSite"')
+        self.assertNotContains(response, "img/me.jpg")
 
     def test_detail_url_includes_profile_and_social_context(self):
         category = Category.objects.create(name="Web")
@@ -197,7 +217,8 @@ class LiveCVTests(TestCase):
         self.assertEqual(data['cv_profile']['skills'], ['New skill'])
         response = self.client.get(reverse('home:home'))
         self.assertContains(response, 'New skill')
-        self.assertContains(response, 'New project')
+        self.assertNotContains(response, 'New project')
+        self.assertContains(self.client.get(reverse('home:projects')), 'New project')
 
 
 class ManagedProjectTests(TestCase):
@@ -220,13 +241,14 @@ class ManagedProjectTests(TestCase):
         self.assertNotContains(response, '>GitHub ↗<')
         self.assertContains(self.client.get(reverse('home:projects')), project.name)
 
-    def test_project_without_live_url_uses_hash_and_hides_repository(self):
+    def test_project_without_live_url_uses_non_link_and_hides_repository(self):
         project = Project.objects.create(
             category=self.category, name='Private source project', short_desc='Summary',
             repository_url='https://example.com/private-source',
         )
         response = self.client.get(reverse('home:case_study', args=[project.slug]))
-        self.assertContains(response, 'href="#">Live project ↗</a>')
+        self.assertContains(response, 'aria-disabled="true">Live preview unavailable</span>')
+        self.assertNotContains(response, 'href="#"')
         self.assertNotContains(response, 'https://example.com/private-source')
 
     def test_drafts_are_private_in_listing_detail_and_cv(self):

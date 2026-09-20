@@ -10,3 +10,11 @@ These case studies are based on local repository implementation evidence. They d
 | Portfolio Website | This repository `README.md`; `home/models.py`; `home/views.py` | Django portfolio with database-backed content and persisted contact messages. |
 
 No live status, metrics, production scale, client results, language proficiency, visa sponsorship, or exclusive ownership is claimed.
+
+## V3 publication rules
+
+- Homepage evidence is qualitative unless a `ProjectMetric` has a documented source.
+- Featured screenshots identify the product interface; they do not prove deployment status or usage.
+- Experience bullets describe contribution areas and validation practices without exposing private business rules.
+- A missing live URL is rendered as an unavailable status, never as a placeholder link.
+- Repository URLs remain private unless the project has an explicit public-source decision.

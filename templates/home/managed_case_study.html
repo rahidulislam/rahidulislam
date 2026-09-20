@@ -5,7 +5,8 @@
     <div><span class="mono">CATEGORY</span><strong>{{ project.category.name }}</strong></div>
     {% if project.date %}<div><span class="mono">DATE</span><strong>{{ project.date|date:'F Y' }}</strong></div>{% endif %}
     <div class="project-links">
-      {% if project.url %}<a class="button primary" href="{{ project.url }}" target="_blank" rel="noopener noreferrer">Live project ↗</a>{% else %}<a class="button primary" href="#">Live project ↗</a>{% endif %}
+      {% if project.url %}<a class="button primary" href="{{ project.url }}" target="_blank" rel="noopener noreferrer">Live project ↗</a>{% else %}<span class="button unavailable-link" aria-disabled="true">Live preview unavailable</span>{% endif %}
+      {% if project.api_docs_url %}<a class="button cv-button" href="{{ project.api_docs_url }}" target="_blank" rel="noopener noreferrer">API documentation ↗</a>{% endif %}
     </div>
   </div>
   {% include "home/case_study_facts.html" %}

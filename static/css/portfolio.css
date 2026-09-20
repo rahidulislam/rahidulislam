@@ -821,6 +821,51 @@ nav#site-nav a:not(.nav-contact):hover::after {
   gap: 32px;
 }
 
+.featured-project-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.featured-project-grid .project-card {
+  padding: 24px;
+}
+
+.featured-project-grid .project-visual {
+  height: 190px;
+}
+
+.project-role {
+  max-width: 48%;
+  color: var(--muted);
+  font-size: 11px;
+  text-align: right;
+}
+
+.project-evidence {
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.project-evidence strong {
+  color: var(--ink);
+}
+
+.unavailable-link {
+  cursor: default;
+  opacity: .65;
+}
+
+@media (max-width: 1050px) {
+  .featured-project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 760px) {
+  .featured-project-grid { grid-template-columns: 1fr; }
+}
+
 .project-card {
   position: relative;
   display: flex;
