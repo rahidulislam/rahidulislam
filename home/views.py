@@ -37,9 +37,17 @@ class HomeView(FormView):
         data.update(get_portfolio_data())
         data['contact_profile'] = data['cv_profile']
         data['home_preview'] = True
-        featured = [project for project in data['projects'] if project.is_featured]
-        data['projects'] = (featured or data['projects'])[:5]
-        data['fallback_projects'] = data['fallback_projects'][:5]
+        selected_names = {'TalentBridge', 'Smart Document Vault', 'HotelMotel'}
+        data['fallback_projects'] = [
+            project for project in data['fallback_projects']
+            if project['name'] in selected_names
+        ]
+        remaining_slots = max(0, 3 - len(data['fallback_projects']))
+        managed_selected = [
+            project for project in data['projects']
+            if project.is_published and project.name in selected_names
+        ]
+        data['projects'] = managed_selected[:remaining_slots]
         return data
 
     def form_valid(self, form):

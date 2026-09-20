@@ -1,12 +1,12 @@
 {
   "name": "Md. Rahidul Islam",
-  "role": "Mid Level Python Developer",
+  "role": "Python & Django engineer building secure business systems",
   "location": "Bangladesh",
   "email": "rahidulislam247@gmail.com",
   "phone": "",
   "linkedin": "https://www.linkedin.com/in/rahidulislam2023/",
   "website": "",
-  "summary": "Python and Django developer building REST APIs and web applications for recruitment, document management, and hotel operations. Seeking mid-level Python / Django opportunities in Germany.",
+  "summary": "I build REST APIs and operational software for recruitment, document management, and hospitality. Based in Bangladesh and open to relocation to Germany and remote opportunities.",
   "education": [],
   "languages": [
     "English: beginner (self-described; CEFR level not assessed)",
@@ -19,28 +19,40 @@
       "location": "Remote, Germany",
       "dates": "June 2026 - Present",
       "bullets": [
-        "Contribute backend features and integration contracts for a recruitment platform.",
-        "Support API documentation, reliability improvements, and deployment workflows.",
-        "Keep product-specific workflows and internal business rules confidential."
+        "Build Django REST endpoints and integration contracts for a multi-stage recruitment platform.",
+        "Improve API documentation, reliability checks, and deployment workflows while preserving private business rules.",
+        "Validate representative permitted and rejected requests across organizational access boundaries."
       ]
     },
     {
       "role": "Backend Developer",
       "company": "Wege LLC",
       "location": "Ajman, UAE",
-      "dates": "September 2023 - June 2024"
+      "dates": "September 2023 - June 2024",
+      "bullets": [
+        "Developed backend features for business workflows with Django and relational data models.",
+        "Maintained server-side validation and access boundaries across application features."
+      ]
     },
     {
       "role": "Django Developer",
       "company": "Meektec IT",
       "location": "Cumilla, Bangladesh",
-      "dates": "April 2022 - January 2023"
+      "dates": "April 2022 - January 2023",
+      "bullets": [
+        "Implemented Django web features and database-backed workflows from product requirements.",
+        "Supported debugging, maintenance, and incremental delivery across the application."
+      ]
     },
     {
       "role": "Web Developer",
       "company": "Research Rider",
       "location": "Dhaka, Bangladesh",
-      "dates": "December 2021 - March 2022"
+      "dates": "December 2021 - March 2022",
+      "bullets": [
+        "Built and maintained web application features with server-rendered templates and backend data flows.",
+        "Translated content and workflow requirements into maintainable application changes."
+      ]
     }
   ],
   "github": "https://github.com/rahidulislam",
