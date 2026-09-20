@@ -41,21 +41,22 @@
     filters.addEventListener('click', event => {
       const button = event.target.closest('[data-filter]');
       if (!button) return;
-      filters.querySelectorAll('button').forEach(item => { const active = item === button; item.classList.toggle('active', active); item.setAttribute('aria-pressed', String(active)); });
-      document.querySelectorAll('[data-category]').forEach(card => { card.hidden = button.dataset.filter !== 'all' && card.dataset.category !== button.dataset.filter; });
       filters.querySelectorAll('button').forEach(item => {
         const active = item === button;
         item.classList.toggle('active', active);
         item.setAttribute('aria-pressed', String(active));
       });
       const selected = button.dataset.filter;
+      let visibleCount = 0;
       document.querySelectorAll('[data-category]').forEach(card => {
         const matches = selected === 'all' || card.dataset.category === selected;
         card.hidden = !matches;
+        if (matches) visibleCount += 1;
       });
+      const status = document.querySelector('[data-filter-status]');
+      if (status) status.textContent = `${visibleCount} project${visibleCount === 1 ? '' : 's'} shown`;
     });
   }
-  document.querySelectorAll('.print-button').forEach(button => { button.hidden = false; button.addEventListener('click', () => window.print()); });
 
   // --- Print Support ---
   document.querySelectorAll('.print-button').forEach(button => {

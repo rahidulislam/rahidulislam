@@ -1,5 +1,5 @@
 <section id="about" class="section about-section"><div class="container about-grid">
 <div class="about-identity">{% if personal_info.image %}<img class="portrait" src="{{ personal_info.get_image_url }}" alt="{{ personal_info.name }}" loading="lazy">{% else %}<div class="identity-art" aria-hidden="true"><span>Curiosity.<br>Clarity.<br><em>Craft.</em></span><small>THE PERSON BEHIND THE CODE</small></div>{% endif %}</div>
-<div><p class="eyebrow">04 / A little about me</p><h2>About me.</h2><div class="about-copy">{{ cv_profile.summary|linebreaks }}</div>
-<div class="about-facts"><div><span class="mono">FOCUS</span><strong>Python & Django development</strong></div><div><span class="mono">NEXT CHAPTER</span><strong>Opportunities in Germany</strong></div><div><span class="mono">BASED IN</span><strong>{{ cv_profile.location }}</strong></div></div>
+<div><p class="eyebrow">04 / A little about me</p><h2>About me.</h2><div class="about-copy"><p>I care about clear boundaries, dependable APIs, and software that is straightforward for another developer to understand. I am preparing for the next stage of my career with a team in Germany or a remote engineering role.</p></div>
+<div class="about-facts"><div><span class="mono">FOCUS</span><strong>Secure backend systems</strong></div><div><span class="mono">NEXT CHAPTER</span><strong>Relocation to Germany</strong></div><div><span class="mono">BASED IN</span><strong>{{ cv_profile.location }}</strong></div></div>
 </div></div></section>

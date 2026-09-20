@@ -1,4 +1,4 @@
-<section id="services" class="section container" aria-labelledby="skills-title"><div class="section-heading"><div><p class="eyebrow">04 / What I work with</p><h2 id="skills-title">Technical skills.</h2></div><p>Skills are grouped by the part of a backend system they support. I only list tools I am prepared to discuss technically.</p></div>
+<section id="services" class="section container" aria-labelledby="skills-title"><div class="section-heading"><div><p class="eyebrow">03 / What I work with</p><h2 id="skills-title">Technical skills.</h2></div><p>Skills are grouped by the part of a backend system they support. I only list tools I am prepared to discuss technically.</p></div>
 {% if skill_groups %}<div class="skill-groups">{% for group in skill_groups %}<article><h3>{{ group.name }}</h3><div class="tags shared-skills">{% for skill in group.skills %}<span>{{ skill.name }}</span>{% endfor %}</div></article>{% endfor %}</div>
 {% else %}<div class="tags shared-skills">{% for skill in cv_profile.skills %}<span>{{ skill }}</span>{% endfor %}</div>{% endif %}
 </section>
