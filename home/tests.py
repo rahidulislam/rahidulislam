@@ -365,8 +365,8 @@ class StructuredCaseStudyTests(TestCase):
         )
         detail = self.client.get(reverse("home:case_study", args=[project.slug]))
         self.assertContains(detail, "Coordinate clinic workflows.")
-        self.assertContains(detail, "/static/img/projects/homeopathic-api.png")
-        self.assertContains(detail, "Homeopathic Management generated OpenAPI contract")
+        self.assertContains(detail, "/static/img/projects/homeopathic-live.jpg")
+        self.assertContains(detail, "CuraLink live homeopathic management landing page")
         self.assertContains(self.client.get(reverse("home:projects")), "Homeopathic Management API")
         self.assertIn("Homeopathic Management API", [item["name"] for item in get_portfolio_data()["cv_projects"]])
 
@@ -384,7 +384,7 @@ class StructuredCaseStudyTests(TestCase):
         )
         detail = self.client.get(reverse("home:case_study", args=[project.slug]))
         self.assertContains(detail, "Keep draft inventory private.")
-        self.assertContains(detail, "/static/img/projects/realestate-marketplace.png")
+        self.assertContains(detail, "/static/img/projects/theproperty-live.jpg")
         self.assertContains(self.client.get(reverse("home:projects")), "TheProperty")
         self.assertIn("TheProperty", [item["name"] for item in get_portfolio_data()["cv_projects"]])
 
@@ -401,8 +401,8 @@ class StructuredCaseStudyTests(TestCase):
         project.name = "HotelMotel"
         project.save(update_fields=["name"])
         response = self.client.get(reverse("home:case_study", args=[project.slug]))
-        self.assertContains(response, "/static/img/projects/hotelmotel-api.png")
-        self.assertContains(response, "HotelMotel generated OpenAPI contract")
+        self.assertContains(response, "/static/img/projects/hotelmotel-live.jpg")
+        self.assertContains(response, "HotelMotel live landing page")
 
     def test_sections_render_safely_and_empty_sections_are_omitted(self):
         category = Category.objects.create(name="Backend")

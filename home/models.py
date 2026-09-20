@@ -136,10 +136,10 @@ class Category(models.Model):
 class Project(models.Model):
     EVIDENCE_IMAGES = {
         'TalentBridge': ('img/projects/talentbridge-login.png', 'TalentBridge authentication interface'),
-        'Smart Document Vault': ('img/projects/document-vault-hero.png', 'Smart Document Vault product interface'),
-        'HotelMotel': ('img/projects/hotelmotel-api.png', 'HotelMotel generated OpenAPI contract'),
-        'TheProperty': ('img/projects/realestate-marketplace.png', 'TheProperty marketplace search interface'),
-        'Homeopathic Management API': ('img/projects/homeopathic-api.png', 'Homeopathic Management generated OpenAPI contract'),
+        'Smart Document Vault': ('img/projects/document-vault-live.jpg', 'Smart Document Vault live landing page'),
+        'HotelMotel': ('img/projects/hotelmotel-live.jpg', 'HotelMotel live landing page'),
+        'TheProperty': ('img/projects/theproperty-live.jpg', 'TheProperty live marketplace landing page'),
+        'Homeopathic Management API': ('img/projects/homeopathic-live.jpg', 'CuraLink live homeopathic management landing page'),
     }
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name='project_category')
