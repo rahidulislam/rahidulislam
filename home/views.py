@@ -1,6 +1,9 @@
 from django.views.generic import FormView, RedirectView, TemplateView
 from django.http import HttpResponse
 from django.urls import reverse
+from django.http import JsonResponse
+from django.db import connection
+from celery import shared_task
 from .models import (InformationCounter, Interest, SocialMedia,
                      PersonalInfo, Skill, Testimonial, Education, Experience, Service,
                      Category, Project)
@@ -129,3 +132,32 @@ class ProjectListView(TemplateView):
         data['categories'] = Category.objects.filter(project_category__is_published=True).distinct()
         data['project_index'] = True
         return data
+class ContactFormView(FormView):
+    form_class = ContactForm
+    template_name = "home/contact.html"
+    success_url = "/#contact"
+
+
+    def form_valid(self, form):
+        contact = form.save()
+        messages.success(
+            self.request, "Your message was saved. Thank you!")
+        send_email_notification.delay(contact.id)
+        return super().form_valid(form)
+
+@shared_task
+def send_email_notification(contact_id):
+    print(f"Sending email notification for contact ID: {contact_id}")
+    return contact_id
+
+def health_check(request):
+    """A simple health check endpoint for monitoring."""
+    return JsonResponse({"status": "ok"})
+
+def readiness(request):
+    """A readiness endpoint to check if the database connection is available."""
+    try:
+        connection.ensure_connection()
+        return JsonResponse({"status": "ready"})
+    except Exception:
+        return JsonResponse({"status": "not ready"}, status=503)

@@ -162,3 +162,14 @@ if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 XS_SHARING_ALLOWED_METHODS = ['GET', 'OPTIONS',]
+redis_url = os.environ.get('REDIS_URL', 'redis://redis:6379/0')
+celery_broker_url = os.environ.get('CELERY_BROKER_URL', redis_url)
+
+
+EMAIL_BACKEND = os.environ.get('DJANGO_EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = os.environ.get('DJANGO_EMAIL_HOST', 'localhost')
+EMAIL_PORT = int(os.environ.get('DJANGO_EMAIL_PORT', 25))
+EMAIL_USE_TLS = os.environ.get('DJANGO_EMAIL_USE_TLS', 'false').lower() in ('1', 'true', 'yes')
+EMAIL_HOST_USER = os.environ.get('DJANGO_EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD', '')
+EMAIL_DEFAULT_FROM = os.environ.get('DJANGO_EMAIL_DEFAULT_FROM', 'webmaster@localhost')

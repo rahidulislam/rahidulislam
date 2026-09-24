@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import HomeView, LegacyProjectDetailView, CaseStudyView, download_cv, ProjectListView, sitemap_xml, robots_txt
+from .views import HomeView, LegacyProjectDetailView, CaseStudyView, download_cv, ProjectListView, health_check, sitemap_xml, robots_txt, ContactFormView, readiness
 app_name = 'home'
 
 urlpatterns = [
@@ -9,5 +9,9 @@ urlpatterns = [
     path('cv/download/', download_cv, name='download_cv'),
     path('work/<slug:slug>/', CaseStudyView.as_view(), name='case_study'),
     path('', HomeView.as_view(), name='home'),
-    path('project/<int:pk>/', LegacyProjectDetailView.as_view(), name='project_detail'),
+    path('project/<int:pk>/', LegacyProjectDetailView.as_view(),
+         name='project_detail'),
+    path('health/', health_check, name='health_check'),
+    path('readiness/', readiness, name='readiness'),
+    path('contact/', ContactFormView.as_view(), name='contact'),
 ]
