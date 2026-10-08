@@ -738,3 +738,72 @@ class PortfolioAdminFeatureTests(TestCase):
         self.assertContains(response, '/articles/django-contact-storage-before-email/')
         self.assertContains(response, '/experience/talentbridge/')
         self.assertNotContains(response, 'draft-sitemap')
+
+
+class ExperienceSlugTests(TestCase):
+    def create_experience(self, company, designation='Engineer'):
+        return Experience.objects.create(company=company, designation=designation, start_year='2026', end_year='Present', description='Public responsibilities', address='Dhaka')
+
+    def test_non_ascii_company_has_persisted_route_in_all_public_consumers(self):
+        experience = self.create_experience('বাংলা প্রতিষ্ঠান')
+        experience.refresh_from_db()
+        self.assertTrue(experience.slug)
+        url = reverse('home:experience_detail', args=[experience.slug])
+        self.assertContains(self.client.get('/experience/'), url)
+        self.assertContains(self.client.get('/'), url)
+        self.assertContains(self.client.get('/sitemap.xml'), url)
+        self.assertContains(self.client.get(url), 'বাংলা প্রতিষ্ঠান')
+
+    def test_empty_and_duplicate_slug_bases_have_distinct_working_routes(self):
+        first = self.create_experience('বাংলা প্রতিষ্ঠান', 'First role')
+        second = self.create_experience('বাংলা প্রতিষ্ঠান', 'Second role')
+        punctuation = self.create_experience('!!!', 'Third role')
+        self.assertEqual(len({first.slug, second.slug, punctuation.slug}), 3)
+        for experience in (first, second, punctuation):
+            response = self.client.get(reverse('home:experience_detail', args=[experience.slug]))
+            self.assertEqual(response.context['experience']['role'], experience.designation)
+
+    def test_company_rename_preserves_existing_url(self):
+        experience = self.create_experience('Existing Company')
+        self.assertEqual(experience.slug, 'existing-company')
+        original_slug = experience.slug
+        experience.company = 'নতুন কোম্পানি'
+        experience.save(update_fields=['company'])
+        experience.refresh_from_db()
+        self.assertEqual(experience.slug, original_slug)
+        self.assertContains(self.client.get(reverse('home:experience_detail', args=[original_slug])), 'নতুন কোম্পানি')
+
+    def test_generated_slugs_do_not_shadow_source_backed_experience_urls(self):
+        experience = self.create_experience('TalentBridge!')
+        self.assertNotEqual(experience.slug, 'talentbridge')
+        response = self.client.get('/experience/talentbridge/')
+        self.assertEqual(response.context['experience']['company'], 'TalentBridge')
+        self.assertEqual(self.client.get(reverse('home:experience_detail', args=[experience.slug])).status_code, 200)
+
+
+from django.test import TransactionTestCase
+
+
+class ExperienceSlugMigrationTests(TransactionTestCase):
+    def test_existing_rows_receive_nonempty_unique_slugs(self):
+        from django.db import connection
+        from django.db.migrations.executor import MigrationExecutor
+        before = ('home', '0040_seed_engineering_articles')
+        after = ('home', '0041_persist_experience_slugs')
+        executor = MigrationExecutor(connection)
+        executor.migrate([before])
+        try:
+            OldExperience = executor.loader.project_state([before]).apps.get_model('home', 'Experience')
+            records = []
+            for company in ('বাংলা প্রতিষ্ঠান', 'বাংলা প্রতিষ্ঠান', '!!!', 'TalentBridge!', 'TalentBridge'):
+                records.append(OldExperience.objects.create(company=company, designation='Engineer', start_year='2026', end_year='Present', description='Migration fixture', address='Dhaka').pk)
+            executor = MigrationExecutor(connection)
+            executor.migrate([after])
+            MigratedExperience = executor.loader.project_state([after]).apps.get_model('home', 'Experience')
+            slugs = list(MigratedExperience.objects.filter(pk__in=records).values_list('slug', flat=True))
+            self.assertTrue(all(slugs))
+            self.assertEqual(len(set(slugs)), len(slugs))
+            self.assertEqual(MigratedExperience.objects.get(pk=records[-1]).slug, 'talentbridge')
+            self.assertNotEqual(MigratedExperience.objects.get(pk=records[-2]).slug, 'talentbridge')
+        finally:
+            MigrationExecutor(connection).migrate([after])

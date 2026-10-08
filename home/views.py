@@ -123,12 +123,11 @@ def download_cv(request):
 def sitemap_xml(request):
     from .models import Article
     from .portfolio_data import get_portfolio_data
-    from django.utils.text import slugify
     urls = [request.build_absolute_uri(reverse("home:home")), request.build_absolute_uri(reverse("home:projects"))]
     urls += [request.build_absolute_uri(reverse("home:case_study", args=[p.slug])) for p in Project.objects.filter(is_published=True).only("slug")]
     urls += [request.build_absolute_uri(reverse('home:articles')), request.build_absolute_uri(reverse('home:experience'))]
     urls += [request.build_absolute_uri(reverse('home:article_detail', args=[article.slug])) for article in Article.objects.filter(is_published=True).only('slug')]
-    urls += [request.build_absolute_uri(reverse('home:experience_detail', args=[slugify(item['company'])])) for item in get_portfolio_data()['cv_profile']['experience']]
+    urls += [request.build_absolute_uri(reverse('home:experience_detail', args=[item['slug']])) for item in get_portfolio_data()['cv_profile']['experience']]
     body = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" + "".join(f"<url><loc>{url}</loc></url>" for url in urls) + "</urlset>"
     return HttpResponse(body, content_type="application/xml")
 
@@ -186,10 +185,9 @@ class ExperienceListView(TemplateView):
 
     def get_context_data(self, **kwargs):
         from .portfolio_data import get_portfolio_data
-        from django.utils.text import slugify
         data = super().get_context_data(**kwargs)
         data.update(get_portfolio_data())
-        data['work_experiences'] = [{**item, 'slug': slugify(item['company'])} for item in data['cv_profile']['experience']]
+        data['work_experiences'] = data['cv_profile']['experience']
         return data
 
 

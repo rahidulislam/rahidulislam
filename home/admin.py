@@ -58,6 +58,7 @@ class SkillAdmin(admin.ModelAdmin):
 @admin.register(Experience)
 class ExperienceAdmin(admin.ModelAdmin):
     list_display = ('designation', 'company', 'start_year', 'end_year')
+    readonly_fields = ('slug',)
     search_fields = ('designation', 'company', 'description')
     inlines = (ExperienceBulletInline,)
 

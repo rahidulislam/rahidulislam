@@ -22,7 +22,8 @@
         "Build Django REST endpoints and integration contracts for a multi-stage recruitment platform.",
         "Improve API documentation, reliability checks, and deployment workflows while preserving private business rules.",
         "Validate representative permitted and rejected requests across organizational access boundaries."
-      ]
+      ],
+      "slug": "talentbridge"
     },
     {
       "role": "Backend Developer",
@@ -32,7 +33,8 @@
       "bullets": [
         "Developed backend features for business workflows with Django and relational data models.",
         "Maintained server-side validation and access boundaries across application features."
-      ]
+      ],
+      "slug": "wege-llc"
     },
     {
       "role": "Django Developer",
@@ -42,7 +44,8 @@
       "bullets": [
         "Implemented Django web features and database-backed workflows from product requirements.",
         "Supported debugging, maintenance, and incremental delivery across the application."
-      ]
+      ],
+      "slug": "meektec-it"
     },
     {
       "role": "Web Developer",
@@ -52,7 +55,8 @@
       "bullets": [
         "Built and maintained web application features with server-rendered templates and backend data flows.",
         "Translated content and workflow requirements into maintainable application changes."
-      ]
+      ],
+      "slug": "research-rider"
     }
   ],
   "github": "https://github.com/rahidulislam",

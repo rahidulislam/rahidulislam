@@ -95,6 +95,7 @@ class Education(models.Model):
 
 
 class Experience(models.Model):
+    slug = models.SlugField(max_length=120, unique=True, blank=True)
     designation = models.CharField(max_length=50)
     start_year = models.CharField(max_length=10)
     end_year = models.CharField(max_length=10)
@@ -104,6 +105,22 @@ class Experience(models.Model):
 
     def __str__(self):
         return self.designation
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            from .experience_slugs import reserved_experience_slugs
+            reserved = reserved_experience_slugs(self.company)
+            base = slugify(self.company) or 'experience'
+            candidate = base[:120]
+            suffix = 2
+            while candidate in reserved or Experience.objects.exclude(pk=self.pk).filter(slug=candidate).exists():
+                suffix_text = f'-{suffix}'
+                candidate = f'{base[:120 - len(suffix_text)]}{suffix_text}'
+                suffix += 1
+            self.slug = candidate
+            if kwargs.get('update_fields'):
+                kwargs['update_fields'] = set(kwargs['update_fields']) | {'slug'}
+        super().save(*args, **kwargs)
 
 
 class ExperienceBullet(models.Model):
