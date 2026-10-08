@@ -1,1 +1,1 @@
-{% for message in messages %}<div class="container notification" role="status">{{ message }}</div>{% endfor %}
+{% load portfolio_language %}{% for message in messages %}<div class="container notification" role="status">{{ message|translate:portfolio_language }}</div>{% endfor %}

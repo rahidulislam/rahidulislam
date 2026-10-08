@@ -1,0 +1,4 @@
+{% extends 'base/base.html' %}{% load portfolio_language %}
+{% block title %}{{ article.title }} — Rahidul Islam{% endblock %}
+{% block description %}{{ article.summary }}{% endblock %}
+{% block content %}<article class="container section reading-page"><a class="text-link" href="{% url 'home:articles' %}">← {{ 'Back to articles'|translate:portfolio_language }}</a><p class="eyebrow">{{ article.topic }} · {{ article.published_at|date:'j M Y' }}</p><h1>{% bilingual article.title article.title_bn %}</h1><p class="detail-intro">{% bilingual article.summary article.summary_bn %}</p><div class="reading-body">{% bilingual article.body article.body_bn as body %}{{ body|linebreaks }}</div>{% if article.source_url %}<a class="text-link" href="{{ article.source_url }}" target="_blank" rel="noopener noreferrer">{{ 'Source reference'|translate:portfolio_language }} ↗</a>{% endif %}</article>{% endblock %}

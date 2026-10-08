@@ -55,3 +55,21 @@ MADRASHA_PROJECT = {'architecture_summary': 'A React Router SPA separates public
                'Vitest domain tests and Playwright browser tests; these frontend suites were not '
                'rerun for this portfolio update.',
  'visual_label': 'Madrasha management frontend'}
+
+
+MADRASHA_SCREENSHOTS = [
+    {'image': 'img/projects/ilmora-landing.jpg', 'alt': 'Ilmora public landing page',
+     'caption': 'Public website — Bengali landing page and demo entry.'},
+    {'image': 'img/projects/ilmora-dashboard.jpg', 'alt': 'Ilmora administrator dashboard',
+     'caption': 'Administrator demo dashboard — session statistics and institutional overview.'},
+    {'image': 'img/projects/ilmora-students.jpg', 'alt': 'Ilmora student directory',
+     'caption': 'Student directory — demo records, search and class filters.'},
+]
+MADRASHA_PROJECT['image'] = 'img/projects/ilmora-landing.jpg'
+MADRASHA_PROJECT['image_alt'] = 'Ilmora bilingual madrasha management landing page'
+
+MADRASHA_SCREENSHOTS.extend([
+    {'image': 'img/projects/ilmora-attendance.jpg', 'alt': 'Ilmora attendance marking', 'caption': 'Student attendance — session-aware marking in the demo workspace.', 'width': 1280, 'height': 800},
+    {'image': 'img/projects/ilmora-fees.jpg', 'alt': 'Ilmora fee collection', 'caption': 'Fee collection — student search and payment workflow in the demo.', 'width': 1280, 'height': 800},
+    {'image': 'img/projects/ilmora-mobile.jpg', 'alt': 'Ilmora mobile landing page', 'caption': 'Mobile preview — Bengali public website at 390px width.', 'width': 390, 'height': 844},
+])

@@ -2,12 +2,17 @@ from django.contrib import admin
 from .models import (SocialMedia, PersonalInfo, Skill,
                      Interest, Testimonial, InformationCounter, Education, Experience,
                      Service,Category,Project,ProjectImage,ProjectVideo,Contact,
-                     EngineeringChallenge, ExperienceBullet, ProjectMetric)
+                     EngineeringChallenge, ExperienceBullet, ProjectMetric, Article)
 # Register your models here.
 admin.site.register(SocialMedia)
 admin.site.register(PersonalInfo)
 admin.site.register(Interest)
-admin.site.register(Testimonial)
+@admin.register(Testimonial)
+class TestimonialAdmin(admin.ModelAdmin):
+    list_display = ('client_name', 'designation', 'consent_to_publish', 'is_published')
+    list_filter = ('consent_to_publish', 'is_published')
+    search_fields = ('client_name', 'review')
+
 admin.site.register(InformationCounter)
 admin.site.register(Education)
 admin.site.register(Service)
@@ -66,7 +71,7 @@ class ProjectAdmin(admin.ModelAdmin):
     list_filter = ('category', 'is_published', 'is_featured')
     ordering = ('order', '-date', '-pk')
     fieldsets = (
-        (None, {'fields': ('category', 'name', 'slug', 'short_desc', 'description', 'features')}),
+        (None, {'fields': ('category', 'name', 'slug', 'short_desc', 'description', 'features', 'work_type', 'technologies')}),
         ('Case study', {'fields': ('project_type', 'project_role', 'collaboration',
                                    'development_status', 'contribution_areas', 'problem',
                                    'contribution', 'constraints', 'architecture_summary',
@@ -86,4 +91,35 @@ admin.site.register(ProjectVideo)
 admin.site.register(EngineeringChallenge)
 admin.site.register(ProjectMetric)
 admin.site.register(ExperienceBullet)
-admin.site.register(Contact)
+@admin.register(Contact)
+class ContactAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'subject', 'status', 'notification_status', 'created_at')
+    list_filter = ('status', 'notification_status', 'created_at')
+    search_fields = ('name', 'email', 'subject', 'message')
+    readonly_fields = ('created_at', 'notification_status')
+    list_editable = ('status',)
+    actions = ('mark_read', 'mark_replied', 'retry_notifications')
+
+    @admin.action(description='Mark selected enquiries as read')
+    def mark_read(self, request, queryset):
+        queryset.update(status='read')
+
+    @admin.action(description='Mark selected enquiries as replied')
+    def mark_replied(self, request, queryset):
+        queryset.update(status='replied')
+
+    @admin.action(description='Retry failed email notifications')
+    def retry_notifications(self, request, queryset):
+        from .notifications import notify_contact
+        count = sum(notify_contact(item) == 'sent' for item in queryset.filter(notification_status='failed'))
+        self.message_user(request, f'{count} notifications sent.')
+
+
+
+
+@admin.register(Article)
+class ArticleAdmin(admin.ModelAdmin):
+    list_display = ('title', 'topic', 'is_published', 'published_at')
+    list_filter = ('is_published', 'topic')
+    search_fields = ('title', 'title_bn', 'summary', 'body')
+    prepopulated_fields = {'slug': ('title',)}

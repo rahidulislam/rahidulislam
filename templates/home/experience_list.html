@@ -1,0 +1,3 @@
+{% extends 'base/base.html' %}{% load portfolio_language %}
+{% block title %}Experience — Rahidul Islam{% endblock %}
+{% block content %}<section class="container section"><p class="eyebrow">{{ 'Experience'|translate:portfolio_language }}</p><h1>{{ 'Professional experience.'|translate:portfolio_language }}</h1><div class="article-grid">{% for experience in work_experiences %}<article class="article-card"><p class="eyebrow">{{ experience.dates }}</p><h2>{{ experience.company }}</h2><p>{{ experience.role }} · {{ experience.location }}</p><a class="text-link" href="{% url 'home:experience_detail' experience.slug %}">{{ 'View experience'|translate:portfolio_language }} ↗</a></article>{% endfor %}</div></section>{% endblock %}

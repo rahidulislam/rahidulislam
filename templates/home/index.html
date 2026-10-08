@@ -1,33 +1,34 @@
-{% extends 'base/base.html' %}
+{% extends 'base/base.html' %}{% load portfolio_language %}
 {% block content %}
 <section class="hero container" aria-labelledby="hero-title">
   <div class="hero-copy">
     <div class="eyebrow"><span class="status-dot"></span> {{ cv_profile.name }}</div>
-    <h1 id="hero-title">{{ cv_profile.role }}</h1>
-    <p class="hero-intro">{{ cv_profile.summary }}</p>
+    <h1 id="hero-title">{{ cv_profile.role|translate:portfolio_language }}</h1>
+    <p class="hero-intro">{{ cv_profile.summary|translate:portfolio_language }}</p>
     <div class="hero-actions">
-      <a class="button primary" href="#portfolio">View case studies <span aria-hidden="true">↗</span></a>
-      <a class="button cv-button" href="{% url 'home:download_cv' %}" download>Download CV <span aria-hidden="true">↓</span></a>
+      <a class="button primary" href="#portfolio">{{ 'View case studies'|translate:portfolio_language }} <span aria-hidden="true">↗</span></a>
+      <a class="button cv-button" href="{% url 'home:download_cv' %}" download>{{ 'Download CV'|translate:portfolio_language }} <span aria-hidden="true">↓</span></a>
       {% if cv_profile.github %}<a class="button text-button" href="{{ cv_profile.github }}" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>{% endif %}
       {% if cv_profile.linkedin %}<a class="button text-button" href="{{ cv_profile.linkedin }}" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>{% endif %}
     </div>
     <p class="opportunity"><span aria-hidden="true">◎</span> Open to relocation to Germany and remote opportunities</p>
   </div>
   <aside class="system-card" aria-label="Illustration of my backend focus">
-    <div class="system-top"><span class="mono">BACKEND DEVELOPMENT</span><span class="mini-dots" aria-hidden="true">● ● ●</span></div>
-    <div class="system-body"><p class="system-caption">A clear path from request to response.</p>
-      <div class="system-node"><span class="node-symbol" aria-hidden="true">↗</span><div><strong>Web & mobile clients</strong><small>The starting point</small></div><span class="mono node-label">01</span></div>
+    <div class="system-top"><span class="mono">{{ 'BACKEND DEVELOPMENT'|translate:portfolio_language }}</span><span class="mini-dots" aria-hidden="true">● ● ●</span></div>
+    <div class="system-body"><p class="system-caption">{{ 'A clear path from request to response.'|translate:portfolio_language }}</p>
+      <div class="system-node"><span class="node-symbol" aria-hidden="true">↗</span><div><strong>{{ 'Web & mobile clients'|translate:portfolio_language }}</strong><small>{{ 'The starting point'|translate:portfolio_language }}</small></div><span class="mono node-label">01</span></div>
       <div class="connector" aria-hidden="true"><span>HTTP request</span></div>
-      <div class="system-node featured-node"><span class="node-symbol" aria-hidden="true">{ }</span><div><strong>Python + Django</strong><small>APIs · authentication · business logic</small></div><span class="mono node-label">02</span></div>
+      <div class="system-node featured-node"><span class="node-symbol" aria-hidden="true">{ }</span><div><strong>Python + Django</strong><small>{{ 'APIs · authentication · business logic'|translate:portfolio_language }}</small></div><span class="mono node-label">02</span></div>
       <div class="connector" aria-hidden="true"><span>Data layer</span></div>
-      <div class="system-node"><span class="node-symbol" aria-hidden="true">≡</span><div><strong>PostgreSQL</strong><small>Structured, connected data</small></div><span class="mono node-label">03</span></div>
+      <div class="system-node"><span class="node-symbol" aria-hidden="true">≡</span><div><strong>PostgreSQL</strong><small>{{ 'Structured, connected data'|translate:portfolio_language }}</small></div><span class="mono node-label">03</span></div>
     </div><div class="system-bottom"><span class="status-dot"></span><span>Python · Django REST Framework · PostgreSQL</span><span aria-hidden="true">↳</span></div>
   </aside>
 </section>
-<div class="stack-strip evidence-strip" aria-label="Engineering focus"><div class="container"><span class="mono">ENGINEERING FOCUS</span><span>Python &amp; Django</span><span>Multi-tenant APIs</span><span>Recruitment · Documents · Hospitality</span><span>Relocation to Germany</span></div></div>
+<div class="stack-strip evidence-strip" aria-label="Engineering focus"><div class="container"><span class="mono">{{ 'ENGINEERING FOCUS'|translate:portfolio_language }}</span><span>Python &amp; Django</span><span>Multi-tenant APIs</span><span>{{ 'Recruitment · Documents · Hospitality'|translate:portfolio_language }}</span><span>{{ 'Relocation to Germany'|translate:portfolio_language }}</span></div></div>
 {% include 'home/portfolio.html' %}
 {% include 'home/resume.html' %}
 {% include 'home/services.html' %}
 {% include 'home/about.html' %}
+{% include 'home/testimonials.html' %}
 {% include 'home/contact.html' %}
 {% endblock %}
