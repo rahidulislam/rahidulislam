@@ -157,8 +157,8 @@ class Project(models.Model):
     technologies = models.TextField(blank=True, help_text='One technology per line; defaults to source-backed tags when empty.')
     EVIDENCE_IMAGES = {
         'Ilmora — Madrasha Management': ('img/projects/ilmora-landing.jpg', 'Ilmora bilingual madrasha management landing page'),
-        'TalentBridge': ('img/projects/talentbridge-login.png', 'TalentBridge authentication interface'),
-        'Smart Document Vault': ('img/projects/document-vault-live.jpg', 'Smart Document Vault live landing page'),
+        'TalentBridge': ('img/projects/talentbridge/01-dashboard.png', 'TalentBridge dashboard with demo data'),
+        'Smart Document Vault': ('img/projects/smart-document-vault/01-dashboard-light.png', 'Smart Document Vault dashboard with demo data'),
         'HotelMotel': ('img/projects/hotelmotel-live.jpg', 'HotelMotel live landing page'),
         'TheProperty': ('img/projects/theproperty-live.jpg', 'TheProperty live marketplace landing page'),
         'Homeopathic Management API': ('img/projects/homeopathic-live.jpg', 'CuraLink live homeopathic management landing page'),
