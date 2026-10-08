@@ -37,7 +37,7 @@ class HomeView(FormView):
         data.update(get_portfolio_data())
         data['contact_profile'] = data['cv_profile']
         data['home_preview'] = True
-        selected_names = {'TalentBridge', 'Smart Document Vault', 'HotelMotel'}
+        selected_names = {'TalentBridge', 'Smart Document Vault', 'Ilmora — Madrasha Management'}
         data['fallback_projects'] = [
             project for project in data['fallback_projects']
             if project['name'] in selected_names
@@ -129,3 +129,7 @@ class ProjectListView(TemplateView):
         data['categories'] = Category.objects.filter(project_category__is_published=True).distinct()
         data['project_index'] = True
         return data
+
+
+class ContactFormView(HomeView):
+    """Use the complete portfolio context for direct visits and validation errors."""
