@@ -1991,3 +1991,5 @@ textarea::placeholder {
 .project-media figcaption { font-size: 13px; margin-top: 14px; }
 .project-media video { width: 100%; max-height: 650px; margin-top: 24px; border-radius: 12px; background: #101a23; }
 html[lang="bn"] body { font-family: 'Noto Sans Bengali', Inter, Arial, sans-serif; }
+
+.reading-page > .eyebrow { display: block; }

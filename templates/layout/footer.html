@@ -5,10 +5,10 @@
       <p class="footer-tagline">{{ 'Python & Django Engineer · Building secure APIs and dependable business systems.'|translate:portfolio_language }}</p>
     </div>
     <div class="footer-nav">
-      <a href="{% url 'home:projects' %}">Projects</a>
-      <a href="{% url 'home:experience' %}">Experience</a>
-      <a href="{% url 'home:home' %}#services">Skills</a>
-      <a href="{% url 'home:home' %}#about">About</a>
+      <a href="{% url 'home:projects' %}">{{ 'Projects'|translate:portfolio_language }}</a>
+      <a href="{% url 'home:experience' %}">{{ 'Experience'|translate:portfolio_language }}</a>
+      <a href="{% url 'home:home' %}#services">{{ 'Skills'|translate:portfolio_language }}</a>
+      <a href="{% url 'home:home' %}#about">{{ 'About'|translate:portfolio_language }}</a>
       <a href="{% url 'home:home' %}#contact">{{ 'Contact'|translate:portfolio_language }}</a>
       <a href="{% url 'home:articles' %}">{{ 'Articles'|translate:portfolio_language }}</a>
     </div>
@@ -18,7 +18,7 @@
     </a>
   </div>
   <div class="container footer-bottom">
-    <span class="copyright">© {% now "Y" %} {{ personal_info.name|default:"Md. Rahidul Islam" }} · All rights reserved.</span>
+    <span class="copyright">© {% now "Y" %} {{ personal_info.name|default:"Md. Rahidul Islam" }} · {% bilingual 'All rights reserved.' 'সর্বস্বত্ব সংরক্ষিত।' %}</span>
     <span class="footer-built">{{ 'Handcrafted with Python & Django'|translate:portfolio_language }}</span>
   </div>
 </footer>

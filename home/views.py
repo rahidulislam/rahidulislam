@@ -16,6 +16,7 @@ class HomeView(FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
+        kwargs["request_language"] = self.request.COOKIES.get("portfolio_language", "en")
         kwargs["request_ip"] = self.request.META.get("REMOTE_ADDR", "unknown")
         return kwargs
 

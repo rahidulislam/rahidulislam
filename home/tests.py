@@ -645,6 +645,9 @@ class PortfolioFeatureTests(TestCase):
         self.assertContains(self.client.get('/projects/'), 'প্রজেক্ট খুঁজুন')
         self.assertEqual(self.client.post('/language/', {'language': 'en', 'next': 'https://evil.example/'} )['Location'], '/')
         self.assertEqual(self.client.get('/language/').status_code, 405)
+        self.client.cookies['portfolio_language'] = 'bn'
+        response = self.client.post('/contact/', {'name': 'Visitor', 'email': 'invalid', 'subject': 'Hello', 'message': 'Hello'})
+        self.assertContains(response, 'সঠিক ইমেইল ঠিকানা দিন।')
 
     def test_experience_detail_uses_shared_live_profile(self):
         self.assertContains(self.client.get('/experience/'), 'TalentBridge')
