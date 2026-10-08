@@ -8,6 +8,9 @@ fallback_projects = [
  {"slug":"theproperty","name":"TheProperty","category":"Real estate marketplace","short_desc":"Role-aware Django property marketplace.","description":"A public architecture overview of a property marketplace with controlled publication and protected private capabilities. Review criteria, ranking behavior, document details, and commercial rules are intentionally omitted.","technical_notes":["Django and PostgreSQL","Controlled publication","Protected private capabilities","Auditable administration"],"tags":["Python","Django","PostgreSQL","Authorization"],"visual_label":"Property marketplace architecture"},
  {"slug":"homeopathic-management-api","name":"Homeopathic Management API","category":"Clinic management","short_desc":"Role-aware Django API for clinic operations.","description":"A public architecture overview of a clinic-management API. Patient data, medical decision rules, billing calculations, inventory formulas, and workflow transitions are intentionally omitted.","technical_notes":["Django REST Framework","Authenticated API access","Sensitive-domain boundaries","Documented API contracts"],"tags":["Python","Django","DRF","Authentication"],"visual_label":"Clinic platform architecture"},
 ]
+from .madrasha_content import MADRASHA_PROJECT
+fallback_projects.append(MADRASHA_PROJECT.copy())
+
 fallback_experiences = [{"designation":"Backend Developer","company":"Wege LLC","period":"September 2023 - June 2024","address":"Ajman, UAE"},{"designation":"Django Developer","company":"Meektec IT","period":"Apr 2022 – Jan 2023","address":"Cumilla, Bangladesh"},{"designation":"Web Developer","company":"Research Rider","period":"Dec 2021 – Mar 2022","address":"Dhaka, Bangladesh"}]
 
 from .case_study_content import (
