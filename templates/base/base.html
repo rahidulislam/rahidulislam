@@ -1,5 +1,5 @@
 {% load static %}<!doctype html>
-<html lang="en">
+<html lang="{{ portfolio_language|default:'en' }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -47,6 +47,7 @@
   {% include 'layout/header.html' %}
   <main id="main">{% include 'base/messages.html' %}{% block content %}{% endblock %}</main>
   {% include 'layout/footer.html' %}
+  {% include 'home/lightbox.html' %}
   {% include 'base/script.html' %}
 </body>
 </html>

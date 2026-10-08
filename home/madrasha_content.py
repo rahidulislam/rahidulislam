@@ -67,3 +67,9 @@ MADRASHA_SCREENSHOTS = [
 ]
 MADRASHA_PROJECT['image'] = 'img/projects/ilmora-landing.jpg'
 MADRASHA_PROJECT['image_alt'] = 'Ilmora bilingual madrasha management landing page'
+
+MADRASHA_SCREENSHOTS.extend([
+    {'image': 'img/projects/ilmora-attendance.jpg', 'alt': 'Ilmora attendance marking', 'caption': 'Student attendance — session-aware marking in the demo workspace.', 'width': 1280, 'height': 800},
+    {'image': 'img/projects/ilmora-fees.jpg', 'alt': 'Ilmora fee collection', 'caption': 'Fee collection — student search and payment workflow in the demo.', 'width': 1280, 'height': 800},
+    {'image': 'img/projects/ilmora-mobile.jpg', 'alt': 'Ilmora mobile landing page', 'caption': 'Mobile preview — Bengali public website at 390px width.', 'width': 390, 'height': 844},
+])

@@ -73,3 +73,39 @@
     });
   }
 })();
+
+// Native dialog keeps keyboard focus inside the viewer and provides Escape handling.
+(() => {
+  const dialog = document.getElementById('image-lightbox');
+  if (!dialog || typeof dialog.showModal !== 'function') return;
+  const links = [...document.querySelectorAll('[data-lightbox]')];
+  let current = 0;
+  let opener;
+  const render = () => {
+    const link = links[current];
+    const preview = link.querySelector('img');
+    dialog.querySelector('#lightbox-image').src = link.href;
+    dialog.querySelector('#lightbox-image').alt = preview.alt;
+    dialog.querySelector('#lightbox-caption').textContent = link.closest('figure')?.querySelector('figcaption')?.textContent || preview.alt;
+    dialog.querySelector('#lightbox-position').textContent = `${current + 1} / ${links.length}`;
+    dialog.querySelectorAll('[data-lightbox-prev], [data-lightbox-next]').forEach(button => button.hidden = links.length < 2);
+  };
+  links.forEach((link, index) => link.addEventListener('click', event => {
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    current = index;
+    opener = link;
+    render();
+    dialog.showModal();
+  }));
+  const move = direction => { current = (current + direction + links.length) % links.length; render(); };
+  dialog.querySelector('[data-lightbox-prev]').addEventListener('click', () => move(-1));
+  dialog.querySelector('[data-lightbox-next]').addEventListener('click', () => move(1));
+  dialog.querySelector('[data-lightbox-close]').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('keydown', event => {
+    if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
+    if (event.key === 'ArrowRight') { event.preventDefault(); move(1); }
+  });
+  dialog.addEventListener('click', event => { if (event.target === dialog) { const rect = dialog.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close(); } });
+  dialog.addEventListener('close', () => { dialog.querySelector('#lightbox-image').removeAttribute('src'); opener?.focus(); });
+})();

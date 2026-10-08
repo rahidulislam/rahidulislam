@@ -154,3 +154,16 @@ if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 XS_SHARING_ALLOWED_METHODS = ['GET', 'OPTIONS',]
+
+# Configure SMTP in production; console backend keeps local development self-contained.
+EMAIL_BACKEND = os.environ.get('DJANGO_EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = os.environ.get('DJANGO_EMAIL_HOST', 'localhost')
+EMAIL_PORT = int(os.environ.get('DJANGO_EMAIL_PORT', '25'))
+EMAIL_HOST_USER = os.environ.get('DJANGO_EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = os.environ.get('DJANGO_EMAIL_USE_TLS', 'false').lower() in ('1', 'true', 'yes')
+EMAIL_USE_SSL = os.environ.get('DJANGO_EMAIL_USE_SSL', 'false').lower() in ('1', 'true', 'yes')
+EMAIL_TIMEOUT = 5
+DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', 'webmaster@localhost')
+CONTACT_NOTIFICATION_EMAIL = os.environ.get('CONTACT_NOTIFICATION_EMAIL', 'rahidulislam247@gmail.com')
+TEMPLATES[0]['OPTIONS']['context_processors'].append('home.language.language_context')

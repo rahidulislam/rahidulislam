@@ -8,6 +8,9 @@ from .models import (
 from .portfolio_content import fallback_experiences, fallback_projects
 
 
+from django.test import override_settings
+
+@override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
 class PortfolioViewTests(TestCase):
     def test_seo_endpoints_and_metadata(self):
         self.assertContains(self.client.get('/robots.txt'), 'Sitemap:')
@@ -18,8 +21,8 @@ class PortfolioViewTests(TestCase):
 
     def test_native_responsive_navigation_is_loaded_without_bootstrap(self):
         response = self.client.get(reverse("home:home"))
-        self.assertContains(response, "css/portfolio.css?v=20260920-v3")
-        self.assertContains(response, "js/portfolio.js?v=20260920-v3")
+        self.assertContains(response, "css/portfolio.css?v=20261008-features")
+        self.assertContains(response, "js/portfolio.js?v=20261008-features")
         self.assertContains(response, 'class="site-header"')
         self.assertContains(response, 'class="menu-toggle"')
         self.assertContains(response, 'aria-controls="site-nav"')
@@ -533,6 +536,7 @@ class PortfolioModelTests(TestCase):
             self.assertContains(response, label)
 
 
+@override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
 class MadrashaAndContactTests(TestCase):
     def setUp(self):
         from django.core.cache import cache
@@ -588,3 +592,146 @@ class IlmoraScreenshotTests(TestCase):
                 self.assertContains(response, screenshot['image'])
                 self.assertTrue((Path(settings.BASE_DIR) / 'static' / screenshot['image']).is_file())
         self.assertContains(self.client.get('/'), 'img/projects/ilmora-landing.jpg')
+
+
+
+@override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+class PortfolioFeatureTests(TestCase):
+    def setUp(self):
+        from django.core.cache import cache
+        cache.clear()
+
+    def test_catalog_filters_combine_and_work_without_javascript(self):
+        response = self.client.get('/projects/', {'q': 'Ilmora', 'type': 'frontend', 'technology': 'React'})
+        self.assertEqual([item['slug'] for item in response.context['project_cards']], ['ilmora-madrasha-management'])
+        self.assertContains(response, 'value="Ilmora"')
+        self.assertContains(response, 'type="search"')
+        empty = self.client.get('/projects/', {'q': 'Ilmora', 'type': 'backend'})
+        self.assertContains(empty, 'No projects match these filters.')
+        self.assertEqual(empty.context['project_cards'], [])
+        self.assertGreater(len(self.client.get('/projects/').context['project_cards']), 1)
+
+    def test_catalog_respects_drafts_and_explicit_technology_tags(self):
+        project = Project.objects.get(slug='ilmora-madrasha-management')
+        project.is_published = False
+        project.save()
+        self.assertNotContains(self.client.get('/projects/'), project.name)
+        project.is_published = True
+        project.technologies = 'React\nZod'
+        project.save()
+        response = self.client.get('/projects/', {'technology': 'Zod'})
+        self.assertEqual([card['name'] for card in response.context['project_cards']], [project.name])
+
+    def test_articles_publish_safely_with_bilingual_content(self):
+        from .models import Article
+        self.assertEqual(self.client.get('/articles/').status_code, 200)
+        article = Article.objects.filter(is_published=True).first()
+        self.assertContains(self.client.get(f'/articles/{article.slug}/'), article.title)
+        Article.objects.create(title='Private draft', slug='private-draft', summary='Secret', body='Private', topic='Django')
+        self.assertNotContains(self.client.get('/articles/'), 'Private draft')
+        self.assertEqual(self.client.get('/articles/private-draft/').status_code, 404)
+        article.body = '<script>alert(1)</script>'
+        article.save()
+        self.assertNotContains(self.client.get(f'/articles/{article.slug}/'), '<script>alert(1)</script>')
+        self.client.cookies['portfolio_language'] = 'bn'
+        self.assertContains(self.client.get(f'/articles/{article.slug}/'), article.title_bn)
+        self.assertContains(self.client.get(f'/articles/{article.slug}/'), article.body_bn.split('\n')[0])
+
+    def test_language_persists_and_rejects_external_redirect(self):
+        response = self.client.post('/language/', {'language': 'bn', 'next': '/projects/?type=frontend'})
+        self.assertEqual(response['Location'], '/projects/?type=frontend')
+        self.assertEqual(response.cookies['portfolio_language'].value, 'bn')
+        self.assertContains(self.client.get('/projects/'), '<html lang="bn">')
+        self.assertContains(self.client.get('/projects/'), 'প্রজেক্ট খুঁজুন')
+        self.assertEqual(self.client.post('/language/', {'language': 'en', 'next': 'https://evil.example/'} )['Location'], '/')
+        self.assertEqual(self.client.get('/language/').status_code, 405)
+
+    def test_experience_detail_uses_shared_live_profile(self):
+        self.assertContains(self.client.get('/experience/'), 'TalentBridge')
+        self.assertContains(self.client.get('/experience/talentbridge/'), 'Responsibilities and contributions')
+        self.assertEqual(self.client.get('/experience/missing/').status_code, 404)
+        experience = Experience.objects.create(company='TalentBridge', designation='Updated engineer', start_year='2026', end_year='Present', description='Updated responsibilities', address='Remote')
+        self.assertContains(self.client.get('/experience/talentbridge/'), 'Updated responsibilities')
+
+    def test_contact_notification_delivered_after_persistence(self):
+        from django.core import mail
+        response = self.client.post('/contact/', {'name': 'Visitor', 'email': 'visitor@example.com', 'subject': 'Hello', 'message': 'Let us talk.'})
+        self.assertEqual(response.status_code, 302)
+        contact = Contact.objects.get(email='visitor@example.com')
+        self.assertEqual(contact.status, 'unread')
+        self.assertEqual(contact.notification_status, 'sent')
+        self.assertEqual(mail.outbox[-1].reply_to, ['visitor@example.com'])
+        self.assertIn('Let us talk.', mail.outbox[-1].body)
+
+    def test_notification_failure_preserves_enquiry_and_can_be_retried(self):
+        from unittest.mock import patch
+        from .notifications import notify_contact
+        with patch('home.notifications.EmailMessage.send', side_effect=OSError('Offline')):
+            response = self.client.post('/contact/', {'name': 'Visitor', 'email': 'visitor@example.com', 'subject': 'Hello', 'message': 'Keep this message.'})
+        self.assertEqual(response.status_code, 302)
+        contact = Contact.objects.get()
+        self.assertEqual(contact.notification_status, 'failed')
+        self.assertEqual(contact.message, 'Keep this message.')
+        self.assertEqual(notify_contact(contact), 'sent')
+        contact.refresh_from_db()
+        self.assertEqual(contact.notification_status, 'sent')
+
+    def test_testimonials_require_publication_and_consent(self):
+        from .models import Testimonial
+        testimonial = Testimonial.objects.create(client_name='Example colleague', designation='Engineer', review='Private feedback', is_published=True)
+        self.assertNotContains(self.client.get('/'), 'Private feedback')
+        testimonial.consent_to_publish = True
+        testimonial.save()
+        self.assertContains(self.client.get('/'), 'Private feedback')
+        testimonial.is_published = False
+        testimonial.save()
+        self.assertNotContains(self.client.get('/'), 'Private feedback')
+
+    def test_enquiries_require_staff_authentication(self):
+        from django.contrib.auth.models import User
+        response = self.client.get('/admin/home/contact/')
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.create_user(username='visitor', password='test-password')
+        self.client.force_login(user)
+        self.assertEqual(self.client.get('/admin/home/contact/').status_code, 302)
+
+    def test_case_study_has_architecture_video_and_lightbox(self):
+        response = self.client.get('/work/ilmora-madrasha-management/')
+        self.assertContains(response, 'data-lightbox')
+        self.assertContains(response, '<dialog')
+        self.assertContains(response, 'img/architecture/ilmora-madrasha-management.svg')
+        self.assertContains(response, 'video/ilmora-demo.webm')
+
+
+@override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+class PortfolioAdminFeatureTests(TestCase):
+    def test_contact_admin_filters_search_status_and_retry(self):
+        from django.contrib.auth.models import User
+        from django.urls import reverse
+        from django.core import mail
+        user = User.objects.create_superuser('admin', 'admin@example.com', 'test-password')
+        self.client.force_login(user)
+        contact = Contact.objects.create(name='Inbox visitor', email='inbox@example.com', subject='Opportunity', message='Hello', notification_status='failed')
+        url = reverse('admin:home_contact_changelist')
+        self.assertContains(self.client.get(url, {'q': 'Opportunity', 'status__exact': 'unread'}), 'Inbox visitor')
+        response = self.client.post(url, {'action': 'mark_read', '_selected_action': [contact.pk]})
+        self.assertEqual(response.status_code, 302)
+        contact.refresh_from_db()
+        self.assertEqual(contact.status, 'read')
+        self.client.post(url, {'action': 'retry_notifications', '_selected_action': [contact.pk]})
+        contact.refresh_from_db()
+        self.assertEqual(contact.notification_status, 'sent')
+        self.assertEqual(len(mail.outbox), 1)
+        self.client.post(url, {'action': 'retry_notifications', '_selected_action': [contact.pk]})
+        self.assertEqual(len(mail.outbox), 1)
+        self.client.post(url, {'action': 'mark_replied', '_selected_action': [contact.pk]})
+        contact.refresh_from_db()
+        self.assertEqual(contact.status, 'replied')
+
+    def test_sitemap_includes_public_articles_and_experience_only(self):
+        from .models import Article
+        Article.objects.create(slug='draft-sitemap', title='Draft', summary='Hidden', body='Draft', topic='Private')
+        response = self.client.get('/sitemap.xml')
+        self.assertContains(response, '/articles/django-contact-storage-before-email/')
+        self.assertContains(response, '/experience/talentbridge/')
+        self.assertNotContains(response, 'draft-sitemap')
