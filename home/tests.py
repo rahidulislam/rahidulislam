@@ -572,3 +572,19 @@ class MadrashaAndContactTests(TestCase):
         })
         self.assertContains(response, 'accept that message')
         self.assertEqual(Contact.objects.count(), 0)
+
+
+class IlmoraScreenshotTests(TestCase):
+    def test_managed_and_fallback_case_study_render_screenshots(self):
+        from pathlib import Path
+        from django.conf import settings
+        from .madrasha_content import MADRASHA_SCREENSHOTS
+        for managed in (True, False):
+            if not managed:
+                Project.objects.filter(slug='ilmora-madrasha-management').delete()
+            response = self.client.get('/work/ilmora-madrasha-management/')
+            self.assertContains(response, 'Project screenshots')
+            for screenshot in MADRASHA_SCREENSHOTS:
+                self.assertContains(response, screenshot['image'])
+                self.assertTrue((Path(settings.BASE_DIR) / 'static' / screenshot['image']).is_file())
+        self.assertContains(self.client.get('/'), 'img/projects/ilmora-landing.jpg')

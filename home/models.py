@@ -135,6 +135,7 @@ class Category(models.Model):
 
 class Project(models.Model):
     EVIDENCE_IMAGES = {
+        'Ilmora — Madrasha Management': ('img/projects/ilmora-landing.jpg', 'Ilmora bilingual madrasha management landing page'),
         'TalentBridge': ('img/projects/talentbridge-login.png', 'TalentBridge authentication interface'),
         'Smart Document Vault': ('img/projects/document-vault-live.jpg', 'Smart Document Vault live landing page'),
         'HotelMotel': ('img/projects/hotelmotel-live.jpg', 'HotelMotel live landing page'),

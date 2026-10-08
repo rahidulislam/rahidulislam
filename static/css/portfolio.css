@@ -1951,3 +1951,5 @@ textarea::placeholder {
 .architecture-gallery img{background:var(--surface-alt);object-fit:contain}
 @media(max-width:900px){.process-grid,.skill-groups,.case-facts-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.process-grid,.skill-groups,.metric-grid,.case-facts-grid{grid-template-columns:1fr}.hero-actions{align-items:stretch}.hero-actions .button{width:100%}}
+
+.screenshot-gallery img { height: auto; }

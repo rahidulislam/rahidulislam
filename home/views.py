@@ -74,6 +74,8 @@ class CaseStudyView(TemplateView):
         data = super().get_context_data(**kwargs)
         project = Project.objects.filter(slug=self.kwargs['slug'], is_published=True).select_related('category').prefetch_related('project_image', 'videos', 'engineering_challenges', 'metrics').first()
         if project:
+            from .madrasha_content import MADRASHA_SCREENSHOTS
+            data['static_screenshots'] = MADRASHA_SCREENSHOTS if project.slug == 'ilmora-madrasha-management' else []
             data.update(
                 project=project,
                 managed_project=True,
@@ -87,6 +89,8 @@ class CaseStudyView(TemplateView):
         project = next((item for item in fallback_projects if item["slug"] == self.kwargs["slug"]), None)
         if project is None or Project.objects.filter(name__iexact=project['name'], is_published=False).exists():
             raise Http404("Project not found")
+        from .madrasha_content import MADRASHA_SCREENSHOTS
+        data['static_screenshots'] = MADRASHA_SCREENSHOTS if project['slug'] == 'ilmora-madrasha-management' else []
         data.update(project=project, personal_info=PersonalInfo.objects.first(), social_items=SocialMedia.objects.all())
         return data
 

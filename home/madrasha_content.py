@@ -55,3 +55,15 @@ MADRASHA_PROJECT = {'architecture_summary': 'A React Router SPA separates public
                'Vitest domain tests and Playwright browser tests; these frontend suites were not '
                'rerun for this portfolio update.',
  'visual_label': 'Madrasha management frontend'}
+
+
+MADRASHA_SCREENSHOTS = [
+    {'image': 'img/projects/ilmora-landing.jpg', 'alt': 'Ilmora public landing page',
+     'caption': 'Public website — Bengali landing page and demo entry.'},
+    {'image': 'img/projects/ilmora-dashboard.jpg', 'alt': 'Ilmora administrator dashboard',
+     'caption': 'Administrator demo dashboard — session statistics and institutional overview.'},
+    {'image': 'img/projects/ilmora-students.jpg', 'alt': 'Ilmora student directory',
+     'caption': 'Student directory — demo records, search and class filters.'},
+]
+MADRASHA_PROJECT['image'] = 'img/projects/ilmora-landing.jpg'
+MADRASHA_PROJECT['image_alt'] = 'Ilmora bilingual madrasha management landing page'
