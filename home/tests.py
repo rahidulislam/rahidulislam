@@ -39,7 +39,7 @@ class PortfolioViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         database_names = {name.casefold() for name in Project.objects.values_list("name", flat=True)}
         expected_fallbacks = [item for item in fallback_projects if item["name"].casefold() not in database_names]
-        self.assertEqual(response.context["fallback_projects"], expected_fallbacks[:3])
+        self.assertEqual(response.context["fallback_projects"], [item for item in expected_fallbacks if item["name"] in {"TalentBridge", "Smart Document Vault", "Ilmora — Madrasha Management"}])
         listing = self.client.get(reverse("home:projects"))
         self.assertEqual(listing.context["fallback_projects"], expected_fallbacks)
         self.assertTrue({"slug", "category", "description", "technical_notes", "tags", "short_desc", "visual_label"}.issubset(fallback_projects[0]))
@@ -79,7 +79,7 @@ class PortfolioViewTests(TestCase):
         response = self.client.get(reverse("home:home"))
         selected_names = [project["name"] for project in response.context["fallback_projects"]]
         selected_names += [project.name for project in response.context["projects"]]
-        self.assertCountEqual(selected_names, names[:3])
+        self.assertCountEqual(selected_names, ["TalentBridge", "Smart Document Vault", "Ilmora — Madrasha Management"])
         self.assertNotContains(response, "TheProperty")
         self.assertNotContains(response, "Homeopathic Management API")
 
@@ -531,3 +531,44 @@ class PortfolioModelTests(TestCase):
             'Contribution areas', 'Constraints', 'Validation',
         ):
             self.assertContains(response, label)
+
+
+class MadrashaAndContactTests(TestCase):
+    def setUp(self):
+        from django.core.cache import cache
+        cache.clear()
+
+    def test_ilmora_is_seeded_and_has_live_case_study(self):
+        project = Project.objects.get(slug='ilmora-madrasha-management')
+        self.assertEqual(project.url, 'https://madrasha-backend.vercel.app/')
+        self.assertContains(self.client.get(reverse('home:home')), project.name)
+        self.assertContains(self.client.get(reverse('home:projects')), project.name)
+        response = self.client.get(reverse('home:case_study', args=[project.slug]))
+        self.assertContains(response, project.url)
+        self.assertContains(response, '58 management routes')
+        self.assertContains(response, 'browser-local data')
+
+    def test_contact_route_saves_and_redirects(self):
+        response = self.client.post(reverse('home:contact'), {
+            'name': 'Visitor', 'email': 'visitor@example.com',
+            'subject': 'Role', 'message': 'Let us connect.',
+        })
+        self.assertRedirects(response, '/#contact')
+        self.assertEqual(Contact.objects.count(), 1)
+
+    def test_contact_errors_keep_page_context_and_ip_protection(self):
+        response = self.client.get(reverse('home:contact'))
+        self.assertContains(response, 'class="site-header"')
+        response = self.client.post(reverse('home:contact'), {
+            'name': 'Visitor', 'email': 'invalid', 'subject': 'Hello', 'message': 'Hello',
+        }, REMOTE_ADDR='192.0.2.7')
+        self.assertContains(response, 'class="site-header"')
+        self.assertEqual(response.context['form'].request_ip, '192.0.2.7')
+        self.assertContains(response, 'Enter a valid email address')
+        self.assertEqual(Contact.objects.count(), 0)
+        response = self.client.post(reverse('home:contact'), {
+            'name': 'Bot', 'email': 'bot@example.com', 'subject': 'Spam',
+            'message': 'Spam', 'website': 'https://spam.example',
+        })
+        self.assertContains(response, 'accept that message')
+        self.assertEqual(Contact.objects.count(), 0)
