@@ -43,9 +43,7 @@ def get_portfolio_data():
     social_items += [item for item in social if item.name.casefold() not in links]
 
     experiences = list(Experience.objects.prefetch_related('bullets').order_by('-id'))
-    def key(company):
-        value = company.casefold().strip()
-        return 'wege' if value in ('wege', 'wege llc', 'wege general llc') else value
+    from .experience_slugs import experience_identity as key
     replacements = {key(item.company): item for item in experiences}
     work = []
     used = set()
@@ -53,7 +51,7 @@ def get_portfolio_data():
         identity = key(item['company'])
         record = replacements.get(identity)
         if record:
-            item = {'role': record.designation, 'company': record.company,
+            item = {'slug': record.slug, 'role': record.designation, 'company': record.company,
                     'dates': f'{record.start_year} - {record.end_year}',
                     'location': record.address, 'description': strip_tags(record.description),
                     'bullets': [strip_tags(bullet.text) for bullet in record.bullets.all()]}
@@ -61,7 +59,7 @@ def get_portfolio_data():
         work.append(item)
     for record in experiences:
         if record.pk not in used:
-            work.insert(0, {'role': record.designation, 'company': record.company,
+            work.insert(0, {'slug': record.slug, 'role': record.designation, 'company': record.company,
                             'dates': f'{record.start_year} - {record.end_year}',
                            'location': record.address, 'description': strip_tags(record.description),
                            'bullets': [strip_tags(bullet.text) for bullet in record.bullets.all()]})

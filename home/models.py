@@ -71,6 +71,8 @@ class Interest(models.Model):
 
 
 class Testimonial(models.Model):
+    consent_to_publish = models.BooleanField(default=False)
+    is_published = models.BooleanField(default=False)
     client_name = models.CharField(max_length=100)
     designation = models.CharField(max_length=50)
     review = models.TextField()
@@ -93,6 +95,7 @@ class Education(models.Model):
 
 
 class Experience(models.Model):
+    slug = models.SlugField(max_length=120, unique=True, blank=True)
     designation = models.CharField(max_length=50)
     start_year = models.CharField(max_length=10)
     end_year = models.CharField(max_length=10)
@@ -102,6 +105,22 @@ class Experience(models.Model):
 
     def __str__(self):
         return self.designation
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            from .experience_slugs import reserved_experience_slugs
+            reserved = reserved_experience_slugs(self.company)
+            base = slugify(self.company) or 'experience'
+            candidate = base[:120]
+            suffix = 2
+            while candidate in reserved or Experience.objects.exclude(pk=self.pk).filter(slug=candidate).exists():
+                suffix_text = f'-{suffix}'
+                candidate = f'{base[:120 - len(suffix_text)]}{suffix_text}'
+                suffix += 1
+            self.slug = candidate
+            if kwargs.get('update_fields'):
+                kwargs['update_fields'] = set(kwargs['update_fields']) | {'slug'}
+        super().save(*args, **kwargs)
 
 
 class ExperienceBullet(models.Model):
@@ -134,7 +153,10 @@ class Category(models.Model):
 
 
 class Project(models.Model):
+    work_type = models.CharField(max_length=12, blank=True, choices=[('backend', 'Backend'), ('frontend', 'Frontend'), ('fullstack', 'Full-stack')])
+    technologies = models.TextField(blank=True, help_text='One technology per line; defaults to source-backed tags when empty.')
     EVIDENCE_IMAGES = {
+        'Ilmora — Madrasha Management': ('img/projects/ilmora-landing.jpg', 'Ilmora bilingual madrasha management landing page'),
         'TalentBridge': ('img/projects/talentbridge-login.png', 'TalentBridge authentication interface'),
         'Smart Document Vault': ('img/projects/document-vault-live.jpg', 'Smart Document Vault live landing page'),
         'HotelMotel': ('img/projects/hotelmotel-live.jpg', 'HotelMotel live landing page'),
@@ -296,6 +318,15 @@ class ProjectVideo(models.Model):
 
 
 class Contact(models.Model):
+    STATUS_CHOICES = [('unread', 'Unread'), ('read', 'Read'), ('replied', 'Replied')]
+    DELIVERY_CHOICES = [('pending', 'Pending'), ('sent', 'Sent'), ('failed', 'Failed')]
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default='unread')
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    notification_status = models.CharField(max_length=12, choices=DELIVERY_CHOICES, default='pending')
+
+    class Meta:
+        ordering = ['-created_at', '-pk']
+
     name = models.CharField(max_length=100)
     email = models.EmailField()
     subject = models.CharField(max_length=100)
@@ -303,3 +334,23 @@ class Contact(models.Model):
 
     def __str__(self):
         return self.email
+
+
+class Article(models.Model):
+    title = models.CharField(max_length=180)
+    title_bn = models.CharField(max_length=180, blank=True)
+    slug = models.SlugField(max_length=180, unique=True)
+    summary = models.TextField()
+    summary_bn = models.TextField(blank=True)
+    body = models.TextField(help_text='Plain text paragraphs; HTML is escaped.')
+    body_bn = models.TextField(blank=True)
+    topic = models.CharField(max_length=80)
+    source_url = models.URLField(blank=True)
+    is_published = models.BooleanField(default=False)
+    published_at = models.DateField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['-published_at', '-pk']
+
+    def __str__(self):
+        return self.title
