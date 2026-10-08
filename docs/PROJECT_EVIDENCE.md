@@ -18,3 +18,9 @@ No live status, metrics, production scale, client results, language proficiency,
 - Experience bullets describe contribution areas and validation practices without exposing private business rules.
 - A missing live URL is rendered as an unavailable status, never as a placeholder link.
 - Repository URLs remain private unless the project has an explicit public-source decision.
+
+### DMS and TalentBridge showcase — 8 October 2026
+
+Imported the user-provided assets from `/home/rahidulislam/Videos/dms-portfolio-2026-10-08` and `/home/rahidulislam/Videos/talentbridge-portfolio-2026-10-08` into tracked static assets. DMS includes four screenshots and an MP4 montage; TalentBridge includes six screenshots and an MP4 montage. Both use synthetic demo data. Source provenance notes are retained beside each screenshot set. The videos are screenshot montages, not recordings of live interactions or backend verification.
+
+TalentBridge now uses its dashboard screenshot as the featured preview and `https://crm.tbcglobal.de/` as its live URL. Migration 0042 updates the existing database entry; curated defaults cover fresh installs and fallback pages.

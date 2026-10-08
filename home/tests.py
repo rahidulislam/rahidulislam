@@ -421,8 +421,8 @@ class StructuredCaseStudyTests(TestCase):
             short_desc="Recruitment API",
         )
         response = self.client.get(reverse("home:case_study", args=[project.slug]))
-        self.assertContains(response, "/static/img/projects/talentbridge-login.png")
-        self.assertContains(response, "TalentBridge authentication interface")
+        self.assertContains(response, "/static/img/projects/talentbridge/01-dashboard.png")
+        self.assertContains(response, "TalentBridge dashboard with demo data")
         project.name = "HotelMotel"
         project.save(update_fields=["name"])
         response = self.client.get(reverse("home:case_study", args=[project.slug]))

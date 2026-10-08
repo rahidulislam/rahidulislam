@@ -80,11 +80,18 @@ class CaseStudyView(TemplateView):
         slug = self.kwargs['slug']
         asset = f'img/architecture/{slug}.svg'
         data['architecture_asset'] = asset if (Path(settings.BASE_DIR) / 'static' / asset).is_file() else ''
-        data['demo_video_asset'] = 'video/ilmora-demo.webm' if slug == 'ilmora-madrasha-management' else ''
+        from .project_showcase import PROJECT_SHOWCASES
+        from .madrasha_content import MADRASHA_SCREENSHOTS
+        showcase = PROJECT_SHOWCASES.get(slug, {})
+        is_ilmora = slug == 'ilmora-madrasha-management'
+        data['static_screenshots'] = showcase.get('screenshots', MADRASHA_SCREENSHOTS if is_ilmora else [])
+        data['screenshots_description'] = ('Captured from the live Ilmora frontend using its browser-local demo data.' if is_ilmora else 'Application screenshots using synthetic demo data.')
+        data['demo_video_asset'] = showcase.get('video', 'video/ilmora-demo.webm' if is_ilmora else '')
+        data['demo_video_type'] = 'video/webm' if is_ilmora else 'video/mp4'
+        data['demo_video_poster'] = showcase.get('poster', 'img/projects/ilmora-dashboard.jpg')
+        data['demo_video_description'] = ('A short recording of Ilmora’s browser-local demo: landing, dashboard, students, attendance and fees.' if is_ilmora else 'A screenshot montage using synthetic demo data.')
         project = Project.objects.filter(slug=self.kwargs['slug'], is_published=True).select_related('category').prefetch_related('project_image', 'videos', 'engineering_challenges', 'metrics').first()
         if project:
-            from .madrasha_content import MADRASHA_SCREENSHOTS
-            data['static_screenshots'] = MADRASHA_SCREENSHOTS if project.slug == 'ilmora-madrasha-management' else []
             data.update(
                 project=project,
                 managed_project=True,
@@ -98,8 +105,6 @@ class CaseStudyView(TemplateView):
         project = next((item for item in fallback_projects if item["slug"] == self.kwargs["slug"]), None)
         if project is None or Project.objects.filter(name__iexact=project['name'], is_published=False).exists():
             raise Http404("Project not found")
-        from .madrasha_content import MADRASHA_SCREENSHOTS
-        data['static_screenshots'] = MADRASHA_SCREENSHOTS if project['slug'] == 'ilmora-madrasha-management' else []
         data.update(project=project, personal_info=PersonalInfo.objects.first(), social_items=SocialMedia.objects.all())
         return data
 
