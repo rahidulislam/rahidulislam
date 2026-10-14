@@ -170,7 +170,16 @@ class ArticleListView(TemplateView):
     def get_context_data(self, **kwargs):
         from .models import Article
         data = super().get_context_data(**kwargs)
-        data['articles'] = Article.objects.filter(is_published=True)
+        from django.db.models import Q
+        articles = Article.objects.filter(is_published=True)
+        data['topics'] = articles.order_by('topic').values_list('topic', flat=True).distinct()
+        data['query'] = self.request.GET.get('q', '').strip()[:200]
+        data['selected_topic'] = self.request.GET.get('topic', '')
+        if data['query']:
+            articles = articles.filter(Q(title__icontains=data['query']) | Q(title_bn__icontains=data['query']) | Q(summary__icontains=data['query']) | Q(summary_bn__icontains=data['query']))
+        if data['selected_topic']:
+            articles = articles.filter(topic=data['selected_topic'])
+        data['articles'] = articles
         return data
 
 
@@ -182,6 +191,7 @@ class ArticleDetailView(TemplateView):
         from .models import Article
         data = super().get_context_data(**kwargs)
         data['article'] = get_object_or_404(Article, slug=self.kwargs['slug'], is_published=True)
+        data['related_articles'] = Article.objects.filter(is_published=True, topic=data['article'].topic).exclude(pk=data['article'].pk)[:2]
         return data
 
 
