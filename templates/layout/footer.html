@@ -4,14 +4,22 @@
       <a class="wordmark" href="{% url 'home:home' %}">rahidul<span>.</span></a>
       <p class="footer-tagline">{{ 'Python & Django Engineer · Building secure APIs and dependable business systems.'|translate:portfolio_language }}</p>
     </div>
-    <div class="footer-nav">
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <h2 class="footer-heading">{% bilingual "Explore" "অন্বেষণ" %}</h2>
       <a href="{% url 'home:projects' %}">{{ 'Projects'|translate:portfolio_language }}</a>
       <a href="{% url 'home:experience' %}">{{ 'Experience'|translate:portfolio_language }}</a>
       <a href="{% url 'home:home' %}#services">{{ 'Skills'|translate:portfolio_language }}</a>
       <a href="{% url 'home:home' %}#about">{{ 'About'|translate:portfolio_language }}</a>
       <a href="{% url 'home:home' %}#contact">{{ 'Contact'|translate:portfolio_language }}</a>
       <a href="{% url 'home:articles' %}">{{ 'Articles'|translate:portfolio_language }}</a>
+    </nav>
+    <div class="footer-contact">
+      <h2 class="footer-heading">{% bilingual "Get in touch" "যোগাযোগ করুন" %}</h2>
+      {% include "layout/contact_links.html" %}
+      {% if public_contact.location %}<p>{{ public_contact.location }}</p>{% endif %}
     </div>
+  </div>
+  <div class="container footer-utility">
     <a class="back-to-top" href="#main" aria-label="Back to top">
       <span>{{ 'Back to top'|translate:portfolio_language }}</span>
       <span aria-hidden="true">↑</span>

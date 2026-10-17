@@ -9,8 +9,8 @@
 - Experience records replace matching default employers; new employers are added to both website and CV. Keep one active record per employer for unambiguous default replacement.
 - Education and skills records replace their default lists when present.
 - Projects are included alongside the curated case studies; matching project names replace curated summaries.
-- When no admin content exists, `home/cv_profile.json` supplies profile/experience/skills defaults, and `home/portfolio_content.py` supplies curated projects. Updating these sources also updates the next download.
-- Language descriptions live in `home/cv_profile.json`; no new proficiency is inferred.
+- When no admin content exists, `apps/profiles/cv_profile.json` supplies profile/experience/skills defaults, and `apps/projects/content.py` supplies curated projects. Updating these sources also updates the next download.
+- Language descriptions live in `apps/profiles/cv_profile.json`; no new proficiency is inferred.
 
 Install `requirements.txt` and run `python manage.py migrate`. Migration 0021 corrects existing Wege records to Sep 2023–Jun 2024.
 

@@ -32,3 +32,7 @@ stable.
 
 `rahidulislam.com` is the clearest primary domain if available. Redirect the
 `www` hostname to the primary domain so employers see one canonical address.
+
+## Domain app migration
+
+The backend app split preserves existing tables but transfers Django model and content-type ownership. Stop old workers before migrating and restart with the matching code. Follow the backup, migration, verification, and rollback sequence in [ARCHITECTURE.md](ARCHITECTURE.md#deployment-and-rollback).
