@@ -1,124 +1,15 @@
-"""Case-study copy grounded in the local project repositories; no inferred metrics."""
-CASE_STUDIES = {
-    "TalentBridge": {
-        "project_type": "Recruitment platform backend",
-        "project_role": "Mid Level Python Developer",
-        "collaboration": "Product engineering team",
-        "development_status": "Ongoing development",
-        "contribution_areas": "Backend endpoints\nAPI contracts and documentation\nReliability improvements\nDeployment support",
-        "constraints": "Organizational data required strict separation. Frontend integrations needed predictable contracts, and longer-running work could not make normal API requests unreliable.",
-        "validation": "Validation focused on representative permitted and rejected requests, documented response behavior, and the boundary between request handling and background execution.",
-        "problem": "Recruitment software brings people, organizations, and time-sensitive work into one product. The backend needed clear access boundaries, stable API contracts, and reliable processing without exposing one organization’s information to another.",
-        "contribution": "As a Mid Level Python Developer, I contributed backend endpoints, integration contracts, reliability improvements, API documentation, and deployment support. This public account describes engineering responsibilities only; customer-specific workflows and commercial rules remain private.",
-        "architecture_summary": "A layered Django backend separates the public API, application responsibilities, data access, and supporting background work. Detailed authorization and domain rules remain private.",
-        "technical_decisions": "Django REST Framework provides a consistent API layer and documented contracts keep integration behavior reviewable. I used layered backend controls and asynchronous execution where appropriate, while keeping local and deployed concerns distinct.\n\nThe public design intentionally stops at these boundaries. Permission formulas, record relationships, workflow transitions, and operational thresholds are not disclosed.",
-        "outcome": "The result is a clearer, documented backend foundation with separated synchronous and background responsibilities and testable authorization boundaries. No production scale, customer outcome, or internal policy claim is made here.",
-        "lessons": "The strongest protection comes from making access context an invariant throughout the backend, not from adding checks at a single endpoint. API documentation is also most useful when it evolves with implementation and tests.",
-    },
-    "Smart Document Vault": {
-        "project_type": "Multi-tenant document SaaS backend",
-        "project_role": "Backend Developer",
-        "collaboration": "Backend-focused project",
-        "development_status": "Development repository",
-        "contribution_areas": "Tenant-aware design\nDocument-processing safety\nAPI contract alignment\nIsolation-focused validation",
-        "constraints": "Customer contexts required reliable separation, document processing needed privacy-conscious handling, and public documentation could not expose security configuration or storage design.",
-        "validation": "Validation focused on representative same-context and cross-context requests, public availability behavior, and documented API responses.",
-        "problem": "A shared document platform must preserve customer isolation and handle document processing safely without making private policy or infrastructure assumptions part of the public interface.",
-        "contribution": "I contributed tenant-aware access controls, secure document processing, contract-aligned API behavior, and isolation-focused tests. The case study excludes customer identifiers, policy rules, storage paths, and security configuration.",
-        "architecture_summary": "The Django backend applies defense-in-depth to customer isolation, document access, and supporting processing. Policy evaluation, storage design, and failure handling remain private.",
-        "technical_decisions": "The design applies defense-in-depth to document access and processing, with isolation enforced by the backend and longer-running work handled asynchronously where appropriate.\n\nExact tenant resolution, policy evaluation, storage topology, security configuration, failure policy, and recovery procedures remain private.",
-        "outcome": "The project provides a security-first foundation for tenant-isolated document management with automated access-boundary and API-contract coverage. It does not claim a public launch, customer volume, or security certification.",
-        "lessons": "Isolation and processing safety work best when treated as system-wide design concerns rather than isolated endpoint checks.",
-    },
-    "HotelMotel": {
-        "project_type": "Hotel operations backend",
-        "project_role": "Backend Developer",
-        "collaboration": "Backend implementation project",
-        "development_status": "Foundation implemented",
-        "contribution_areas": "Backend APIs\nModular domain organization\nAccess boundaries\nAutomated behavior checks",
-        "constraints": "Connected operational responsibilities needed consistent behavior while pricing, availability, staff procedures, and state rules remained private.",
-        "validation": "Validation focused on public API behavior, representative permission outcomes, and interactions between maintainable modules.",
-        "problem": "Hotel operations combine planned reservations with real-world activity, shared inventory, financial information, and staff responsibilities. The backend needed clear domain boundaries and consistent state changes.",
-        "contribution": "I contributed backend APIs, domain organization, lifecycle handling, access controls, and automated tests across the hotel operations foundation. Pricing, availability formulas, and staff procedures are not published.",
-        "architecture_summary": "A modular Django API separates major operational responsibilities while shared application services coordinate cross-domain work. Sensitive procedures remain private.",
-        "technical_decisions": "The Django backend separates operational concerns into maintainable modules and validates access and consistency at server-controlled boundaries.\n\nThis case study does not disclose state-machine rules, pricing calculations, inventory algorithms, staff procedures, or internal model relationships.",
-        "outcome": "The work established a testable API foundation for hotel operations with clearer ownership and authorization boundaries. It makes no claim about production occupancy, revenue, or customer usage.",
-        "lessons": "Operational systems become easier to change when responsibilities have clear ownership and shared behavior is validated at module boundaries.",
-    },
-    "Portfolio Website": {
-        "project_type": "Django portfolio and CV platform",
-        "project_role": "Designer and Full-stack Developer",
-        "collaboration": "Independent project",
-        "development_status": "Active",
-        "contribution_areas": "Django application and content model\nResponsive interface\nGenerated PDF CV\nPublishing and contact protections",
-        "constraints": "Website and CV content needed one source of truth, drafts could not become public, and the site needed to remain maintainable without a large CMS.",
-        "validation": "Automated checks cover shared website and CV content, draft visibility, contact protection, canonical project routes, and responsive behavior.",
-        "problem": "Project details and a downloadable CV need to stay consistent as experience and work samples change. Maintaining a separate PDF by hand creates duplicate editing work.",
-        "contribution": "I designed and implemented the Django site, its content models, generated CV, responsive interface, publishing controls, contact protections, and automated test coverage.",
-        "architecture_summary": "Django models and admin provide the content source. Public views filter publication state, templates render the website, and ReportLab produces the CV from the same provider.",
-        "technical_decisions": "Django admin owns structured portfolio content and explicit publication status. Website pages and the ReportLab PDF use the same content provider, reducing drift between formats. Stable project slugs provide canonical URLs, while draft records and unpublished evidence remain outside public responses.\n\nThe site stays a single Django application because its scale does not justify service boundaries or a large CMS.",
-        "outcome": "Visitors can browse structured case studies and download a CV generated from current published content. The site also provides responsive navigation, accessible themes, SEO metadata, contact abuse protection, and regression tests.",
-        "lessons": "A small content system benefits more from one authoritative data path and strong publication controls than from additional infrastructure. Privacy rules also need tests, not only editorial guidance.",
-    },
-    "TheProperty": {
-        "project_type": "Server-rendered property marketplace",
-        "project_role": "Django Developer",
-        "collaboration": "Independent product project",
-        "development_status": "First-release foundation",
-        "contribution_areas": "Django foundation\nPrivate workspaces\nService boundaries\nProduction configuration",
-        "constraints": "Public discovery and private management required different visibility boundaries. Review criteria, document details, ranking behavior, and commercial rules could not be published.",
-        "validation": "Validation focused on representative public and authenticated paths, publication visibility, and protected private capabilities.",
-        "problem": "A property marketplace must support public discovery while keeping unpublished inventory, private account material, and staff-only decisions outside the public surface.",
-        "contribution": "I contributed the Django marketplace foundation, role-oriented workspaces, service boundaries, production configuration, and automated safeguards. Internal moderation and commercial responsibilities are intentionally summarized rather than reproduced.",
-        "architecture_summary": "A server-rendered Django application separates public discovery, private workspaces, and administrative responsibilities. Review criteria and commercial rules remain private.",
-        "technical_decisions": "Public discovery and private management capabilities are separated through server-side authorization and explicit publishing controls. Sensitive files use protected delivery, and important administrative changes remain traceable. Business operations are kept behind service boundaries instead of being spread across views and templates.\n\nReview criteria, marketplace state rules, ranking behavior, identity-document details, and commercial workflows are not disclosed.",
-        "outcome": "The project demonstrates a production-oriented marketplace foundation with controlled publication, protected private material, and auditable administration. No transaction volume or commercial outcome is claimed.",
-        "lessons": "Moderated marketplaces need publication state, authorization, and auditability to reinforce one another. Hiding controls in the interface is never a substitute for backend enforcement.",
-    },
-    "Homeopathic Management API": {
-        "project_type": "Clinic management API",
-        "project_role": "Backend Developer",
-        "collaboration": "Backend implementation project",
-        "development_status": "API foundation implemented",
-        "contribution_areas": "Authenticated APIs\nPrivacy-aware boundaries\nClinical workflow support\nAdministrative service integration",
-        "constraints": "Patient context and clinical responsibilities required careful privacy boundaries. Medical rules, billing calculations, inventory formulas, and workflow states could not be disclosed.",
-        "validation": "Validation focused on documented API behavior, representative role boundaries, and the public contract between connected service areas.",
-        "problem": "A clinic platform coordinates scheduling, clinical records, inventory, and billing while protecting patient context and keeping each responsibility within the correct access boundary.",
-        "contribution": "I contributed authenticated APIs, permission boundaries, clinical workflow support, inventory integration, and billing foundations. No patient data, medical decision rule, or pricing formula is included in this case study.",
-        "architecture_summary": "A documented Django REST API separates authenticated access, clinical responsibilities, and administrative services. Medical rules and record structures remain private.",
-        "technical_decisions": "Django REST Framework provides a documented API with server-side role enforcement and validated changes. Clinical and operational areas remain connected through explicit application boundaries rather than exposing sensitive records broadly.\n\nMedical logic, billing calculations, inventory formulas, record schemas, and workflow transitions are intentionally omitted.",
-        "outcome": "The repository demonstrates an integrated clinic-management API with clear authentication and domain boundaries while keeping medical, billing, and operational rules private. It makes no healthcare-outcome claim.",
-        "lessons": "In sensitive domains, authorization and data minimization must shape the API contract from the beginning. Adding them after workflows are built creates avoidable exposure risk.",
-    },
-}
+"""Compatibility imports; new code must use the domain module."""
 
-# Public, disclosure-safe evidence imported by the management command.
-ENGINEERING_CHALLENGES = {
-    "TalentBridge": [
-        {"title": "Maintaining access boundaries", "problem": "Connected product data needs consistent separation.", "approach": "Use layered backend controls and keep private policy details outside the public interface.", "trade_offs": "Layered controls require consistent maintenance and broader permission-focused validation.", "verification": "Validation focused on representative permitted and rejected requests."},
-        {"title": "Separating longer-running work", "problem": "Some processing does not belong in the request-response path.", "approach": "Use asynchronous execution where appropriate while keeping the public API contract stable.", "trade_offs": "Asynchronous execution adds operational components that must be configured and observed.", "verification": "Validation focused on the boundary between request handling and background execution."},
-    ],
-    "Smart Document Vault": [
-        {"title": "Maintaining customer isolation", "problem": "Shared infrastructure must preserve separation between customer contexts.", "approach": "Apply defense-in-depth in the backend without exposing policy mechanics publicly.", "trade_offs": "Defense-in-depth adds implementation and validation work but reduces reliance on any single control.", "verification": "Validation focused on representative same-context and cross-context requests."},
-        {"title": "Handling document processing safely", "problem": "Document processing must preserve privacy and predictable API behavior.", "approach": "Separate processing concerns from public access while keeping private failure policies undisclosed.", "trade_offs": "Separating processing improves safety boundaries while adding operational coordination.", "verification": "Validation focused on public availability behavior across processing outcomes."},
-    ],
-    "HotelMotel": [
-        {"title": "Keeping operational concerns maintainable", "problem": "Connected hotel operations can become tightly coupled.", "approach": "Separate responsibilities into focused modules with clear ownership.", "trade_offs": "Modular ownership improves clarity but requires explicit coordination between responsibilities.", "verification": "Validation focused on the public behavior of connected modules."},
-        {"title": "Controlling sensitive actions", "problem": "Authenticated access alone is not sufficient for every operation.", "approach": "Apply server-side authorization while keeping staff procedures private.", "trade_offs": "Narrow authorization is safer than broad access but expands the permission scenarios that need validation.", "verification": "Validation focused on representative permitted and rejected actions."},
-    ],
-    "Portfolio Website": [
-        {"title": "Preventing content drift", "problem": "Maintaining website and CV content independently creates inconsistent information.", "approach": "Use one content provider for both HTML and generated PDF output.", "trade_offs": "A shared provider reduces duplication but requires website and PDF consumers to evolve together.", "verification": "Automated checks compare the content supplied to both outputs."},
-        {"title": "Controlling public visibility", "problem": "Editorial content needs a safe path from draft to public display.", "approach": "Apply explicit publication controls before rendering public output.", "trade_offs": "Explicit publishing controls add editorial steps but make public exposure intentional and testable.", "verification": "Validation focused on draft and published visibility behavior."},
-    ],
-    "TheProperty": [
-        {"title": "Separating discovery from management", "problem": "Public browsing and private management have different visibility needs.", "approach": "Keep public and private capabilities behind distinct application boundaries.", "trade_offs": "Distinct boundaries improve privacy but require careful coordination of shared presentation needs.", "verification": "Validation focused on representative public and authenticated paths."},
-        {"title": "Keeping publishing controlled", "problem": "Content should appear publicly only after the appropriate internal decision.", "approach": "Use explicit publishing controls without disclosing review criteria or state rules.", "trade_offs": "Controlled publishing adds workflow overhead while preventing accidental public visibility.", "verification": "Validation focused on public visibility before and after publication."},
-    ],
-    "Homeopathic Management API": [
-        {"title": "Protecting sensitive context", "problem": "Clinical and administrative capabilities have different privacy needs.", "approach": "Use role-aware backend boundaries without publishing medical or policy rules.", "trade_offs": "Role-aware boundaries increase permission complexity but reduce unnecessary data exposure.", "verification": "Validation focused on representative permitted and rejected access."},
-        {"title": "Keeping connected areas cohesive", "problem": "Several clinic responsibilities must cooperate without becoming one tightly coupled module.", "approach": "Keep service responsibilities explicit and expose a consistent public API.", "trade_offs": "Separate responsibilities improve maintainability while requiring explicit contracts between services.", "verification": "Validation focused on the documented contract between public API areas."},
-    ],
-}
+from apps.projects.case_study_content import (
+    CASE_STUDIES,
+    ENGINEERING_CHALLENGES,
+    PROJECT_IMAGES,
+    PROJECT_METRICS,
+)
 
-PROJECT_METRICS = {}
-PROJECT_IMAGES = {}
+__all__ = [
+    "CASE_STUDIES",
+    "ENGINEERING_CHALLENGES",
+    "PROJECT_IMAGES",
+    "PROJECT_METRICS",
+]

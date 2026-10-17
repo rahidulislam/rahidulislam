@@ -1,0 +1,9 @@
+{% load portfolio_language %}
+<div class="public-contact-links">
+  {% if public_contact.email %}<a href="mailto:{{ public_contact.email }}">{{ public_contact.email }} ↗</a>{% endif %}
+  {% if public_contact.phone %}<a href="tel:{{ public_contact.phone }}">{% bilingual "Phone" "ফোন" %}: {{ public_contact.phone }}</a>{% endif %}
+  {% if public_contact.whatsapp %}<a href="{{ public_contact.whatsapp_url }}" target="_blank" rel="noopener noreferrer">WhatsApp ↗</a>{% endif %}
+  {% if public_contact.telegram %}<a href="{{ public_contact.telegram_url }}" target="_blank" rel="noopener noreferrer">Telegram @{{ public_contact.telegram }} ↗</a>{% endif %}
+  {% if public_contact.linkedin %}<a href="{{ public_contact.linkedin }}" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>{% endif %}
+  {% if public_contact.github %}<a href="{{ public_contact.github }}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>{% endif %}
+</div>
