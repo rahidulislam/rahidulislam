@@ -1,0 +1,121 @@
+"""Local-source grounded defaults for a fresh portfolio install."""
+
+from .case_study_content import (
+    CASE_STUDIES,
+    ENGINEERING_CHALLENGES,
+    PROJECT_IMAGES,
+    PROJECT_METRICS,
+)
+from .madrasha_content import MADRASHA_PROJECT
+
+fallback_projects = [
+    {
+        "slug": "talentbridge",
+        "name": "TalentBridge",
+        "category": "Recruitment platform",
+        "short_desc": "Django REST backend for recruitment workflows.",
+        "image": "img/projects/talentbridge/01-dashboard.png",
+        "image_alt": "TalentBridge dashboard with demo data",
+        "description": "A public architecture overview of a Django REST recruitment platform. Domain rules, workflow transitions, data relationships, and organizational policies are intentionally omitted.",
+        "technical_notes": [
+            "Django REST Framework",
+            "Relational persistence",
+            "Asynchronous processing",
+            "Documented API contracts",
+        ],
+        "tags": ["Python", "Django", "DRF", "PostgreSQL"],
+        "visual_label": "Recruitment platform architecture",
+    },
+    {
+        "slug": "smart-document-vault",
+        "name": "Smart Document Vault",
+        "category": "Document management SaaS",
+        "short_desc": "Multi-tenant document-management API with secure isolation.",
+        "image": "img/projects/smart-document-vault/01-dashboard-light.png",
+        "image_alt": "Smart Document Vault dashboard with demo data",
+        "description": "A public architecture overview of a tenant-aware document service. Tenant resolution, policy logic, storage topology, and processing rules are intentionally omitted.",
+        "technical_notes": [
+            "Django REST Framework",
+            "Tenant-aware authorization",
+            "Asynchronous security processing",
+            "Documented API contracts",
+        ],
+        "tags": ["Python", "Django", "DRF", "Multi-tenancy"],
+        "visual_label": "Secure document platform architecture",
+    },
+    {
+        "slug": "hotelmotel",
+        "name": "HotelMotel",
+        "category": "Hotel operations",
+        "short_desc": "Django API foundation for hotel operations.",
+        "image": "img/projects/hotelmotel-live.jpg",
+        "image_alt": "HotelMotel landing page",
+        "description": "A public architecture overview of a modular hotel-operations backend. Pricing, availability, staff procedures, state transitions, and model relationships are intentionally omitted.",
+        "technical_notes": [
+            "Django REST API",
+            "Modular domain boundaries",
+            "Server-side authorization",
+            "Automated behavior checks",
+        ],
+        "tags": ["Python", "Django", "REST API", "Authorization"],
+        "visual_label": "Hotel operations architecture",
+    },
+    {
+        "slug": "portfolio-website",
+        "name": "Portfolio Website",
+        "category": "Personal site",
+        "short_desc": "Django portfolio site for projects, experience, and contact.",
+        "description": "A Django-powered personal portfolio with database-backed profile content, projects, experience, and a contact form.",
+        "technical_notes": [
+            "Django class-based views",
+            "Database-backed content",
+            "Contact form persistence",
+        ],
+        "tags": ["Python", "Django", "HTML", "CSS"],
+        "visual_label": "Developer portfolio",
+    },
+    {
+        "slug": "theproperty",
+        "name": "TheProperty",
+        "category": "Real estate marketplace",
+        "short_desc": "Role-aware Django property marketplace.",
+        "description": "A public architecture overview of a property marketplace with controlled publication and protected private capabilities. Review criteria, ranking behavior, document details, and commercial rules are intentionally omitted.",
+        "technical_notes": [
+            "Django and PostgreSQL",
+            "Controlled publication",
+            "Protected private capabilities",
+            "Auditable administration",
+        ],
+        "tags": ["Python", "Django", "PostgreSQL", "Authorization"],
+        "visual_label": "Property marketplace architecture",
+    },
+    {
+        "slug": "homeopathic-management-api",
+        "name": "Homeopathic Management API",
+        "category": "Clinic management",
+        "short_desc": "Role-aware Django API for clinic operations.",
+        "description": "A public architecture overview of a clinic-management API. Patient data, medical decision rules, billing calculations, inventory formulas, and workflow transitions are intentionally omitted.",
+        "technical_notes": [
+            "Django REST Framework",
+            "Authenticated API access",
+            "Sensitive-domain boundaries",
+            "Documented API contracts",
+        ],
+        "tags": ["Python", "Django", "DRF", "Authentication"],
+        "visual_label": "Clinic platform architecture",
+    },
+]
+
+
+fallback_projects.append(MADRASHA_PROJECT.copy())
+
+
+for project in fallback_projects:
+    project.update(CASE_STUDIES.get(project["name"], {}))
+    project["engineering_challenges"] = ENGINEERING_CHALLENGES.get(project["name"], [])
+    project["metrics"] = PROJECT_METRICS.get(project["name"], [])
+    project["project_images"] = PROJECT_IMAGES.get(project["name"], [])
+
+for project in fallback_projects:
+    if project["slug"] == "talentbridge":
+        project["url"] = "https://crm.tbcglobal.de/"

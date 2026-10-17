@@ -1,6 +1,7 @@
 from django import template
 from django.utils.safestring import mark_safe
-from home.article_content import render_article
+
+from apps.articles.rendering import render_article
 
 register = template.Library()
 

@@ -40,3 +40,7 @@ Noakhali Ideal Polytechnic Institute, Bangladesh · 2011–2015
 ## Opportunities
 
 Interested in mid-level Python and Django roles with teams in Germany. For opportunities or questions about my work, contact [rahidulislam247@gmail.com](mailto:rahidulislam247@gmail.com).
+
+## Backend development
+
+Engineering standards live in [AGENTS.md](AGENTS.md). See [backend architecture and migration guidance](docs/ARCHITECTURE.md) for domain ownership, compatibility, deployment, and rollback. Install `requirements-dev.txt` and run `python scripts/check_backend.py` before submitting a PR to `dev`.

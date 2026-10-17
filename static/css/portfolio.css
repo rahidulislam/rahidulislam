@@ -1993,3 +1993,17 @@ textarea::placeholder {
 html[lang="bn"] body { font-family: 'Noto Sans Bengali', Inter, Arial, sans-serif; }
 
 .reading-page > .eyebrow { display: block; }
+
+/* Shared public contact information */
+.site-footer .footer-top { display:grid; grid-template-columns:1.4fr .8fr 1fr; align-items:start; }
+.site-footer .footer-nav { display:flex; flex-direction:column; align-items:flex-start; gap:10px; }
+.footer-heading { font-size:14px; font-weight:600; margin:0 0 12px; color:var(--ink); }
+.public-contact-links { display:flex; flex-direction:column; align-items:flex-start; gap:12px; overflow-wrap:anywhere; }
+.public-contact-links a { color:var(--muted); font-size:14px; }
+.public-contact-links a:hover { color:var(--green); }
+.public-contact-links a:focus-visible { outline:2px solid var(--green); outline-offset:4px; }
+.footer-contact { min-width:0; }
+.footer-contact p { color:var(--muted); font-size:13px; margin-top:16px; }
+.footer-utility { display:flex; justify-content:flex-end; padding-top:20px; }
+@media(max-width:760px) { .site-footer .footer-top { grid-template-columns:1fr 1fr; gap:28px; } .footer-brand { grid-column:1/-1; } }
+@media(max-width:440px) { .site-footer .footer-top { grid-template-columns:1fr; } }
