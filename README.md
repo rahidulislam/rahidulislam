@@ -43,4 +43,4 @@ Interested in mid-level Python and Django roles with teams in Germany. For oppor
 
 ## Backend development
 
-Engineering standards live in [AGENTS.md](AGENTS.md). See [backend architecture and migration guidance](docs/ARCHITECTURE.md) for domain ownership, compatibility, deployment, and rollback. Install `requirements-dev.txt` and run `python scripts/check_backend.py` before submitting a PR to `dev`.
+Engineering standards live in [AGENTS.md](AGENTS.md). See [backend architecture and migration guidance](docs/ARCHITECTURE.md) for domain ownership, compatibility, deployment, and rollback. Install `requirements-dev.txt`, run `python -m playwright install --only-shell chromium` for browser tests (use `--with-deps` on a fresh Linux machine), and run `python scripts/check_backend.py` before submitting a PR to `dev`.
