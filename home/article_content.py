@@ -1,6 +1,5 @@
-from markdown_it import MarkdownIt
+"""Compatibility imports; new code must use the domain module."""
 
+from apps.articles.rendering import render_article
 
-def render_article(text):
-    """One safe renderer shared by published articles and staff previews."""
-    return MarkdownIt('js-default', {'breaks': True}).render(text or '')
+__all__ = ["render_article"]
