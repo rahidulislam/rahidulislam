@@ -37,15 +37,16 @@ Use focused functions and the Django ORM. Avoid repository wrappers, generic ser
 
 ## Verification
 
-Install `requirements-dev.txt`, then run:
+Install `requirements-dev.txt` and the Chromium browser used by the responsive regression tests, then run:
 
 ```sh
+python -m playwright install --only-shell chromium
 python scripts/check_backend.py
 ```
 
 This runs Ruff, Black, Django checks, migration-drift checks, and the complete test suite. CI runs the same command on PRs and pushes to dev, staging, and main, including promotion PRs. SQLite is the configured production engine and is used in CI; change CI alongside settings if the production engine changes. There is no REST schema or TypeScript build to validate in this Django-template backend change.
 
-Regression coverage includes publication rules, localized forms, CV output, legacy redirects/admin paths, staff permissions, focused project queries, service validation, notification failure/retry, after-commit timing and rollback, and migration forward/reverse preservation of all domain tables, primary keys, relationships, permissions, and admin history. Migration tests reject table DDL during ownership moves. Test databases are migrated from scratch by Django.
+Regression coverage includes real Chromium layout checks for mobile footer placement and header-menu behavior across article detail/list, homepage, and project pages at 320, 390, 760, 768, and 1024px, plus publication rules, localized forms, CV output, legacy redirects/admin paths, staff permissions, focused project queries, service validation, notification failure/retry, after-commit timing and rollback, and migration forward/reverse preservation of all domain tables, primary keys, relationships, permissions, and admin history. Migration tests reject table DDL during ownership moves. Test databases are migrated from scratch by Django.
 
 Required GitHub check: **Backend quality gate**, bound to the GitHub Actions integration. The user-approved **Backend delivery standards** ruleset (ID `25285282`) is active for dev, staging, and main. It requires pull requests, resolved review threads, and the up-to-date backend check, and blocks force pushes and branch deletion. The staging branch does not yet exist; the rule will apply when it is created through the release workflow. Repository protection is external state and must be inspected again if policies change.
 
