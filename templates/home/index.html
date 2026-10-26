@@ -7,7 +7,7 @@
     <p class="hero-intro">{{ cv_profile.summary|translate:portfolio_language }}</p>
     <div class="hero-actions">
       <a class="button primary" href="#portfolio">{{ 'View case studies'|translate:portfolio_language }} <span aria-hidden="true">↗</span></a>
-      <a class="button cv-button" href="{% url 'home:download_cv' %}" download>{{ 'Download CV'|translate:portfolio_language }} <span aria-hidden="true">↓</span></a>
+      <a hx-boost="false" class="button cv-button" href="{% url 'home:download_cv' %}" download>{{ 'Download CV'|translate:portfolio_language }} <span aria-hidden="true">↓</span></a>
       {% if cv_profile.github %}<a class="button text-button" href="{{ cv_profile.github }}" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>{% endif %}
       {% if cv_profile.linkedin %}<a class="button text-button" href="{{ cv_profile.linkedin }}" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>{% endif %}
     </div>
