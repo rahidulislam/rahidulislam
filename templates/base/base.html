@@ -43,15 +43,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <script src="{% static 'js/theme.js' %}"></script>
+  <script src="{% static 'js/theme.js' %}?v=20261026-htmx"></script>
   {% include 'base/style.html' %}
 </head>
-<body>
+<body hx-boost="true" hx-target="#page-shell" hx-select="#page-shell" hx-swap="outerHTML show:window:top" hx-sync="body:queue all" hx-indicator="#navigation-status">
+  <p id="navigation-status" hidden class="htmx-indicator" role="status" aria-live="polite">Loading…</p>
+  <div id="page-shell">
   <a class="skip-link" href="#main">Skip to content</a>
   {% include 'layout/header.html' %}
   <main id="main">{% include 'base/messages.html' %}{% block content %}{% endblock %}</main>
   {% include 'layout/footer.html' %}
   {% include 'home/lightbox.html' %}
+  </div>
   {% include 'base/script.html' %}
 </body>
 </html>

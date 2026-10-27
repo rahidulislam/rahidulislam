@@ -44,3 +44,18 @@ Interested in mid-level Python and Django roles with teams in Germany. For oppor
 ## Backend development
 
 Engineering standards live in [AGENTS.md](AGENTS.md). See [backend architecture and migration guidance](docs/ARCHITECTURE.md) for domain ownership, compatibility, deployment, and rollback. Install `requirements-dev.txt`, run `python -m playwright install --only-shell chromium` for browser tests (use `--with-deps` on a fresh Linux machine), and run `python scripts/check_backend.py` before submitting a PR to `dev`.
+
+### Progressive navigation
+
+Public links and forms use locally vendored HTMX 2.0.11 to replace `#page-shell`
+without reloading the document. Page titles, canonical/social metadata, mobile
+navigation, theme controls, and lightboxes are refreshed after navigation.
+Downloads, lightbox links, and the language switch retain native behavior.
+Contact forms retain Django validation and CSRF protection; submit buttons are
+disabled while a submission is pending. JavaScript-free navigation still works.
+
+HTMX history storage is disabled to avoid saving contact values and CSRF tokens
+to localStorage. Back/forward navigation therefore reloads from the server.
+The vendored library and Zero-Clause BSD license are in `static/vendor/htmx/`.
+Run `python manage.py test apps.portfolio.tests.test_htmx_navigation` after
+installing the development requirements and Playwright Chromium.
