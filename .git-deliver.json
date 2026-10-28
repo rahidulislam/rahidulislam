@@ -10,5 +10,10 @@
   "promotions": {
     "staging": "dev",
     "main": "staging"
-  }
+  },
+  "sync_branches": [
+    "dev",
+    "staging",
+    "main"
+  ]
 }

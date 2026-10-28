@@ -215,3 +215,53 @@ python scripts/git-deliver.py --promote main
 যোগ করুন। Mapping না থাকলে promotion বন্ধ থাকবে। Content একই হলে নতুন PR
 তৈরি হবে না। `--promote staging --plan` শুধু পরিকল্পনা দেখায়।
 এই command নিজে merge, branch-history sync, protection bypass বা deploy করে না।
+
+## Merge-এর পরে branch sync
+
+```bash
+python scripts/git-deliver.py --sync dev staging
+```
+
+এটি remote থেকে fetch করে স্থানীয় `dev`-কে `origin/dev` এবং `staging`-কে
+`origin/staging`-এর সঙ্গে fast-forward করে। Checkout বদলানোর প্রয়োজন নেই।
+কোন branch ইতিমধ্যে সিঙ্ক আছে সেটিও জানায়। সব configured branch একসঙ্গে:
+
+```bash
+python scripts/git-deliver.py --sync
+```
+
+এই প্রজেক্টে config-এর `sync_branches` হলো `["dev", "staging", "main"]`।
+অন্য প্রজেক্টে এটি না থাকলে default base branch সিঙ্ক হবে।
+শুধু পরিকল্পনা দেখতে `--sync dev staging --plan` ব্যবহার করুন; কোনো fetch/update হবে না।
+
+সুরক্ষার আচরণ:
+
+- শুধু fast-forward অনুমোদিত। Local branch ahead/diverged হলে কোনো reset করবে না।
+- সব target আগে যাচাই হয়; একটি target অনিরাপদ হলে local branch আপডেট শুরু হয় না।
+  Remote-tracking refs fetch-এর মাধ্যমে আপডেট হতে পারে।
+- বর্তমান branch-এ unsaved changes এবং incoming tree পরিবর্তন থাকলে থামে;
+  নিজে stash/commit করে না। দুই commit-এর tree অভিন্ন হলে history-only fast-forward
+  করতে পারে, এবং স্থানীয় লেখা অক্ষত থাকে।
+- অন্য worktree-তে checkout থাকা target আপডেট করবে না; সেই path-এ `--repo` দিয়ে চালান।
+- Merge/rebase/conflict চললে আগে সেটি শেষ করতে বলবে।
+- কোনো background watcher নেই: merge শেষ হওয়ার পরে command চালাবেন, বা assistant
+  নির্দেশনা অনুযায়ী চালাবে।
+
+### staging-এর commit-এ dev আনতে
+
+```bash
+python scripts/git-deliver.py --sync dev --sync-source staging
+```
+
+এটি স্থানীয় `dev`-কে remote `staging`-এর commit-এ fast-forward করে, যদি ইতিহাস
+অনুমতি দেয়। Remote dev-ও আপডেট করতে স্পষ্টভাবে:
+
+```bash
+python scripts/git-deliver.py --sync dev --sync-source staging --push-sync
+```
+
+এটি force ছাড়া normal push করে। GitHub-এর PR-only rule থাকলে push প্রত্যাখ্যাত
+হতে পারে; local sync সংরক্ষিত থাকবে এবং স্ক্রিপ্ট কারণ জানিয়ে nonzero exit দেবে।
+Protection bypass বা স্বয়ংক্রিয় ruleset পরিবর্তন হবে না। Protected sync PR merge
+করলে নতুন merge commit যোগ হতে পারে—দুই remote branch-এর SHA সবসময় অভিন্ন
+করার নিশ্চয়তা দেওয়া যায় না। Default `--sync` কখনো remote branch-এ push করে না।
