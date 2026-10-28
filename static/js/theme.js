@@ -31,10 +31,14 @@
   });
   document.addEventListener('DOMContentLoaded', () => {
     apply();
-    document.querySelector('.theme-toggle')?.addEventListener('click', () => {
+  });
+  document.addEventListener('htmx:afterSwap', apply);
+  document.addEventListener('htmx:historyRestore', apply);
+  document.addEventListener('click', event => {
+    if (event.target.closest('.theme-toggle')) {
       choice = root.dataset.theme === 'dark' ? 'light' : 'dark';
       try { localStorage.setItem(key, choice); } catch (_) { /* Session-only preference. */ }
       apply();
-    });
+    }
   });
 })();
