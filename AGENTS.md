@@ -203,6 +203,13 @@ authorize implementation or publishing.
   `python scripts/git-deliver.py --promote staging` for dev -> staging, or
   `--promote main` for staging -> main after staging validation. The script
   creates/reuses the PR without requiring a title/body or branch switch.
+- After a requested PR has merged, or when the user requests remote sync, use
+  `python scripts/git-deliver.py --sync dev staging` (or the requested branches).
+  Default sync updates each local branch from its matching remote, without
+  switching checkout, stashing, resetting, or pushing. If the user explicitly
+  requests cross-branch alignment, use `--sync TARGET --sync-source SOURCE`;
+  add `--push-sync` only when remote alignment is authorized. Report protection
+  rejection honestly; equal code trees do not imply identical commit history.
 - Do not force-push, rewrite published history, merge PRs, promote a release,
   or deploy without the user's explicit authorization for that action.
 - Explicit user requests such as "local only", "do not commit", or
