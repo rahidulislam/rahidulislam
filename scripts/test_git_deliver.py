@@ -155,6 +155,82 @@ class DeliveryTests(unittest.TestCase):
             "codex/feature-new-task",
         )
 
+    def prepare_promotion(self):
+        self.config["promotions"] = {"staging": "dev", "main": "staging"}
+        (self.repo / ".git-deliver.json").write_text(json.dumps(self.config))
+        self.command("git", "push", "origin", f"{self.initial}:refs/heads/staging")
+        self.changed()
+        self.command("git", "add", "app.txt")
+        self.command("git", "commit", "-m", "fix: improve validation")
+        self.command("git", "push", "origin", "HEAD:refs/heads/dev")
+
+    def test_promotion_creates_pr_without_touching_local_work(self):
+        self.prepare_promotion()
+        (self.repo / "unrelated.txt").write_text("keep this work")
+        before = self.command("git", "status", "--porcelain").stdout
+        head = self.command("git", "rev-parse", "HEAD").stdout
+        result = self.deliver("--promote", "staging")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.command("git", "status", "--porcelain").stdout, before)
+        self.assertEqual(self.command("git", "rev-parse", "HEAD").stdout, head)
+        calls = [
+            json.loads(line) for line in (self.root / "gh.log").read_text().splitlines()
+        ]
+        creation = next(call for call in calls if call[:2] == ["pr", "create"])
+        self.assertEqual(creation[creation.index("--base") + 1], "staging")
+        self.assertEqual(creation[creation.index("--head") + 1], "dev")
+        self.assertFalse(any(call[:2] == ["pr", "merge"] for call in calls))
+
+    def test_promotion_reuses_existing_pr(self):
+        self.prepare_promotion()
+        self.env["GH_TEST_PRS"] = '[{"number":2,"url":"https://example.invalid/pr/2"}]'
+        result = self.deliver("--promote", "staging")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Existing promotion PR", result.stdout)
+        calls = [
+            json.loads(line) for line in (self.root / "gh.log").read_text().splitlines()
+        ]
+        self.assertFalse(any(call[:2] == ["pr", "create"] for call in calls))
+
+    def test_promotion_requires_route_and_rejects_commit_flags(self):
+        result = self.deliver("--promote", "staging")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse((self.root / "gh.log").exists())
+        self.prepare_promotion()
+        result = self.deliver("--promote", "staging", "--all")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse((self.root / "gh.log").exists())
+
+    def test_promotion_plan_does_not_call_github(self):
+        self.prepare_promotion()
+        result = self.deliver("--promote", "staging", "--plan")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse((self.root / "gh.log").exists())
+
+    def test_promotion_with_identical_remote_trees_does_not_create_pr(self):
+        self.prepare_promotion()
+        self.command("git", "push", "origin", "HEAD:refs/heads/staging")
+        result = self.deliver("--promote", "staging")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("No new content", result.stderr)
+        calls = [
+            json.loads(line) for line in (self.root / "gh.log").read_text().splitlines()
+        ]
+        self.assertFalse(any(call[:2] == ["pr", "create"] for call in calls))
+
+    def test_production_promotion_uses_staging_as_source(self):
+        self.prepare_promotion()
+        self.command("git", "push", "origin", f"{self.initial}:refs/heads/main")
+        self.command("git", "push", "origin", "HEAD:refs/heads/staging")
+        result = self.deliver("--promote", "main")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        calls = [
+            json.loads(line) for line in (self.root / "gh.log").read_text().splitlines()
+        ]
+        creation = next(call for call in calls if call[:2] == ["pr", "create"])
+        self.assertEqual(creation[creation.index("--base") + 1], "main")
+        self.assertEqual(creation[creation.index("--head") + 1], "staging")
+
 
 if __name__ == "__main__":
     unittest.main()

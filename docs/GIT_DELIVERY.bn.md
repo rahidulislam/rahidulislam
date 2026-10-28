@@ -172,7 +172,7 @@ git-deliver --repo /absolute/path/to/project --plan
 - Merge অনুমোদন আলাদা। History-sync PR-এর ক্ষেত্রে merge commit প্রয়োজন
   হতে পারে; squash/rebase দিয়ে ancestry sync ঠিক হয় না।
 - Remote push rejection বা branch protection থাকলে তা অতিক্রম করবে না।
-  Promotion PR (`dev → staging → main`) feature delivery থেকে আলাদা workflow।
+  Promotion-এর জন্য নিচের `--promote` command ব্যবহার করুন।
 
 ## ৬. স্ক্রিপ্টের tests
 
@@ -184,3 +184,34 @@ python3 -m unittest discover -s scripts -p test_git_deliver.py -v
 
 Tests অস্থায়ী স্থানীয় Git repository ও fake `gh` ব্যবহার করে। আসল GitHub-এ
 commit, push, PR বা merge করে না।
+
+## এক কমান্ডে release promotion
+
+```bash
+python scripts/git-deliver.py --promote staging
+```
+
+এটি সর্বশেষ remote `dev` থেকে `staging`-এ PR তৈরি করে। একই PR খোলা থাকলে
+সেটির লিংক দেয়। Branch বদলানো, নতুন commit, push, title বা description লেখা লাগে না।
+স্থানীয় পরিবর্তন অক্ষত থাকে। PR-এর CI remote commit যাচাই করবে; এই mode-এ
+স্থানীয় checks চালিয়ে remote commit যাচাই হয়েছে বলে দাবি করা হয় না।
+
+Staging-এ merge ও যাচাই করার পরে production promotion:
+
+```bash
+python scripts/git-deliver.py --promote main
+```
+
+এটি `staging → main` PR তৈরি/পুনর্ব্যবহার করে। অনুমোদিত রুটগুলো config-এ থাকে:
+
+```json
+"promotions": {
+  "staging": "dev",
+  "main": "staging"
+}
+```
+
+অন্য project-এ reuse করলে তার `.git-deliver.json`-এ এই mapping প্রয়োজন অনুযায়ী
+যোগ করুন। Mapping না থাকলে promotion বন্ধ থাকবে। Content একই হলে নতুন PR
+তৈরি হবে না। `--promote staging --plan` শুধু পরিকল্পনা দেখায়।
+এই command নিজে merge, branch-history sync, protection bypass বা deploy করে না।

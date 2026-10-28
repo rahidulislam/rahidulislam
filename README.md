@@ -79,3 +79,14 @@ See [the Bengali setup and reuse guide](docs/GIT_DELIVERY.bn.md) for installatio
 other projects, and the difference between automatic delivery and merge approval.
 The `Automatic Git delivery` section in `AGENTS.md` authorizes routine task
 commits, pushes, and PR creation; merging still needs explicit authorization.
+
+Release promotion needs only one command (no title/body or branch switch):
+
+```bash
+python scripts/git-deliver.py --promote staging  # dev -> staging
+python scripts/git-deliver.py --promote main     # staging -> main, after staging validation
+```
+
+Promotion uses fetched remote branches and reuses an existing PR. It preserves
+local work and leaves merging/deployment to explicit approval; repository CI
+validates the remote source commits. Allowed routes are in `.git-deliver.json`.
