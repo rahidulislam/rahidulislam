@@ -1,0 +1,27 @@
+{% extends 'dashboard/base.html' %}{% block content %}<div class="toolbar">
+<form class="filters" method="get" hx-boost="false">
+<label for="search">Search {{ resource.label|lower }}</label>
+<div class="filter-row">
+<input id="search" name="q" type="search" value="{{ query }}" maxlength="200" placeholder="Search by name or keyword">{% if parent %}<input type="hidden" name="{{ resource.parent }}" value="{{ parent }}">{% endif %}<button class="button" type="submit">Search</button>
+<a class="text-link" href="{% url 'dashboard:list' resource.key %}">Reset</a>
+</div>
+</form>{% if can_add %}<a class="button primary" href="{% url 'dashboard:add' resource.key %}{% if parent %}?{{ resource.parent }}={{ parent }}{% endif %}">+ Add {{ resource.model_name|default:'record' }}</a>{% endif %}</div>
+<section class="panel">
+<div class="panel-heading">
+<h2>{{ resource.label }}</h2>
+<span class="muted small">{{ page.paginator.count }} records</span>
+</div>{% if rows %}<div class="table-scroll">
+<table>
+<thead>
+<tr>{% for header in headers %}<th scope="col">{{ header|capfirst }}</th>{% endfor %}<th scope="col">Action</th>
+</tr>
+</thead>
+<tbody>{% for row in rows %}<tr>{% for cell in row.cells %}<td>{{ cell|truncatechars:100 }}</td>{% endfor %}<td>
+<a class="text-link" href="{% url 'dashboard:edit' resource.key row.object.pk %}" aria-label="Edit {{ row.object }}">Edit →</a>
+</td>
+</tr>{% endfor %}</tbody>
+</table>
+</div>{% else %}<div class="empty">
+<h3>No records found.</h3>
+<p>{% if query or parent %}Try another search or reset the filters.{% else %}Add your first record to get started.{% endif %}</p>
+</div>{% endif %}{% include 'dashboard/pagination.html' %}</section>{% endblock %}

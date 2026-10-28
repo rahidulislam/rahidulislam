@@ -1,0 +1,78 @@
+{% extends 'dashboard/base.html' %}{% block content %}<p class="intro">Understand which pages bring people to your work.</p>
+<form class="filters panel" method="get" hx-boost="false">{{ form.non_field_errors }}<div class="filter-row">{% for field in form %}<div>{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}<button class="button primary" type="submit">Update report</button>
+</div>
+<p class="help">Custom dates apply when “Custom dates” is selected. Dates use the server's configured timezone (UTC).</p>
+</form>{% if report %}{% if report.has_data %}<div class="stat-grid analytics-stats">
+<article class="stat">
+<p>Total page views</p>
+<strong>{{ report.total_views }}</strong>
+<span>{{ form.cleaned_data.start|date:'j M Y' }} – {{ form.cleaned_data.end|date:'j M Y' }}</span>
+</article>
+<article class="stat">
+<p>Estimated visitor-days</p>
+<strong>{{ report.visitor_days }}</strong>
+<span>Daily unique estimates added across this range</span>
+</article>
+<article class="stat">
+<p>Tracking since</p>
+<strong class="date-stat">{{ report.tracking_since|date:'j M Y' }}</strong>
+<span>Earlier dates have no data</span>
+</article>
+</div>
+<section class="panel">
+<div class="panel-heading">
+<h2>Daily traffic</h2>
+<span class="pill">Page views</span>
+</div>
+<div class="traffic-chart" role="img" aria-label="Daily page view bar chart. Exact values are in the table below.">{% for day in report.days %}<div class="chart-column" title="{{ day.date|date:'j M' }}: {{ day.views }} views">
+<div class="chart-bar" style="height:{{ day.percent }}%">
+</div>
+<span>{{ day.date|date:'j M' }}</span>
+</div>{% endfor %}</div>
+<details class="data-details">
+<summary>Show daily values</summary>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th scope="col">Date</th>
+<th scope="col">Page views</th>
+<th scope="col">Estimated visitors</th>
+</tr>
+</thead>
+<tbody>{% for day in report.days %}<tr>
+<td>{{ day.date|date:'Y-m-d' }}</td>
+<td>{{ day.views }}</td>
+<td>{{ day.visitors }}</td>
+</tr>{% endfor %}</tbody>
+</table>
+</div>
+</details>
+</section>
+<div class="two-column">
+<section class="panel">
+<div class="panel-heading">
+<h2>Popular pages</h2>
+<span class="muted small">Top 20</span>
+</div>{% for item in report.pages %}<div class="activity-row">
+<span class="path">{{ item.path }}</span>
+<strong>{{ item.views }}</strong>
+</div>{% empty %}<p class="empty">No page views in this range.</p>{% endfor %}</section>
+<section class="panel">
+<div class="panel-heading">
+<h2>Traffic sources</h2>
+<span class="muted small">Top 20</span>
+</div>{% for item in report.referrers %}<div class="activity-row">
+<span class="path">{{ item.domain|default:'Direct / internal / unknown' }}</span>
+<strong>{{ item.views }}</strong>
+</div>{% empty %}<p class="empty">No referrers in this range.</p>{% endfor %}</section>
+</div>{% else %}<section class="panel empty">
+<h2>No data</h2>
+<p>Tracking starts with this installation. Visits before tracking began are unavailable.</p>
+</section>{% endif %}{% endif %}<section class="callout">
+<div>
+<p class="eyebrow">HOW TO READ THESE NUMBERS</p>
+<h2>Estimates with clear boundaries.</h2>
+<p>No cookies, raw IP addresses, full user agents or query strings are stored. A daily rotating hash estimates unique visitors; shared networks and changing devices affect accuracy. Visitor-days are not unique people across the whole range. Known bots, signed-in users and management pages are excluded. Event details expire after 90 days; daily totals remain.</p>
+</div>
+</section>{% endblock %}

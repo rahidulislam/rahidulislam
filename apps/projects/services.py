@@ -1,6 +1,11 @@
 from collections.abc import Callable
 
+from django.contrib.admin.models import ADDITION, CHANGE, DELETION
+from django.contrib.auth.models import AbstractBaseUser
 from django.db import transaction
+
+from core.audit import record_change
+from core.uploads import clean_failed_uploads
 
 from .content import fallback_projects
 from .models import (
@@ -9,6 +14,7 @@ from .models import (
     Project,
     ProjectImage,
     ProjectMetric,
+    ProjectVideo,
 )
 
 PROJECT_FIELDS = (
@@ -138,3 +144,37 @@ class CatalogImporter:
                     "order": item.get("order", order),
                 },
             )
+
+
+Content = (
+    Category
+    | EngineeringChallenge
+    | Project
+    | ProjectImage
+    | ProjectMetric
+    | ProjectVideo
+)
+
+
+def save_content(
+    *, obj: Content, actor: AbstractBaseUser, changed_fields: list[str]
+) -> Content:
+    with clean_failed_uploads([obj]), transaction.atomic():
+        adding = obj.pk is None
+        obj.full_clean()
+        obj.save()
+        record_change(
+            actor=actor,
+            obj=obj,
+            action=ADDITION if adding else CHANGE,
+            message="Dashboard fields: " + ", ".join(changed_fields),
+        )
+    return obj
+
+
+def delete_content(*, obj: Content, actor: AbstractBaseUser) -> None:
+    with transaction.atomic():
+        record_change(
+            actor=actor, obj=obj, action=DELETION, message="Deleted from dashboard"
+        )
+        obj.delete()

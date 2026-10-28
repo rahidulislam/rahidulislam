@@ -43,6 +43,10 @@ Noakhali Ideal Polytechnic Institute, Bangladesh · 2011–2015
 
 Interested in mid-level Python and Django roles with teams in Germany. For opportunities or questions about my work, contact [rahidulislam247@gmail.com](mailto:rahidulislam247@gmail.com).
 
+## Owner dashboard
+
+Manage portfolio content, enquiries and cookie-free traffic estimates at `/dashboard/` using an active superuser account. See [dashboard setup, analytics definitions and retention](docs/DASHBOARD.md). Run migrations and collect static assets before enabling the workspace, and schedule the daily analytics purge command.
+
 ## Backend development
 
 Engineering standards live in [AGENTS.md](AGENTS.md). See [backend architecture and migration guidance](docs/ARCHITECTURE.md) for domain ownership, compatibility, deployment, and rollback. Install `requirements-dev.txt`, run `python -m playwright install --only-shell chromium` for browser tests (use `--with-deps` on a fresh Linux machine), and run `python scripts/check_backend.py` before submitting a PR to `dev`.

@@ -45,6 +45,6 @@ def sitemap_xml(request: HttpRequest) -> HttpResponse:
 def robots_txt(request: HttpRequest) -> HttpResponse:
     sitemap = request.build_absolute_uri(reverse("home:sitemap"))
     return HttpResponse(
-        f"User-agent: *\nAllow: /\nDisallow: /admin/\nSitemap: {sitemap}\n",
+        f"User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /dashboard/\nSitemap: {sitemap}\n",
         content_type="text/plain",
     )

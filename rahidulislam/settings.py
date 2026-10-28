@@ -60,16 +60,20 @@ INSTALLED_APPS = [
     "apps.contacts",
     "apps.portfolio",
     "apps.resumes",
+    "apps.dashboard",
+    "apps.analytics",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "apps.dashboard.middleware.PrivateDashboardMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "apps.analytics.middleware.NavigationAnalyticsMiddleware",
 ]
 
 ROOT_URLCONF = "rahidulislam.urls"
@@ -203,4 +207,11 @@ TEMPLATES[0]["OPTIONS"]["context_processors"].append(
 AUTHENTICATION_BACKENDS = [
     "core.auth.LegacyPermissionBackend",
     "django.contrib.auth.backends.ModelBackend",  # Keep existing sessions valid.
+]
+
+# Only exact proxy addresses under our control may supply analytics client IPs.
+ANALYTICS_TRUSTED_PROXIES = [
+    value.strip()
+    for value in os.environ.get("ANALYTICS_TRUSTED_PROXIES", "").split(",")
+    if value.strip()
 ]
