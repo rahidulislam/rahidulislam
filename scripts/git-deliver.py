@@ -225,6 +225,184 @@ def promote(root, config, args):
     print("Promotion PR created. It has not been merged or deployed.")
 
 
+def is_ancestor(root, before, after):
+    result = run(
+        ["git", "merge-base", "--is-ancestor", before, after],
+        root,
+        capture=True,
+        check=False,
+    )
+    if result.returncode not in (0, 1):
+        fail("Unable to compare branch ancestry.")
+    return result.returncode == 0
+
+
+def sync_branches(root, config, args):
+    if (
+        args.init
+        or args.start
+        or args.promote
+        or args.base
+        or args.files
+        or args.all
+        or args.message
+        or args.title
+        or args.body_file
+        or args.draft
+    ):
+        fail("--sync cannot be combined with delivery or promotion flags.")
+    branches = args.sync if args.sync else config.get("sync_branches", [config["base"]])
+    if (
+        not isinstance(branches, list)
+        or not branches
+        or any(
+            not isinstance(branch, str) or not branch or branch.startswith("-")
+            for branch in branches
+        )
+    ):
+        fail("sync_branches must be a nonempty list of branch names.")
+    if len(set(branches)) != len(branches):
+        fail("Each sync branch must be specified once.")
+    if args.sync_source and len(branches) != 1:
+        fail(
+            "--sync-source requires exactly one target: --sync dev --sync-source staging."
+        )
+    if args.push_sync and not args.sync_source:
+        fail(
+            "--push-sync requires an explicit --sync-source and a single target branch."
+        )
+    source_branches = list(
+        dict.fromkeys([*branches, *([args.sync_source] if args.sync_source else [])])
+    )
+    for branch in source_branches:
+        if not isinstance(branch, str) or branch.startswith("-"):
+            fail("Invalid sync source branch.")
+        git(root, "check-ref-format", "--branch", branch)
+    remote = config["remote"]
+    if args.plan:
+        print(
+            json.dumps(
+                {
+                    "targets": branches,
+                    "source": args.sync_source or "matching remote branches",
+                    "remote": remote,
+                    "push": args.push_sync,
+                    "policy": "fast-forward only; no stash, reset, checkout switch, force push, or protection bypass",
+                },
+                indent=2,
+            )
+        )
+        return
+    for operation in (
+        "MERGE_HEAD",
+        "CHERRY_PICK_HEAD",
+        "REVERT_HEAD",
+        "rebase-merge",
+        "rebase-apply",
+    ):
+        if (root / git(root, "rev-parse", "--git-path", operation)).exists():
+            fail("Finish or abort the current Git operation before syncing.")
+    if git(root, "diff", "--name-only", "--diff-filter=U"):
+        fail("Resolve current conflicts before syncing.")
+    run(
+        [
+            "git",
+            "fetch",
+            "--no-tags",
+            remote,
+            *[
+                f"refs/heads/{branch}:refs/remotes/{remote}/{branch}"
+                for branch in source_branches
+            ],
+        ],
+        root,
+    )
+    current = git(root, "branch", "--show-current")
+    occupied = {}
+    location = None
+    for line in git(root, "worktree", "list", "--porcelain").splitlines():
+        if line.startswith("worktree "):
+            location = Path(line.removeprefix("worktree ")).resolve()
+        elif line.startswith("branch refs/heads/"):
+            occupied[line.removeprefix("branch refs/heads/")] = location
+    plans = []
+    for branch in branches:
+        if branch in occupied and occupied[branch] != root.resolve():
+            fail(
+                f"{branch} is checked out in another worktree: {occupied[branch]}. Run --repo there."
+            )
+        remote_target = git(root, "rev-parse", f"refs/remotes/{remote}/{branch}")
+        desired = git(
+            root, "rev-parse", f"refs/remotes/{remote}/{args.sync_source or branch}"
+        )
+        exists = run(
+            ["git", "show-ref", "--verify", "--quiet", f"refs/heads/{branch}"],
+            root,
+            capture=True,
+            check=False,
+        )
+        if exists.returncode not in (0, 1):
+            fail(f"Unable to read local branch {branch}.")
+        before = (
+            git(root, "rev-parse", f"refs/heads/{branch}")
+            if exists.returncode == 0
+            else None
+        )
+        if before and not is_ancestor(root, before, desired):
+            fail(
+                f"{branch} is ahead of or diverged from the sync source. No local branches were changed; review its commits. No reset or force push was attempted."
+            )
+        if args.sync_source and not is_ancestor(root, remote_target, desired):
+            fail(
+                "Remote target cannot fast-forward to the requested source. No local branches were changed."
+            )
+        if (
+            branch == current
+            and before != desired
+            and git(root, "status", "--porcelain")
+        ):
+            if git(root, "rev-parse", f"{before}^{{tree}}") != git(
+                root, "rev-parse", f"{desired}^{{tree}}"
+            ):
+                fail(
+                    f"{branch} has local changes and its tree would change. Preserve your work or use an isolated worktree. Nothing was stashed or reset."
+                )
+        plans.append((branch, before, desired))
+    # Preflight every branch before changing any local ref. Git commands retain
+    # their own locks and compare-and-swap / fast-forward checks for races.
+    for branch, before, desired in plans:
+        if before == desired:
+            print(f"{branch}: already synced at {desired[:12]}")
+        elif branch == current:
+            run(["git", "merge", "--ff-only", desired], root)
+            print(f"{branch}: synced at {desired[:12]}")
+        elif before is None:
+            run(["git", "branch", branch, desired], root)
+            run(["git", "branch", f"--set-upstream-to={remote}/{branch}", branch], root)
+            print(f"{branch}: created at {desired[:12]}")
+        else:
+            run(["git", "update-ref", f"refs/heads/{branch}", desired, before], root)
+            print(f"{branch}: synced at {desired[:12]}")
+    if args.push_sync:
+        result = run(
+            [
+                "git",
+                "push",
+                remote,
+                f"{plans[0][2]}:refs/heads/{branches[0]}",
+            ],
+            root,
+            check=False,
+        )
+        if result.returncode:
+            fail(
+                "Normal sync push was rejected. Local sync remains saved; remote was not bypassed. For PR-only branches, a protected sync PR may be required; it may add a merge commit rather than make both SHA values identical."
+            )
+    print(
+        "Sync complete. Local edits and the active checkout were preserved; no PR was merged."
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -239,6 +417,22 @@ def main():
         "--promote",
         choices=("staging", "main"),
         help="Create/reuse the configured release promotion PR",
+    )
+    parser.add_argument(
+        "--sync",
+        nargs="*",
+        metavar="BRANCH",
+        help="Fast-forward local branches from remote (defaults to sync_branches)",
+    )
+    parser.add_argument(
+        "--sync-source",
+        metavar="BRANCH",
+        help="Use this remote branch as the source for one --sync target",
+    )
+    parser.add_argument(
+        "--push-sync",
+        action="store_true",
+        help="Explicit normal push after --sync-source; protections are honored",
     )
     parser.add_argument("--base", help="PR target branch; also used by --start")
     parser.add_argument(
@@ -271,6 +465,10 @@ def main():
     )
     args = parser.parse_args()
     root = Path(git(Path(args.repo).resolve(), "rev-parse", "--show-toplevel"))
+    if (args.sync_source or args.push_sync) and args.sync is None:
+        fail("--sync-source and --push-sync require --sync.")
+    if args.init and args.sync is not None:
+        fail("--init cannot be combined with --sync.")
     if args.init and args.promote:
         fail("--init cannot be combined with --promote.")
     if args.init:
@@ -280,6 +478,9 @@ def main():
     if args.base:
         config["base"] = args.base
     validate_config(config)
+    if args.sync is not None:
+        sync_branches(root, config, args)
+        return
     if args.promote:
         promote(root, config, args)
         return

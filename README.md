@@ -90,3 +90,16 @@ python scripts/git-deliver.py --promote main     # staging -> main, after stagin
 Promotion uses fetched remote branches and reuses an existing PR. It preserves
 local work and leaves merging/deployment to explicit approval; repository CI
 validates the remote source commits. Allowed routes are in `.git-deliver.json`.
+
+After merging a PR, sync local branches from the configured remote:
+
+```bash
+python scripts/git-deliver.py --sync dev staging
+python scripts/git-deliver.py --sync  # configured dev, staging, main
+```
+
+Sync is fast-forward only and does not switch the checkout, stash, reset, or push
+by default. An ahead/diverged branch or an unsafe dirty checkout stops the update.
+For explicit post-promotion ancestry alignment, use `--sync dev --sync-source staging`;
+add `--push-sync` only to attempt a normal remote push. PR-only protections may
+reject that push even when local branches have the same commit.
