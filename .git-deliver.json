@@ -1,0 +1,19 @@
+{
+  "base": "dev",
+  "remote": "origin",
+  "checks": [
+    [
+      "python",
+      "scripts/check_backend.py"
+    ]
+  ],
+  "promotions": {
+    "staging": "dev",
+    "main": "staging"
+  },
+  "sync_branches": [
+    "dev",
+    "staging",
+    "main"
+  ]
+}

@@ -13,6 +13,16 @@ def main() -> None:
     commands = [
         [sys.executable, "-m", "ruff", "check", "."],
         [sys.executable, "-m", "black", "--check", "."],
+        [
+            sys.executable,
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "scripts",
+            "-p",
+            "test_git_deliver.py",
+        ],
         [sys.executable, "manage.py", "check"],
         [sys.executable, "manage.py", "makemigrations", "--check", "--dry-run"],
         [sys.executable, "manage.py", "test", "--noinput"],

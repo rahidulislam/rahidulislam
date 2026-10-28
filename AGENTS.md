@@ -173,3 +173,47 @@ main <- staging <- dev <- isolated feature/fix branch
 - `home` retains historical migrations and compatibility imports only. Do not add new business logic there.
 - Preserve existing tables, records, URL names, localization, and admin access when moving models.
 - Run `python scripts/check_backend.py` for the backend quality gate.
+
+## Automatic Git delivery
+
+For code or documentation implementation tasks in this repository, the user
+authorizes the assistant to run configured checks, create meaningful commits,
+push the task branch, and create or update its GitHub pull request without
+asking separately for those routine steps. Apply this only to the current task;
+preserve unrelated work. Questions, planning, and code reviews alone do not
+authorize implementation or publishing.
+
+- Read `.git-deliver.json` and the repository instructions first. If the config
+  does not exist, initialize it and configure real project checks before delivery.
+- Before implementation, use `python scripts/git-deliver.py --start feature-DESCRIPTIVE-TASK`
+  on a clean checkout, or continue a suitable existing task branch. If unrelated
+  changes exist, use an isolated worktree. Do not stage or stash someone else's work.
+- After implementation, review the diff, write a concrete commit message and a
+  reviewer-facing PR description, then run:
+  `python scripts/git-deliver.py --files EXACT TASK FILES --message "TYPE: concrete change" --body-file /tmp/task-pr.md`
+- Use explicit task files; `--all` is allowed only when every nonignored change
+  belongs to the task. Run additional checks required by the repository even if
+  they are not yet configured in `.git-deliver.json`.
+- If the command fails, fix task-caused failures and retry. Never claim checks
+  passed unless they actually ran successfully. Do not weaken checks or bypass
+  branch protections. Stop and report unavailable credentials or permissions.
+- Reuse an existing task PR. Check its CI and review state, attach created PRs
+  when the host provides an attachment tool, and report its URL and any pending work.
+- When the user requests a release promotion, use
+  `python scripts/git-deliver.py --promote staging` for dev -> staging, or
+  `--promote main` for staging -> main after staging validation. The script
+  creates/reuses the PR without requiring a title/body or branch switch.
+- After a requested PR has merged, or when the user requests remote sync, use
+  `python scripts/git-deliver.py --sync dev staging` (or the requested branches).
+  Default sync updates each local branch from its matching remote, without
+  switching checkout, stashing, resetting, or pushing. If the user explicitly
+  requests cross-branch alignment, use `--sync TARGET --sync-source SOURCE`;
+  add `--push-sync` only when remote alignment is authorized. Report protection
+  rejection honestly; equal code trees do not imply identical commit history.
+- Do not force-push, rewrite published history, merge PRs, promote a release,
+  or deploy without the user's explicit authorization for that action.
+- Explicit user requests such as "local only", "do not commit", or
+  "do not push" override automatic delivery for that task.
+
+This rule applies when an assistant is working on a task. It is not a background
+watcher and does not run on every file save.

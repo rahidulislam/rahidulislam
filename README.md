@@ -44,3 +44,62 @@ Interested in mid-level Python and Django roles with teams in Germany. For oppor
 ## Backend development
 
 Engineering standards live in [AGENTS.md](AGENTS.md). See [backend architecture and migration guidance](docs/ARCHITECTURE.md) for domain ownership, compatibility, deployment, and rollback. Install `requirements-dev.txt`, run `python -m playwright install --only-shell chromium` for browser tests (use `--with-deps` on a fresh Linux machine), and run `python scripts/check_backend.py` before submitting a PR to `dev`.
+
+### Progressive navigation
+
+Public links and forms use locally vendored HTMX 2.0.11 to replace `#page-shell`
+without reloading the document. Page titles, canonical/social metadata, mobile
+navigation, theme controls, and lightboxes are refreshed after navigation.
+Downloads, lightbox links, and the language switch retain native behavior.
+Contact forms retain Django validation and CSRF protection; submit buttons are
+disabled while a submission is pending. JavaScript-free navigation still works.
+
+HTMX history storage is disabled to avoid saving contact values and CSRF tokens
+to localStorage. Back/forward navigation therefore reloads from the server.
+The vendored library and Zero-Clause BSD license are in `static/vendor/htmx/`.
+Run `python manage.py test apps.portfolio.tests.test_htmx_navigation` after
+installing the development requirements and Playwright Chromium.
+
+### Automatic Git delivery
+
+Task completion includes checks, a meaningful commit, push, and GitHub PR creation
+or reuse. The repository-local script requires Python and authenticated `gh`:
+
+```bash
+# Start before implementation, from a clean checkout
+python scripts/git-deliver.py --start feature-task-name
+
+# After implementation: use exact files belonging to this task
+python scripts/git-deliver.py --files path/to/changed-file --message "fix: describe the actual change"
+```
+
+`.git-deliver.json` targets `dev` and runs the backend quality gate, including
+delivery-script integration tests. Use the development Python environment.
+See [the Bengali setup and reuse guide](docs/GIT_DELIVERY.bn.md) for installation,
+other projects, and the difference between automatic delivery and merge approval.
+The `Automatic Git delivery` section in `AGENTS.md` authorizes routine task
+commits, pushes, and PR creation; merging still needs explicit authorization.
+
+Release promotion needs only one command (no title/body or branch switch):
+
+```bash
+python scripts/git-deliver.py --promote staging  # dev -> staging
+python scripts/git-deliver.py --promote main     # staging -> main, after staging validation
+```
+
+Promotion uses fetched remote branches and reuses an existing PR. It preserves
+local work and leaves merging/deployment to explicit approval; repository CI
+validates the remote source commits. Allowed routes are in `.git-deliver.json`.
+
+After merging a PR, sync local branches from the configured remote:
+
+```bash
+python scripts/git-deliver.py --sync dev staging
+python scripts/git-deliver.py --sync  # configured dev, staging, main
+```
+
+Sync is fast-forward only and does not switch the checkout, stash, reset, or push
+by default. An ahead/diverged branch or an unsafe dirty checkout stops the update.
+For explicit post-promotion ancestry alignment, use `--sync dev --sync-source staging`;
+add `--push-sync` only to attempt a normal remote push. PR-only protections may
+reject that push even when local branches have the same commit.
