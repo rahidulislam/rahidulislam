@@ -6,5 +6,9 @@
       "python",
       "scripts/check_backend.py"
     ]
-  ]
+  ],
+  "promotions": {
+    "staging": "dev",
+    "main": "staging"
+  }
 }

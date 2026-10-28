@@ -110,6 +110,121 @@ def initialize(root, base):
         )
 
 
+def github_repo(root, remote):
+    repository = git(root, "remote", "get-url", remote)
+    ssh_remote = re.fullmatch(r"[^@]+@([^:]+):(.+)", repository)
+    if ssh_remote:
+        repository = "https://" + ssh_remote[1] + "/" + ssh_remote[2]
+    return repository.removesuffix(".git")
+
+
+def promote(root, config, args):
+    if args.init or args.start or args.base or args.files or args.all or args.message:
+        fail(
+            "--promote cannot be combined with init/start/base/message/file selection."
+        )
+    routes = config.get("promotions", {})
+    if not isinstance(routes, dict):
+        fail("promotions must map target branches to their source branches.")
+    source = routes.get(args.promote)
+    target = args.promote
+    if (
+        not isinstance(source, str)
+        or not source
+        or source.startswith("-")
+        or source == target
+    ):
+        fail(
+            f"Configure promotions.{target} with the permitted source branch in {CONFIG}."
+        )
+    if args.plan:
+        print(
+            json.dumps(
+                {
+                    "source": source,
+                    "target": target,
+                    "remote": config["remote"],
+                    "action": "create or reuse promotion PR; CI validates remote commits",
+                },
+                indent=2,
+            )
+        )
+        return
+    run(["git", "check-ref-format", "--branch", source], root)
+    run(["git", "check-ref-format", "--branch", target], root)
+    remote = config["remote"]
+    run(["gh", "auth", "status"], root)
+    run(["git", "fetch", remote, source, target], root)
+    repository = github_repo(root, remote)
+    prs = json.loads(
+        run(
+            [
+                "gh",
+                "pr",
+                "list",
+                "--repo",
+                repository,
+                "--base",
+                target,
+                "--head",
+                source,
+                "--state",
+                "open",
+                "--json",
+                "number,url",
+            ],
+            root,
+            capture=True,
+        ).stdout
+    )
+    if prs:
+        print("Existing promotion PR: " + prs[0]["url"])
+        return
+    comparison = f"{remote}/{target}..{remote}/{source}"
+    commits = git(root, "log", "--format=- %s", comparison)
+    difference = run(
+        ["git", "diff", "--quiet", f"{remote}/{target}", f"{remote}/{source}"],
+        root,
+        capture=True,
+        check=False,
+    )
+    if difference.returncode not in (0, 1):
+        fail("Unable to compare promotion branches.")
+    if not commits or difference.returncode == 0:
+        fail("No new content to promote; no PR was created.")
+    title = args.title or f"Promote {source} to {target}"
+    body = (
+        args.body_file.resolve().read_text()
+        if args.body_file
+        else (
+            f"Promote `{source}` to `{target}` for release validation.\n\n"
+            f"Source commit: `{git(root, 'rev-parse', f'{remote}/{source}')}`\n\n"
+            f"Changes:\n{commits}\n\n"
+            "Validation: this PR must pass repository CI before merge. "
+            "No local changes were committed or pushed; staging/production validation remains pending."
+        )
+    )
+    command = [
+        "gh",
+        "pr",
+        "create",
+        "--repo",
+        repository,
+        "--base",
+        target,
+        "--head",
+        source,
+        "--title",
+        title,
+        "--body",
+        body,
+    ]
+    if args.draft:
+        command.append("--draft")
+    run(command, root)
+    print("Promotion PR created. It has not been merged or deployed.")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -119,6 +234,11 @@ def main():
         "--init",
         action="store_true",
         help="Create project configuration; no commit/push",
+    )
+    parser.add_argument(
+        "--promote",
+        choices=("staging", "main"),
+        help="Create/reuse the configured release promotion PR",
     )
     parser.add_argument("--base", help="PR target branch; also used by --start")
     parser.add_argument(
@@ -151,6 +271,8 @@ def main():
     )
     args = parser.parse_args()
     root = Path(git(Path(args.repo).resolve(), "rev-parse", "--show-toplevel"))
+    if args.init and args.promote:
+        fail("--init cannot be combined with --promote.")
     if args.init:
         initialize(root, args.base)
         return
@@ -158,6 +280,9 @@ def main():
     if args.base:
         config["base"] = args.base
     validate_config(config)
+    if args.promote:
+        promote(root, config, args)
+        return
     base, remote = config["base"], config["remote"]
     branch = git(root, "branch", "--show-current")
     if not branch:
@@ -269,11 +394,7 @@ def main():
     if not git(root, "log", "--format=%H", f"{remote}/{base}..HEAD"):
         fail("No commits ahead of the base; nothing to publish.")
     run(["git", "push", "-u", remote, branch], root)
-    github_repository = git(root, "remote", "get-url", remote)
-    ssh_remote = re.fullmatch(r"[^@]+@([^:]+):(.+)", github_repository)
-    if ssh_remote:
-        github_repository = "https://" + ssh_remote[1] + "/" + ssh_remote[2]
-    github_repository = github_repository.removesuffix(".git")
+    github_repository = github_repo(root, remote)
     prs = json.loads(
         run(
             [
