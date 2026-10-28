@@ -1,5 +1,9 @@
 # Deployment
 
+Live site: https://rahidulislam.dev/
+
+Live Django admin: https://rahidulislam.dev/admin/
+
 For a step-by-step PythonAnywhere setup, see [Deploy to PythonAnywhere](deploy-pythonanywhere.md).
 For an Ubuntu VPS deployment with Nginx, Gunicorn, systemd, HTTPS, backups,
 and rollback steps, see [Deploy to AWS Lightsail](deploy-aws-lightsail.md).
