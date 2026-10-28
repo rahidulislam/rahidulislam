@@ -199,6 +199,10 @@ authorize implementation or publishing.
   branch protections. Stop and report unavailable credentials or permissions.
 - Reuse an existing task PR. Check its CI and review state, attach created PRs
   when the host provides an attachment tool, and report its URL and any pending work.
+- When the user requests a release promotion, use
+  `python scripts/git-deliver.py --promote staging` for dev -> staging, or
+  `--promote main` for staging -> main after staging validation. The script
+  creates/reuses the PR without requiring a title/body or branch switch.
 - Do not force-push, rewrite published history, merge PRs, promote a release,
   or deploy without the user's explicit authorization for that action.
 - Explicit user requests such as "local only", "do not commit", or
