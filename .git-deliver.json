@@ -1,0 +1,10 @@
+{
+  "base": "dev",
+  "remote": "origin",
+  "checks": [
+    [
+      "python",
+      "scripts/check_backend.py"
+    ]
+  ]
+}

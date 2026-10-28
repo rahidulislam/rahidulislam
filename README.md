@@ -59,3 +59,23 @@ to localStorage. Back/forward navigation therefore reloads from the server.
 The vendored library and Zero-Clause BSD license are in `static/vendor/htmx/`.
 Run `python manage.py test apps.portfolio.tests.test_htmx_navigation` after
 installing the development requirements and Playwright Chromium.
+
+### Automatic Git delivery
+
+Task completion includes checks, a meaningful commit, push, and GitHub PR creation
+or reuse. The repository-local script requires Python and authenticated `gh`:
+
+```bash
+# Start before implementation, from a clean checkout
+python scripts/git-deliver.py --start feature-task-name
+
+# After implementation: use exact files belonging to this task
+python scripts/git-deliver.py --files path/to/changed-file --message "fix: describe the actual change"
+```
+
+`.git-deliver.json` targets `dev` and runs the backend quality gate, including
+delivery-script integration tests. Use the development Python environment.
+See [the Bengali setup and reuse guide](docs/GIT_DELIVERY.bn.md) for installation,
+other projects, and the difference between automatic delivery and merge approval.
+The `Automatic Git delivery` section in `AGENTS.md` authorizes routine task
+commits, pushes, and PR creation; merging still needs explicit authorization.
