@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow">
 <meta name="htmx-config" content='{"historyCacheSize":0}'>
 <title>{{ title|default:"Sign in" }} · Portfolio workspace</title>
-<link rel="icon" href="{% static 'img/favicon.svg' %}">
+{% include "layout/site_icon.html" %}
 <link rel="stylesheet" href="{% static 'dashboard/dashboard.css' %}">
 <script defer src="{% static 'vendor/htmx/htmx.min.js' %}">
 </script>

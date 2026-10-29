@@ -215,3 +215,7 @@ ANALYTICS_TRUSTED_PROXIES = [
     for value in os.environ.get("ANALYTICS_TRUSTED_PROXIES", "").split(",")
     if value.strip()
 ]
+
+TEMPLATES[0]["OPTIONS"]["context_processors"].append(
+    "apps.portfolio.context_processors.site_branding"
+)

@@ -20,6 +20,8 @@ def main() -> None:
         with override_settings(STATIC_ROOT=directory):
             call_command("collectstatic", interactive=False, verbosity=0)
         for name in (
+            "css/branding.css",
+            "img/favicon.svg",
             "dashboard/dashboard.css",
             "dashboard/dashboard.js",
             "vendor/htmx/htmx.min.js",

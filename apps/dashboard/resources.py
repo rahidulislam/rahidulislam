@@ -12,7 +12,7 @@ from apps.articles.models import Article
 from apps.contacts import services as contacts
 from apps.contacts.models import PublicContact
 from apps.portfolio import services as portfolio
-from apps.portfolio.models import InformationCounter, Service, Testimonial
+from apps.portfolio.models import InformationCounter, Service, SiteBranding, Testimonial
 from apps.profiles import services as profiles
 from apps.profiles.models import (
     Education,
@@ -63,6 +63,19 @@ class Resource:
 
 
 RESOURCES = (
+    Resource(
+        "site-branding",
+        "Site branding",
+        "Site content",
+        SiteBranding,
+        ("brand_name", "logo", "logo_dark", "site_icon"),
+        ("brand_name", "updated_at"),
+        ("brand_name",),
+        portfolio.save_content,
+        portfolio.delete_content,
+        singleton=True,
+        deletable=False,
+    ),
     Resource(
         "projects",
         "Projects",

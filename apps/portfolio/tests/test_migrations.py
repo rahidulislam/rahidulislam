@@ -180,7 +180,10 @@ class DomainMigrationTests(TransactionTestCase):
                 return execute(sql, params, many, context)
 
             with connection.execute_wrapper(record):
-                moved = self.migrate(latest)
+                # Only ownership transfers must avoid DDL. New additive domain
+                # migrations (such as branding) legitimately create new tables.
+                moved = self.migrate([(domain, "0001_initial") for domain in DOMAINS])
+            moved = self.migrate(latest)
             self.assertEqual(self.snapshot(moved, legacy=False), before)
             for domain, names in DOMAINS.items():
                 for name in names:

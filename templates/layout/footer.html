@@ -1,7 +1,7 @@
 {% load portfolio_language %}<footer class="site-footer">
   <div class="container footer-top">
     <div class="footer-brand">
-      <a class="wordmark" href="{% url 'home:home' %}">rahidul<span>.</span></a>
+      <a class="wordmark" href="{% url 'home:home' %}" aria-label="{{ site_branding.brand_name|default:'Rahidul Islam' }} home">{% include "layout/brand_logo.html" %}</a>
       <p class="footer-tagline">{{ 'Python & Django Engineer · Building secure APIs and dependable business systems.'|translate:portfolio_language }}</p>
     </div>
     <nav class="footer-nav" aria-label="Footer navigation">
