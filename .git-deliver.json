@@ -3,6 +3,15 @@
   "remote": "origin",
   "checks": [
     [
+      "npm",
+      "run",
+      "check"
+    ],
+    [
+      "python",
+      "scripts/check_dashboard_assets.py"
+    ],
+    [
       "python",
       "scripts/check_backend.py"
     ]

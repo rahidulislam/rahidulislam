@@ -1,0 +1,5 @@
+{% load static %}{% if site_branding.site_icon %}
+<link rel="icon" href="{{ site_branding.site_icon.url }}?v={{ site_branding.updated_at|date:'U' }}">
+{% else %}
+<link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}?v=20261029">
+{% endif %}

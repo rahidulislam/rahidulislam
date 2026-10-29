@@ -1,0 +1,43 @@
+/* Shared, readable branding for both public themes. */
+.site-header .wordmark,
+.site-footer .wordmark {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ink);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.wordmark .brand-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+}
+.wordmark .brand-word {
+  color: var(--ink);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1.3;
+}
+.brand-symbol { width: 38px; height: 38px; flex-shrink: 0; }
+.brand-image {
+  display: inline-flex;
+  padding: 6px 10px;
+  background: #fff;
+  border: 1px solid #dce3e7;
+  border-radius: 6px;
+  max-width: 210px;
+}
+.brand-image img { width: 180px; height: 52px; object-fit: contain; }
+.brand-logo-dark { display: none; }
+:root[data-theme="dark"] .has-dark-logo { background: #101a23; border-color: #43505a; }
+:root[data-theme="dark"] .has-dark-logo .brand-logo-light { display: none; }
+:root[data-theme="dark"] .has-dark-logo .brand-logo-dark { display: block; }
+@media (max-width: 760px) {
+  .site-header .brand-image { max-width: 130px; padding: 4px 6px; }
+  .site-header .brand-image img { width: 116px; height: 38px; }
+  .site-header .brand-word { font-size: 21px; }
+  .site-header .brand-symbol { width: 30px; height: 30px; }
+  .site-header .brand-text { gap: 6px; }
+}

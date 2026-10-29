@@ -1,0 +1,14 @@
+{
+  "name": "portfolio-workspace",
+  "private": true,
+  "scripts": {
+    "lint": "eslint static/dashboard/dashboard.js static/js/navigation.js --max-warnings=0",
+    "typecheck": "tsc -p tsconfig.dashboard.json",
+    "check": "npm run lint && npm run typecheck"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.13.0",
+    "typescript": "7.0.2"
+  }
+}

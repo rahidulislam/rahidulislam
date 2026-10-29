@@ -1,0 +1,10 @@
+{% extends 'dashboard/base.html' %}{% block content %}<section class="panel narrow">
+<p class="eyebrow">PERMANENT ACTION</p>
+<h2>Delete “{{ obj }}”?</h2>
+<p>This will also delete the related records listed below. This action cannot be undone.</p>
+<ul>{% for entry in summary %}<li>{{ entry.count }} {{ entry.label }}</li>{% endfor %}</ul>{% if error %}<p role="alert" class="notice error">{{ error }}</p>{% endif %}<form method="post" hx-boost="false">{% csrf_token %}<div class="form-actions">
+<button class="button danger" type="submit">Delete permanently</button>
+<a class="button" href="{% url 'dashboard:edit' resource.key obj.pk %}">Keep record</a>
+</div>
+</form>
+</section>{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'dashboard/base.html' %}{% block content %}<form class="filters panel" method="get" hx-boost="false">
+<div class="filter-row">
+<div>
+<label for="q">Search messages</label>
+<input type="search" id="q" name="q" value="{{ query }}" placeholder="Name, email or message" maxlength="200">
+</div>
+<div>
+<label for="status">Message status</label>
+<select id="status" name="status">
+<option value="">All messages</option>{% for value,label in statuses %}<option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+</div>
+<button class="button primary" type="submit">Apply filters</button>
+<a class="text-link" href="{% url 'dashboard:inbox' %}">Reset</a>
+</div>
+</form>
+<section class="panel">
+<div class="panel-heading">
+<h2>Conversations</h2>
+<span class="muted small">{{ page.paginator.count }} messages</span>
+</div>{% for item in page %}<a class="activity-row message-row" href="{% url 'dashboard:enquiry' item.pk %}">
+<span>
+<strong>{{ item.subject }}</strong>
+<small>{{ item.name }} · {{ item.email }} · {{ item.created_at|date:'j M Y, H:i' }}</small>
+<span class="muted">{{ item.message|truncatechars:110 }}</span>
+</span>
+<span class="pill">{{ item.get_status_display }}</span>
+</a>{% empty %}<div class="empty">
+<h3>No messages found.</h3>
+<p>New contact enquiries will appear here. Try resetting any active filters.</p>
+</div>{% endfor %}{% include 'dashboard/pagination.html' %}</section>{% endblock %}
