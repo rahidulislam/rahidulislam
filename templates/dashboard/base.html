@@ -1,0 +1,59 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="htmx-config" content='{"historyCacheSize":0}'>
+<title>{{ title|default:"Sign in" }} · Portfolio workspace</title>
+{% include "layout/site_icon.html" %}
+<link rel="stylesheet" href="{% static 'dashboard/dashboard.css' %}">
+<script defer src="{% static 'vendor/htmx/htmx.min.js' %}">
+</script>
+<script defer src="{% static 'dashboard/dashboard.js' %}">
+</script>
+</head>
+<body hx-boost="true" hx-target="#dashboard-shell" hx-select="#dashboard-shell" hx-swap="outerHTML show:window:top" hx-indicator="#loading-status">
+<div id="dashboard-shell" hx-history="false">
+<a class="skip-link" href="#main">Skip to content</a>
+{% if request.user.is_authenticated and request.user.is_superuser %}
+<aside class="sidebar">
+<a class="brand" href="{% url 'dashboard:overview' %}">Rahidul Islam<span>PORTFOLIO WORKSPACE</span>
+</a>
+<details class="navigation" open>
+<summary>Workspace navigation</summary>
+<nav aria-label="Dashboard">
+<a href="{% url 'dashboard:overview' %}" {% if active == 'overview' %}aria-current="page"{% endif %}>Overview</a>
+<a href="{% url 'dashboard:analytics' %}" {% if active == 'analytics' %}aria-current="page"{% endif %}>Visitor analytics</a>
+<a href="{% url 'dashboard:inbox' %}" {% if active == 'inbox' %}aria-current="page"{% endif %}>Inbox</a>{% for group in nav_groups %}<p class="nav-label">{{ group.label }}</p>{% for link in group.items %}<a href="{% url 'dashboard:list' link.key %}" {% if active == link.key %}aria-current="page"{% endif %}>{{ link.label }}</a>{% endfor %}{% endfor %}</nav>
+</details>
+<div class="sidebar-footer">
+<a href="{% url 'home:home' %}" hx-boost="false">View public site ↗</a>
+<a href="{% url 'admin:index' %}" hx-boost="false">Django admin ↗</a>
+<form method="post" action="{% url 'dashboard:logout' %}" hx-boost="false">{% csrf_token %}<button class="quiet" type="submit">Sign out</button>
+</form>
+</div>
+</aside>
+<div class="workspace">
+<header class="topbar">
+<span class="eyebrow">YOUR PORTFOLIO, AT A GLANCE</span>
+<span class="account">{{ request.user.get_short_name|default:request.user.username }} <span class="pill">Owner</span>
+</span>
+</header>
+<main id="main" tabindex="-1">
+<header class="page-heading">
+<div>
+<p class="eyebrow">WORKSPACE / {{ active|default:'overview'|upper }}</p>
+<h1>{{ title }}</h1>
+</div>
+<time>{% now "j F Y" %}</time>
+</header>{% for message in messages %}<div role="status" class="notice {{ message.tags }}">{{ message }}</div>{% endfor %}{% block content %}{% endblock %}</main>
+<footer class="workspace-footer">Portfolio workspace <span>Private workspace · Owner access</span>
+</footer>
+</div>
+{% else %}<main id="main" class="login-layout">{% block login %}{% endblock %}</main>{% endif %}
+<p id="loading-status" class="htmx-indicator" role="status" aria-live="polite">Loading workspace…</p>
+<p id="request-error" class="notice error request-error" role="alert" hidden>The request failed. Your edits are still here. Check your connection and try again.</p>
+</div>
+</body>
+</html>

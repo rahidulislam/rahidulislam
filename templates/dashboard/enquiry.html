@@ -1,0 +1,22 @@
+{% extends 'dashboard/base.html' %}{% block content %}<a class="text-link back-link" href="{% url 'dashboard:inbox' %}">← Back to inbox</a>
+<div class="editor-layout">
+<article class="panel">
+<div class="panel-heading">
+<h2>{{ item.name }}</h2>
+<span class="pill">{{ item.get_status_display }}</span>
+</div>
+<p>
+<a href="mailto:{{ item.email }}" hx-boost="false">{{ item.email }}</a> · {{ item.created_at|date:'j M Y, H:i' }}</p>
+<div class="message-body">{{ item.message|linebreaksbr }}</div>
+</article>
+<aside class="panel">
+<h2>Message actions</h2>
+<p class="muted">Notification: <strong>{{ item.get_notification_status_display }}</strong>
+</p>
+<form method="post" hx-boost="false">{% csrf_token %}{{ form.errors }}<div class="stack-actions">
+<button class="button" name="action" value="read" type="submit">Mark read</button>
+<button class="button primary" name="action" value="replied" type="submit">Mark replied</button>{% if item.notification_status == 'failed' %}<button class="button" name="action" value="retry" type="submit">Retry failed notification</button>{% endif %}</div>
+</form>
+<p class="help">Marking replied records your progress. Send the reply through your email client.</p>
+</aside>
+</div>{% endblock %}

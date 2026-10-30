@@ -26,7 +26,7 @@
         status.textContent = 'Unable to load this page. Please open it again.';
         return;
       }
-      const selector = 'meta[name="description"], meta[property^="og:"], meta[name^="twitter:"], meta[property^="article:"], link[rel="canonical"], script[type="application/ld+json"]';
+      const selector = 'meta[name="description"], meta[property^="og:"], meta[name^="twitter:"], meta[property^="article:"], link[rel="canonical"], link[rel="icon"], script[type="application/ld+json"]';
       document.head.querySelectorAll(selector).forEach(node => node.remove());
       page.head.querySelectorAll(selector).forEach(node => document.head.append(node.cloneNode(true)));
       document.documentElement.lang = page.documentElement.lang;
@@ -36,7 +36,7 @@
   document.addEventListener('htmx:afterSettle', event => {
     if (event.detail.target.id !== 'page-shell') return;
     let fragment = window.location.hash.slice(1);
-    try { fragment = decodeURIComponent(fragment); } catch (_) { /* Keep malformed fragments literal. */ }
+    try { fragment = decodeURIComponent(fragment); } catch { /* Keep malformed fragments literal. */ }
     const target = (fragment && document.getElementById(fragment)) || document.getElementById('main');
     if (target) {
       target.setAttribute('tabindex', '-1');

@@ -1,0 +1,8 @@
+{% load static %}{% if site_branding.logo %}
+<span class="brand-image {% if site_branding.logo_dark %}has-dark-logo{% endif %}">
+  <img class="brand-logo-light" src="{{ site_branding.logo.url }}" alt="{{ site_branding.brand_name }}" width="180" height="52">
+  {% if site_branding.logo_dark %}<img class="brand-logo-dark" src="{{ site_branding.logo_dark.url }}" alt="{{ site_branding.brand_name }}" width="180" height="52">{% endif %}
+</span>
+{% else %}
+<span class="brand-text"><img class="brand-symbol" src="{% static 'img/favicon.svg' %}?v=20261030-navy-amber-logo" alt="" width="38" height="38"><span class="brand-word">{{ site_branding.brand_name|default:'rahidul.' }}</span></span>
+{% endif %}

@@ -1,0 +1,42 @@
+{% extends 'dashboard/base.html' %}{% block content %}<a class="text-link back-link" href="{% url 'dashboard:list' resource.key %}">← Back to {{ resource.label|lower }}</a>
+<div class="editor-layout">
+<section class="panel editor-panel">
+<form method="post" enctype="multipart/form-data" hx-boost="false" data-editor>{% csrf_token %}{% if form.errors %}<div class="notice error" role="alert">
+<strong>Please correct the errors below.</strong>{{ form.non_field_errors }}<ul>{% for field in form %}{% if field.errors %}<li>
+<a href="#{{ field.id_for_label }}">{{ field.label }}: {{ field.errors|striptags }}</a>
+</li>{% endif %}{% endfor %}</ul>
+</div>{% endif %}<div class="form-fields">
+{% for field in form %}
+{% if resource.key == 'projects' %}
+  {% if field.name == 'category' %}<h2 class="form-section">Project identity</h2>{% endif %}
+  {% if field.name == 'project_type' %}<h2 class="form-section">Case study</h2>{% endif %}
+  {% if field.name == 'url' %}<h2 class="form-section">Links and media</h2>{% endif %}
+  {% if field.name == 'is_published' %}<h2 class="form-section">Publishing</h2>{% endif %}
+  {% if field.name == 'client_name' %}<h2 class="form-section">Client details</h2>{% endif %}
+{% elif resource.key == 'articles' %}
+  {% if field.name == 'title' %}<h2 class="form-section">Article identity</h2>{% endif %}
+  {% if field.name == 'cover_image' %}<h2 class="form-section">Cover image</h2>{% endif %}
+  {% if field.name == 'summary' %}<h2 class="form-section">Introduction</h2>{% endif %}
+  {% if field.name == 'body' %}<h2 class="form-section">Content</h2>{% endif %}
+  {% if field.name == 'source_url' %}<h2 class="form-section">Publication</h2>{% endif %}
+{% endif %}
+<div class="field {% if field.field.widget.input_type == 'checkbox' %}checkbox-field{% endif %}">{{ field.label_tag }}{{ field }}{% if field.help_text %}<p class="help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</p>{% endif %}{{ field.errors }}{% if resource.key == 'articles' and field.name == 'body' or resource.key == 'articles' and field.name == 'body_bn' %}<button class="button preview-button" type="button" data-preview-field="{{ field.name }}" data-preview-url="{% url 'dashboard:preview' %}">Preview {% if field.name == 'body_bn' %}Bengali{% else %}English{% endif %} Markdown</button>{% endif %}</div>{% endfor %}</div>
+<div class="form-actions">
+<button class="button primary" type="submit">Save changes →</button>
+<a class="button" href="{% url 'dashboard:list' resource.key %}">Back to list</a>{% if obj and resource.deletable %}<a class="danger-link" href="{% url 'dashboard:delete' resource.key obj.pk %}">Delete record</a>{% endif %}</div>
+<p class="muted small save-note">Changes take effect on save. Publication and consent settings still apply.</p>
+</form>
+</section>
+<aside class="editor-aside">{% if related %}<section class="panel">
+<h2>Related content</h2>
+<p class="muted small">Manage the details belonging to this record.</p>{% for link in related %}<a class="related-link" href="{% url 'dashboard:list' link.key %}?{{ link.parent }}={{ obj.pk }}">{{ link.label }} →</a>{% endfor %}</section>{% endif %}{% if resource.key == 'articles' %}<section class="panel preview-panel" aria-labelledby="preview-heading">
+<h2 id="preview-heading">Markdown preview</h2>
+<p class="muted small" id="preview-status" role="status">Choose a preview button to render your unsaved text.</p>
+<div id="markdown-preview" class="markdown-content">
+</div>
+</section>{% else %}<section class="panel">
+<p class="eyebrow">CONTENT NOTES</p>
+<h2>Make every detail count.</h2>
+<p class="muted">Keep claims accurate, add meaningful image descriptions and review publication settings before saving.</p>
+</section>{% endif %}</aside>
+</div>{% endblock %}

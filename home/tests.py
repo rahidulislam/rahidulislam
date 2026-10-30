@@ -28,7 +28,7 @@ class PortfolioViewTests(TestCase):
 
     def test_native_responsive_navigation_is_loaded_without_bootstrap(self):
         response = self.client.get(reverse("home:home"))
-        self.assertContains(response, "css/portfolio.css?v=20261026-htmx")
+        self.assertContains(response, "css/portfolio.css?v=20261030-navy-amber")
         self.assertContains(response, "js/portfolio.js?v=20261026-htmx")
         self.assertContains(response, 'class="site-header"')
         self.assertContains(response, 'class="menu-toggle"')
