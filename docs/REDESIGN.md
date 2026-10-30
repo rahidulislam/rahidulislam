@@ -33,3 +33,24 @@ For this session dependencies were installed in `/tmp/portfolio-venv`. The previ
 Django tests cover homepage defaults and database records, project detail links, valid/invalid contact persistence, all curated case-study routes, and missing-case 404 behavior. Browser review covers desktop, 390px mobile, navigation, and contact layout.
 
 Before public deployment: confirm latest employer dates, add your preferred contact email and portrait in admin, and add approved public demo/source links and project screenshots. The repository still has its pre-existing development settings (DEBUG on, fixed development secret, old dependency pins); production configuration and dependency upgrades require a separate tested deployment pass. The redesign has not been deployed.
+
+## Navy/Amber public theme (October 2026)
+
+All public HTML pages share the theme in `static/css/color-scheme.css`, loaded
+last after the structural portfolio styles. Dark surfaces use `#081321` and
+`#101f33`, with `#f5b942` for actions. Light surfaces use `#f7f8fa` and white;
+inline amber text uses a darker shade for contrast. Existing accent variable
+names are retained as compatibility aliases for article and case-study styles.
+The engineering illustration stays navy in both themes. Brand imagery and
+semantic success/error colors retain their own meaning.
+
+The theme switch preserves the `portfolio-theme` preference, follows the system
+when no preference exists, and reapplies after HTMX navigation. Public layout
+changes do not alter admin, generated resume/PDF styles, routes or contact data.
+Edit source assets in `static/`; deployment collects generated static files.
+
+Validation: `npm ci --ignore-scripts && npm run check` and
+`python scripts/check_backend.py`. The theme browser regression covers stored
+preferences, HTMX navigation and overflow at 320, 390, 768 and 1440 pixels in both
+themes. Set `THEME_SCREENSHOT_DIR` to an external output directory when running
+`python manage.py test apps.portfolio.tests.test_public_theme` to capture pages.

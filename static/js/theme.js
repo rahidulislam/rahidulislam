@@ -6,7 +6,7 @@
   try {
     const stored = localStorage.getItem(key);
     if (stored === 'light' || stored === 'dark') choice = stored;
-  } catch (_) { /* The switch still works when storage is unavailable. */ }
+  } catch { /* The switch still works when storage is unavailable. */ }
   function apply() {
     const dark = choice ? choice === 'dark' : system.matches;
     root.dataset.theme = dark ? 'dark' : 'light';
@@ -18,7 +18,7 @@
       button.title = dark ? 'Enable light mode' : 'Enable dark mode';
     }
     document.querySelectorAll('meta[name="theme-color"]').forEach(meta => {
-      meta.content = dark ? '#101a23' : '#fafbfc';
+      meta.content = dark ? '#081321' : '#f7f8fa';
     });
   }
   apply();
@@ -37,7 +37,7 @@
   document.addEventListener('click', event => {
     if (event.target.closest('.theme-toggle')) {
       choice = root.dataset.theme === 'dark' ? 'light' : 'dark';
-      try { localStorage.setItem(key, choice); } catch (_) { /* Session-only preference. */ }
+      try { localStorage.setItem(key, choice); } catch { /* Session-only preference. */ }
       apply();
     }
   });
