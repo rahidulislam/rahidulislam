@@ -36,14 +36,14 @@
   {% if project %}<script type="application/ld+json">{"@context":"https://schema.org","@type":"CreativeWork","name":"{{ project.name|escapejs }}","description":"{{ project.short_desc|default:project.description|escapejs }}","url":"{{ canonical_url|escapejs }}","author":{"@type":"Person","name":"Md. Rahidul Islam"}{% if project.get_image_url %},"image":"{{ request.scheme }}://{{ request.get_host }}{{ project.get_image_url|escapejs }}"{% endif %}}</script>{% endif %}
   {% endwith %}
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#fafbfc" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#101a23" media="(prefers-color-scheme: dark)">
-  <link rel="icon" href="{% static 'img/favicon.svg' %}">
+  <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#081321" media="(prefers-color-scheme: dark)">
+  {% include "layout/site_icon.html" %}
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <script src="{% static 'js/theme.js' %}?v=20261026-htmx"></script>
+  <script src="{% static 'js/theme.js' %}?v=20261030-navy-amber"></script>
   {% include 'base/style.html' %}
 </head>
 <body hx-boost="true" hx-target="#page-shell" hx-select="#page-shell" hx-swap="outerHTML show:window:top" hx-sync="body:queue all" hx-indicator="#navigation-status">

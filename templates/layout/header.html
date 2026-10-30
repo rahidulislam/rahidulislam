@@ -1,6 +1,6 @@
 {% load portfolio_language %}<header class="site-header">
   <div class="container nav-wrap">
-    <a class="wordmark" href="{% url 'home:home' %}" aria-label="Rahidul Islam home">rahidul<span>.</span></a>
+    <a class="wordmark" href="{% url 'home:home' %}" aria-label="{{ site_branding.brand_name|default:'Rahidul Islam' }} home">{% include "layout/brand_logo.html" %}</a>
     <nav id="site-nav" aria-label="Main navigation">
       <a href="{% url 'home:projects' %}">{{ 'Projects'|translate:portfolio_language }}</a>
       <a href="{% url 'home:experience' %}">{{ 'Experience'|translate:portfolio_language }}</a>

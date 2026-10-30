@@ -1,0 +1,10 @@
+{% extends 'dashboard/base.html' %}{% block login %}<section class="login-card">
+<p class="eyebrow">RAHIDUL ISLAM / PORTFOLIO</p>
+<h1>Your workspace.</h1>
+<p class="muted">Sign in to manage your content and see how your portfolio is doing.</p>
+<form method="post" hx-boost="false">{% csrf_token %}{{ form.non_field_errors }}{% for field in form %}<div class="field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}<input type="hidden" name="next" value="{{ next }}">
+<button class="button primary" type="submit">Sign in →</button>
+</form>
+<p class="muted small">Only the site owner's active superuser account can sign in.</p>
+<a href="{% url 'home:home' %}" hx-boost="false">← Back to portfolio</a>
+</section>{% endblock %}

@@ -1,6 +1,6 @@
 from django.db.models import QuerySet
 
-from .models import InformationCounter, Service, Testimonial
+from .models import InformationCounter, Service, SiteBranding, Testimonial
 
 
 def published_testimonials() -> QuerySet[Testimonial]:
@@ -13,3 +13,7 @@ def information_counter_get() -> InformationCounter | None:
 
 def service_list() -> QuerySet[Service]:
     return Service.objects.all()
+
+
+def site_branding_get() -> SiteBranding | None:
+    return SiteBranding.objects.filter(pk=1).first()
