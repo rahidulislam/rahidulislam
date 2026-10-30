@@ -18,17 +18,17 @@
    CSS Variables & Design Tokens (Base Layout & Typography)
    -------------------------------------------------------------------------- */
 :root {
-  /* Typography */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --font-serif: Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --mono: var(--font-mono);
+  --font-serif: Georgia, serif;
+  --space-xs: 4px; --space-sm: 8px; --space-md: 16px; --space-lg: 24px;
+  --space-xl: 32px; --space-2xl: 48px; --space-3xl: 64px; --space-4xl: 96px;
+  --radius-sm: 8px; --radius-md: 14px; --radius-lg: 22px; --radius-full: 9999px;
+  --transition-fast: 150ms ease; --transition-base: 250ms ease; --transition-slow: 350ms ease;
+}
 
-/* Employer-facing minimal direction: neutral surfaces and one restrained accent. */
-:root{--paper:#fafbfc;--ink:#172b3a;--muted:#596773;--green:#176b64;--line:#dce3e7;--clay:#176b64}
-body{font-family:Arial,Helvetica,sans-serif}
-em{font-family:inherit;font-style:normal}
 .site-header{background:rgba(250,251,252,.98)}
-h1,h2,h3{letter-spacing:-.035em}
 .hero h1{font-weight:600;font-size:clamp(44px,4.9vw,70px)}
 .hero .eyebrow{color:var(--muted)}
 .system-card{transform:none;box-shadow:none;background:#f0f4f5;border-color:var(--line)}
@@ -39,7 +39,6 @@ h1,h2,h3{letter-spacing:-.035em}
 .featured-node{background:var(--green);box-shadow:none}
 .featured-node small{color:#e0efec}
 .status-dot{background:var(--green);box-shadow:0 0 0 4px #e5f0ee}
-.primary:hover{background:#10554f;transform:none}
 .nav-contact{border-color:var(--line)}
 .stack-strip span:not(.mono){color:var(--ink)}
 .curated-project{padding:30px;border:1px solid var(--line);border-radius:5px;background:#fff}
@@ -62,57 +61,9 @@ h1,h2,h3{letter-spacing:-.035em}
 @media(max-width:760px){.hero h1{font-size:clamp(40px,9vw,58px)}.curated-project{padding:23px}.contact-section h2{font-size:44px}}
 @media print{.curated-project{padding:15px}.system-card{display:none}}
 .cv-button{background:transparent;color:var(--ink);border-color:#a9b9c2;gap:16px}.cv-button:hover{background:#edf2f4}.hero-actions{flex-wrap:wrap;gap:16px}@media print{.cv-button{display:none}}
-  /* Spacing */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
-  --space-2xl: 48px;
-  --space-3xl: 64px;
-  --space-4xl: 96px;
-
 .shared-skills{gap:12px}.shared-skills span{font-size:13px;padding:12px 16px;background:white}
-  /* Border Radii */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --radius-full: 9999px;
-
 .all-projects-link{margin-top:36px}.project-description{margin-bottom:32px;max-width:800px}.project-description h2{font-size:28px;margin-bottom:18px}.project-description p{margin-bottom:12px}.detail-gallery video{width:100%;max-height:480px;border:1px solid var(--line);border-radius:4px;background:#101a23}.detail-gallery figure{min-width:0}
-  /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
-
 .case-study-sections{max-width:780px}.case-study-sections .project-description{padding:28px 0;border-bottom:1px solid var(--line)}.case-study-sections p{line-height:1.8}
-  /* Elevation Shadows (Default Light) */
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.07), 0 2px 4px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.08), 0 4px 8px rgba(15, 23, 42, 0.04);
-  --shadow-card-hover: 0 18px 36px -8px rgba(15, 23, 42, 0.12), 0 8px 16px -4px rgba(15, 23, 42, 0.06);
-
-  /* Light Theme Tokens */
-  --paper: #f8fafc;
-  --surface: #ffffff;
-  --surface-alt: #f1f5f9;
-  --surface-highlight: #e2e8f0;
-  --ink: #0f172a;
-  --ink-secondary: #334155;
-  --muted: #64748b;
-  --muted-light: #94a3b8;
-  --line: #e2e8f0;
-  --line-strong: #cbd5e1;
-  --green: #0d9488;
-  --green-hover: #0f766e;
-  --green-light: #f0fdfa;
-  --green-border: #99f6e4;
-  --clay: #0d9488;
-  --accent-glow: rgba(13, 148, 136, 0.15);
-  --status-live: #10b981;
-  --status-glow: rgba(16, 185, 129, 0.25);
-  --header-bg: rgba(248, 250, 252, 0.88);
-}
 
 /* --------------------------------------------------------------------------
    Reset & Global Styles
