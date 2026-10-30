@@ -38,7 +38,7 @@ class SiteBrandingTests(TestCase):
     def test_defaults_are_readable_and_have_a_versioned_icon(self):
         response = self.client.get(reverse("home:articles"))
         self.assertContains(response, 'class="brand-word">rahidul.</span>', count=2)
-        self.assertContains(response, "favicon.svg?v=20261029")
+        self.assertContains(response, "favicon.svg?v=20261030-navy-amber-logo")
         self.assertContains(response, "branding.css")
 
     def test_upload_updates_header_footer_and_both_site_icons_with_audit(self):
@@ -104,7 +104,7 @@ class SiteBrandingTests(TestCase):
         self.assertFalse(branding.site_icon)
         public = self.client.get(reverse("home:articles"))
         self.assertContains(public, "Text brand")
-        self.assertContains(public, "favicon.svg?v=20261029")
+        self.assertContains(public, "favicon.svg?v=20261030-navy-amber-logo")
 
     def test_singleton_constraint_and_delete_protection(self):
         with self.assertRaises(IntegrityError), transaction.atomic():
