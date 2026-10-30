@@ -180,7 +180,7 @@ class DashboardBrowserTests(StaticLiveServerTestCase):
                     )
                 visitor.goto(self.live_server_url + reverse("home:articles"))
                 expect(visitor.locator('link[rel="icon"]')).to_have_attribute(
-                    "href", "/static/img/favicon.svg?v=20261029"
+                    "href", "/static/img/favicon.svg?v=20261030-navy-amber-logo"
                 )
                 self.login(owner)
                 owner.goto(
