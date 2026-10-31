@@ -63,6 +63,8 @@ fallback_projects = [
     {
         "slug": "portfolio-website",
         "name": "Portfolio Website",
+        "image": "img/projects/portfolio-website/01-home-desktop.png",
+        "image_alt": "Rahidul Islam portfolio homepage on desktop",
         "category": "Personal site",
         "short_desc": "Django portfolio site for projects, experience, and contact.",
         "description": "A Django-powered personal portfolio with database-backed profile content, projects, experience, and a contact form.",

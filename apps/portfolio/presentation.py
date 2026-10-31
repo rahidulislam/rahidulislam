@@ -32,11 +32,12 @@ def homepage_context() -> dict[str, Any]:
         "TalentBridge",
         "Smart Document Vault",
         "Ilmora — Madrasha Management",
+        "Portfolio Website",
     }
     data["fallback_projects"] = [
         item for item in data["fallback_projects"] if item["name"] in selected_names
     ]
-    remaining_slots = max(0, 3 - len(data["fallback_projects"]))
+    remaining_slots = max(0, 4 - len(data["fallback_projects"]))
     data["projects"] = [
         item for item in data["projects"] if item.name in selected_names
     ][:remaining_slots]
