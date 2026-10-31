@@ -35,6 +35,10 @@ class Project(models.Model):
         help_text="One technology per line; defaults to source-backed tags when empty.",
     )
     EVIDENCE_IMAGES = {
+        "Portfolio Website": (
+            "img/projects/portfolio-website/01-home-desktop.png",
+            "Rahidul Islam portfolio homepage on desktop",
+        ),
         "Ilmora — Madrasha Management": (
             "img/projects/ilmora-landing.jpg",
             "Ilmora bilingual madrasha management landing page",

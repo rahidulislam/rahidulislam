@@ -1,6 +1,25 @@
 """Curated screenshots and montages supplied for the portfolio."""
 
 PROJECT_SHOWCASES = {
+    "portfolio-website": {
+        "description": "Captured from the current public portfolio website on desktop and mobile.",
+        "screenshots": [
+            {
+                "image": "img/projects/portfolio-website/01-home-desktop.png",
+                "alt": "Rahidul Islam portfolio homepage on desktop",
+                "caption": "Current portfolio — desktop homepage.",
+                "width": 1440,
+                "height": 1000,
+            },
+            {
+                "image": "img/projects/portfolio-website/02-home-mobile.png",
+                "alt": "Rahidul Islam portfolio homepage on mobile",
+                "caption": "Current portfolio — mobile homepage.",
+                "width": 390,
+                "height": 844,
+            },
+        ],
+    },
     "talentbridge": {
         "screenshots": [
             {
