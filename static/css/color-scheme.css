@@ -1,44 +1,4 @@
-/* Public Navy/Amber theme. Legacy accent names remain compatible with page styles. */
-:root {
-  color-scheme: light;
-  --paper: #f7f8fa; --surface: #ffffff; --surface-alt: #edf1f6; --surface-highlight: #e2e8f0;
-  --ink: #122139; --ink-secondary: #33465e; --muted: #56667b; --muted-light: #63748a;
-  --line: #d9e1eb; --line-strong: #a8b7ca;
-  --green: #865300; --green-hover: #684000; --green-light: #fff5dd; --green-border: #d3ac60;
-  --clay: var(--green); --accent-glow: #f5b94220; --header-bg: #f7f8faf2;
-  --action: #f5b942; --action-hover: #ffd075; --action-ink: #172033;
-  --status-live: #247348; --status-glow: #24734820;
-  --error: #a72b2b; --error-bg: #fff0ef; --success: #21623e; --success-bg: #edf8f0;
-  --shadow-sm: 0 2px 5px #12213905; --shadow-md: 0 8px 24px #12213908;
-  --shadow-lg: 0 24px 60px #12213912; --shadow-card-hover: 0 16px 40px #12213912;
-}
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --paper: #081321; --surface: #101f33; --surface-alt: #14263d; --surface-highlight: #1c314b;
-  --ink: #f3f6fa; --ink-secondary: #d0d9e6; --muted: #a8b7ca; --muted-light: #93a5bd;
-  --line: #293d55; --line-strong: #536b88;
-  --green: #f5b942; --green-hover: #ffd075; --green-light: #f5b94214; --green-border: #a07830;
-  --clay: var(--green); --accent-glow: #f5b94216; --header-bg: #081321f2;
-  --status-live: #84d2a4; --status-glow: #84d2a420;
-  --error: #ffb5ae; --error-bg: #3c202a; --success: #a0dfb9; --success-bg: #143629;
-  --shadow-sm: 0 2px 5px #00000012; --shadow-md: 0 8px 24px #00000018;
-  --shadow-lg: 0 24px 60px #00000030; --shadow-card-hover: 0 16px 40px #00000028;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-  color-scheme: dark;
-  --paper: #081321; --surface: #101f33; --surface-alt: #14263d; --surface-highlight: #1c314b;
-  --ink: #f3f6fa; --ink-secondary: #d0d9e6; --muted: #a8b7ca; --muted-light: #93a5bd;
-  --line: #293d55; --line-strong: #536b88;
-  --green: #f5b942; --green-hover: #ffd075; --green-light: #f5b94214; --green-border: #a07830;
-  --clay: var(--green); --accent-glow: #f5b94216; --header-bg: #081321f2;
-  --status-live: #84d2a4; --status-glow: #84d2a420;
-  --error: #ffb5ae; --error-bg: #3c202a; --success: #a0dfb9; --success-bg: #143629;
-  --shadow-sm: 0 2px 5px #00000012; --shadow-md: 0 8px 24px #00000018;
-  --shadow-lg: 0 24px 60px #00000030; --shadow-card-hover: 0 16px 40px #00000028;
-  }
-}
-
+/* Shared theme tokens are loaded before page styles. */
 body { font-family: var(--font-sans); }
 em { font-family: inherit; font-style: normal; color: var(--green); }
 ::selection { background: var(--action); color: var(--action-ink); }
@@ -155,4 +115,19 @@ input:focus, textarea:focus, select:focus { background: var(--surface); border-c
   :root, :root[data-theme="dark"] { color-scheme: light; --paper: #fff; --surface: #fff; --surface-alt: #f2f2f2; --ink: #111; --muted: #444; --ink-secondary: #333; --line: #ccc; --green: #684000; }
   .theme-toggle { display: none; }
   .curated-project, .article-card { box-shadow: none; }
+}
+
+/* Keep the menu anchored to the actual header height, including wrapped controls. */
+@media (max-width: 1100px) {
+  .nav-wrap { position: relative; height: auto; min-height: 88px; gap: 12px; justify-content: space-between; }
+  .menu-toggle { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); }
+  nav#site-nav { position: absolute; top: 100%; left: -16px; right: -16px; margin: 0; padding: 16px; display: none; flex-direction: column; align-items: stretch; gap: 8px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-lg); max-height: 70dvh; overflow-y: auto; visibility: visible; opacity: 1; transform: none; pointer-events: auto; }
+  nav#site-nav.is-open { display: flex; }
+  nav#site-nav a { min-height: 44px; display: flex; align-items: center; }
+}
+@media (max-width: 600px) {
+  .nav-wrap { flex-wrap: wrap; padding-block: 12px; gap: 10px; }
+  .site-header .wordmark { flex-basis: 100%; }
+  .header-actions { width: 100%; justify-content: flex-end; }
+  .header-actions .language-switch { margin-right: auto; }
 }

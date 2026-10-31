@@ -14,7 +14,7 @@
     const toggle = document.querySelector('.menu-toggle');
     const nav = document.querySelector('#site-nav');
     if (toggle && nav) {
-      const mobile = window.matchMedia('(max-width: 768px)');
+      const mobile = window.matchMedia('(max-width: 1100px)');
       const setOpen = open => {
         const shouldOpen = mobile.matches && open;
         nav.classList.toggle('is-open', shouldOpen);

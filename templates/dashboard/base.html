@@ -7,7 +7,10 @@
 <meta name="htmx-config" content='{"historyCacheSize":0}'>
 <title>{{ title|default:"Sign in" }} · Portfolio workspace</title>
 {% include "layout/site_icon.html" %}
-<link rel="stylesheet" href="{% static 'dashboard/dashboard.css' %}">
+<meta name="color-scheme" content="light dark">
+<script src="{% static 'js/theme.js' %}?v=20261030-navy-amber"></script>
+<link rel="stylesheet" href="{% static 'css/theme-tokens.css' %}?v=20261031">
+<link rel="stylesheet" href="{% static 'dashboard/dashboard.css' %}?v=20261031">
 <script defer src="{% static 'vendor/htmx/htmx.min.js' %}">
 </script>
 <script defer src="{% static 'dashboard/dashboard.js' %}">
@@ -37,6 +40,7 @@
 <div class="workspace">
 <header class="topbar">
 <span class="eyebrow">YOUR PORTFOLIO, AT A GLANCE</span>
+<button class="theme-toggle button" type="button" aria-label="Enable dark mode" aria-pressed="false" hidden>Light / dark</button>
 <span class="account">{{ request.user.get_short_name|default:request.user.username }} <span class="pill">Owner</span>
 </span>
 </header>

@@ -77,3 +77,29 @@ class PublicThemeTests(StaticLiveServerTestCase):
                             )
         self.assertEqual(errors, [])
         page.close()
+
+    def test_navigation_controls_and_links_fit_small_screens(self) -> None:
+        with sync_playwright() as playwright, playwright.chromium.launch() as browser:
+            page = browser.new_page()
+            for width in (320, 390, 768, 820, 1024):
+                page.set_viewport_size({"width": width, "height": 900})
+                page.goto(self.live_server_url)
+                controls = page.locator(".header-actions").bounding_box()
+                brand = page.locator(".site-header .wordmark").bounding_box()
+                self.assertLessEqual(brand["x"] + brand["width"], width)
+                if width <= 600:
+                    self.assertGreaterEqual(controls["y"], brand["y"] + brand["height"])
+                toggle = page.locator(".menu-toggle")
+                toggle.click()
+                nav = page.locator("#site-nav")
+                expect(nav).to_be_visible()
+                header = page.locator(".site-header").bounding_box()
+                self.assertGreaterEqual(nav.bounding_box()["y"], header["height"] - 1)
+                links = nav.locator("a")
+                for index in range(links.count()):
+                    box = links.nth(index).bounding_box()
+                    self.assertGreaterEqual(box["height"], 44)
+                    self.assertLessEqual(box["x"] + box["width"], width)
+                page.keyboard.press("Escape")
+                expect(toggle).to_have_attribute("aria-expanded", "false")
+                expect(nav).to_have_attribute("inert", "")
