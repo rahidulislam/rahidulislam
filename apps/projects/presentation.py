@@ -41,7 +41,7 @@ def case_study_context(*, slug: str) -> dict[str, Any]:
     data["static_screenshots"] = showcase.get(
         "screenshots", MADRASHA_SCREENSHOTS if is_ilmora else []
     )
-    data["screenshots_description"] = (
+    data["screenshots_description"] = showcase.get("description") or (
         "Captured from the live Ilmora frontend using its browser-local demo data."
         if is_ilmora
         else "Application screenshots using synthetic demo data."

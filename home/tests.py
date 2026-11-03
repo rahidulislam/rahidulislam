@@ -65,6 +65,7 @@ class PortfolioViewTests(TestCase):
                     "TalentBridge",
                     "Smart Document Vault",
                     "Ilmora — Madrasha Management",
+                    "Portfolio Website",
                 }
             ],
         )
@@ -111,7 +112,7 @@ class PortfolioViewTests(TestCase):
         )
         self.assertEqual(response.context["experiences"].count(), 1)
 
-    def test_homepage_shows_only_three_selected_projects(self):
+    def test_homepage_shows_only_four_selected_projects(self):
         Project.objects.all().delete()
         category = Category.objects.create(name="Selected work")
         names = [
@@ -137,7 +138,12 @@ class PortfolioViewTests(TestCase):
         selected_names += [project.name for project in response.context["projects"]]
         self.assertCountEqual(
             selected_names,
-            ["TalentBridge", "Smart Document Vault", "Ilmora — Madrasha Management"],
+            [
+                "TalentBridge",
+                "Smart Document Vault",
+                "Ilmora — Madrasha Management",
+                "Portfolio Website",
+            ],
         )
         self.assertNotContains(response, "TheProperty")
         self.assertNotContains(response, "Homeopathic Management API")
