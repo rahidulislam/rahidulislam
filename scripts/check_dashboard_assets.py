@@ -21,6 +21,7 @@ def main() -> None:
             call_command("collectstatic", interactive=False, verbosity=0)
         for name in (
             "css/branding.css",
+            "css/select-controls.css",
             "css/theme-tokens.css",
             "js/theme.js",
             "img/favicon.svg",
