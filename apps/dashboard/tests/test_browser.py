@@ -221,3 +221,30 @@ class DashboardBrowserTests(StaticLiveServerTestCase):
                 self.assertLessEqual(
                     visitor.evaluate("document.documentElement.scrollWidth"), 390
                 )
+
+    def test_workspace_uses_public_theme_and_persisted_preference(self):
+        with sync_playwright() as playwright, playwright.chromium.launch() as browser:
+            page = browser.new_page(color_scheme="light")
+            page.goto(self.live_server_url)
+            page.locator(".theme-toggle").click()
+            self.login(page)
+            expect(page.locator("html")).to_have_attribute("data-theme", "dark")
+            expect(page.locator("body")).to_have_css(
+                "background-color", "rgb(8, 19, 33)"
+            )
+            expect(page.locator(".sidebar")).to_have_css(
+                "background-color", "rgb(16, 31, 51)"
+            )
+            expect(page.locator(".eyebrow").first).to_have_css(
+                "color", "rgb(245, 185, 66)"
+            )
+            page.locator(".theme-toggle").click()
+            page.reload()
+            expect(page.locator("body")).to_have_css(
+                "background-color", "rgb(247, 248, 250)"
+            )
+            for width in (320, 390, 768):
+                page.set_viewport_size({"width": width, "height": 900})
+                self.assertLessEqual(
+                    page.evaluate("document.documentElement.scrollWidth"), width
+                )
