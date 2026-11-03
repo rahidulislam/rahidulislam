@@ -1,0 +1,5 @@
+<a class="footer-contact-action" href="{{ href }}" hx-boost="false" aria-labelledby="footer-contact-label-{{ kind }}" aria-describedby="footer-contact-{{ kind }}"{% if external %} target="_blank" rel="noopener noreferrer"{% endif %}>
+  {% include "layout/contact_icon.html" %}
+  <span id="footer-contact-label-{{ kind }}">{{ label }}</span>
+  <span id="footer-contact-{{ kind }}" class="contact-tooltip" role="tooltip">{{ detail }}</span>
+</a>
