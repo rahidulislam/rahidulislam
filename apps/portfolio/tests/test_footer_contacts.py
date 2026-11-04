@@ -58,12 +58,43 @@ class FooterContactTests(StaticLiveServerTestCase):
             expect(tooltip).not_to_be_visible()
             expect(email).to_be_focused()
 
-            for width in (320, 390, 768, 1440):
+            for width in (
+                320,
+                390,
+                441,
+                480,
+                600,
+                760,
+                768,
+                820,
+                1024,
+                1100,
+                1101,
+                1440,
+            ):
                 page.set_viewport_size({"width": width, "height": 900})
                 for theme in ("light", "dark"):
                     page.locator("html").evaluate(
                         "(root, theme) => root.dataset.theme = theme", theme
                     )
+                    email.blur()
+                    for action in footer.locator(".footer-contact-action").all():
+                        action.focus()
+                        action_box = action.bounding_box()
+                        label_box = action.locator("span").first.bounding_box()
+                        icon_box = action.locator("svg").bounding_box()
+                        self.assertGreaterEqual(
+                            label_box["x"], icon_box["x"] + icon_box["width"]
+                        )
+                        self.assertLessEqual(
+                            label_box["x"] + label_box["width"],
+                            action_box["x"] + action_box["width"],
+                        )
+                        hint = action.locator('[role="tooltip"]')
+                        expect(hint).to_be_visible()
+                        hint_box = hint.bounding_box()
+                        self.assertGreaterEqual(hint_box["x"], 0)
+                        self.assertLessEqual(hint_box["x"] + hint_box["width"], width)
                     email.blur()
                     email.focus()
                     expect(tooltip).to_be_visible()
