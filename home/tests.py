@@ -28,8 +28,8 @@ class PortfolioViewTests(TestCase):
 
     def test_native_responsive_navigation_is_loaded_without_bootstrap(self):
         response = self.client.get(reverse("home:home"))
-        self.assertContains(response, "css/portfolio.css?v=20261030-navy-amber")
-        self.assertContains(response, "js/portfolio.js?v=20261026-htmx")
+        self.assertContains(response, "css/portfolio.css?v=20261031-navigation")
+        self.assertContains(response, "js/portfolio.js?v=20261031-navigation")
         self.assertContains(response, 'class="site-header"')
         self.assertContains(response, 'class="menu-toggle"')
         self.assertContains(response, 'aria-controls="site-nav"')
@@ -65,6 +65,7 @@ class PortfolioViewTests(TestCase):
                     "TalentBridge",
                     "Smart Document Vault",
                     "Ilmora — Madrasha Management",
+                    "Portfolio Website",
                 }
             ],
         )
@@ -111,7 +112,7 @@ class PortfolioViewTests(TestCase):
         )
         self.assertEqual(response.context["experiences"].count(), 1)
 
-    def test_homepage_shows_only_three_selected_projects(self):
+    def test_homepage_shows_only_four_selected_projects(self):
         Project.objects.all().delete()
         category = Category.objects.create(name="Selected work")
         names = [
@@ -137,7 +138,12 @@ class PortfolioViewTests(TestCase):
         selected_names += [project.name for project in response.context["projects"]]
         self.assertCountEqual(
             selected_names,
-            ["TalentBridge", "Smart Document Vault", "Ilmora — Madrasha Management"],
+            [
+                "TalentBridge",
+                "Smart Document Vault",
+                "Ilmora — Madrasha Management",
+                "Portfolio Website",
+            ],
         )
         self.assertNotContains(response, "TheProperty")
         self.assertNotContains(response, "Homeopathic Management API")

@@ -8,5 +8,5 @@
     "lib": ["ES2022", "DOM"],
     "types": []
   },
-  "include": ["static/dashboard/dashboard.js"]
+  "include": ["static/dashboard/dashboard.js", "static/js/footer-contact.js"]
 }

@@ -1,0 +1,9 @@
+{% load portfolio_language %}
+<div class="footer-contact-actions">
+  {% if public_contact.email %}{% bilingual "Email" "ইমেইল" as email_label %}{% include "layout/footer_contact_action.html" with kind="email" label=email_label detail=public_contact.email href="mailto:"|add:public_contact.email %}{% endif %}
+  {% if public_contact.phone %}{% bilingual "Call" "কল করুন" as call_label %}{% include "layout/footer_contact_action.html" with kind="phone" label=call_label detail=public_contact.phone href="tel:"|add:public_contact.phone %}{% endif %}
+  {% if public_contact.whatsapp %}{% include "layout/footer_contact_action.html" with kind="whatsapp" label="WhatsApp" detail=public_contact.whatsapp href=public_contact.whatsapp_url external=True %}{% endif %}
+  {% if public_contact.telegram %}{% include "layout/footer_contact_action.html" with kind="telegram" label="Telegram" detail="@"|add:public_contact.telegram href=public_contact.telegram_url external=True %}{% endif %}
+  {% if public_contact.linkedin %}{% include "layout/footer_contact_action.html" with kind="linkedin" label="LinkedIn" detail=public_contact.linkedin href=public_contact.linkedin external=True %}{% endif %}
+  {% if public_contact.github %}{% include "layout/footer_contact_action.html" with kind="github" label="GitHub" detail=public_contact.github href=public_contact.github external=True %}{% endif %}
+</div>
