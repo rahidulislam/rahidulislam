@@ -1,0 +1,81 @@
+.footer-contact { container: footer-contacts / inline-size; }
+.footer-contact-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+.footer-contact-action {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.footer-contact-action:hover {
+  background: var(--green-light);
+  border-color: var(--green-border);
+  color: var(--green);
+  text-decoration: none;
+  z-index: 2;
+}
+.footer-contact-action:focus-visible {
+  outline: 3px solid var(--green);
+  outline-offset: 3px;
+  z-index: 2;
+}
+.contact-icon { flex-shrink: 0; color: var(--green); }
+.contact-tooltip {
+  position: absolute;
+  inset-inline-end: 0;
+  bottom: calc(100% + 8px);
+  width: max-content;
+  max-width: min(280px, calc(100vw - 48px));
+  max-width: min(280px, 100cqi, calc(100vw - 48px));
+  padding: 9px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-md);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  visibility: hidden;
+}
+/* Bridge the gap so a pointer can move onto the tooltip without dismissing it. */
+.contact-tooltip::after {
+  content: "";
+  position: absolute;
+  inset: 100% 0 auto;
+  height: 10px;
+}
+.footer-contact-action:not([data-tooltip-dismissed]):hover .contact-tooltip,
+.footer-contact-action:not([data-tooltip-dismissed]):focus-visible .contact-tooltip {
+  visibility: visible;
+}
+@media (forced-colors: active) {
+  .footer-contact-action, .contact-tooltip { border-color: ButtonText; }
+}
+
+/* Adapt to the footer column's available space, including the two-column tablet footer. */
+@container footer-contacts (min-width: 270px) {
+  .footer-contact-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .footer-contact-action:nth-child(odd) .contact-tooltip {
+    inset-inline-start: 0;
+    inset-inline-end: auto;
+  }
+}
+.footer-contact-action > span:first-of-type {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
