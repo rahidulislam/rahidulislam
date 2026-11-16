@@ -66,12 +66,9 @@ PROJECT = {
     "languages.",
     "technologies": "Python\nDjango\nHTMX\nPostgreSQL\nCelery\nBilingual UI",
     "url": "https://laundry-ms.rauhnova.com/",
-    "validation": "Scope verified against the repository README, production-readiness "
-    "notes and source. The repository's CI runs Ruff, Black, ESLint, Django "
-    "system and migration checks, and roughly 270 automated tests covering "
-    "checkout transactions, price snapshots, permissions, concurrency and "
-    "PDF output; that suite was not rerun for this portfolio update. "
-    "Screenshots were captured from the live public site.",
+    "validation": "Scope verified against the repository source and the live site. "
+    "Its CI runs about 270 automated tests for checkout, payments, permissions and "
+    "PDF output; they were not rerun for this portfolio update.",
     "work_type": "fullstack",
 }
 CATEGORY = "Laundry operations"

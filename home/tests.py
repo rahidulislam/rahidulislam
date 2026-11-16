@@ -65,7 +65,7 @@ class PortfolioViewTests(TestCase):
                     "TalentBridge",
                     "Smart Document Vault",
                     "Ilmora — Madrasha Management",
-                    "Portfolio Website",
+                    "Poripati — Laundry Management",
                 }
             ],
         )
@@ -142,7 +142,7 @@ class PortfolioViewTests(TestCase):
                 "TalentBridge",
                 "Smart Document Vault",
                 "Ilmora — Madrasha Management",
-                "Portfolio Website",
+                "Poripati — Laundry Management",
             ],
         )
         self.assertNotContains(response, "TheProperty")

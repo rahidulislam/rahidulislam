@@ -50,8 +50,11 @@ class LaundryProjectTests(TestCase):
         self.assertContains(response, LAUNDRY_SCREENSHOTS[1]["image"])
         self.assertContains(self.client.get(reverse("home:projects")), "Poripati")
 
-    def test_homepage_selection_is_unchanged(self):
-        self.assertNotContains(self.client.get(reverse("home:home")), "Poripati")
+    def test_homepage_features_poripati_instead_of_the_portfolio(self):
+        response = self.client.get(reverse("home:home"))
+        self.assertContains(response, f'href="/work/{SLUG}/"')
+        self.assertContains(response, "poripati/01-home-desktop-en.jpg")
+        self.assertNotContains(response, 'href="/work/portfolio-website/"')
 
     def test_screenshot_files_match_declared_sizes(self):
         static = Path(settings.BASE_DIR) / "static"

@@ -51,12 +51,9 @@ LAUNDRY_PROJECT = {
     "constraints": "Business rules such as charges, cancellation cut-offs and refund "
     "policies are drafted for owner approval and are not invented by the software. "
     "Catalogue photographs are illustrative concept images.",
-    "validation": "Scope verified against the repository README, production-"
-    "readiness notes and source. The repository's CI runs Ruff, Black, ESLint, "
-    "Django system and migration checks, and roughly 270 automated tests covering "
-    "checkout transactions, price snapshots, permissions, concurrency and PDF "
-    "output; that suite was not rerun for this portfolio update. Screenshots were "
-    "captured from the live public site.",
+    "validation": "Scope verified against the repository source and the live site. "
+    "Its CI runs about 270 automated tests for checkout, payments, permissions and "
+    "PDF output; they were not rerun for this portfolio update.",
     "lessons": "Separating delivery from payment and recording every change as an "
     "event made refunds and reporting far simpler than flag-based order states. "
     "Next: verify PostgreSQL row-lock behaviour under load in staging.",
