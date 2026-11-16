@@ -2,6 +2,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.text import slugify
 
+from core.images import ImageSize, uploaded_image_size
+
 
 class SocialMedia(models.Model):
     name = models.CharField(max_length=20)
@@ -34,6 +36,9 @@ class PersonalInfo(models.Model):
 
     def get_image_url(self):
         return self.image.url if self.image else None
+
+    def get_image_size(self) -> ImageSize | None:
+        return uploaded_image_size(self.image)
 
     class Meta:
         db_table = "home_personalinfo"

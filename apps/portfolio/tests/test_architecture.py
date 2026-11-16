@@ -87,7 +87,7 @@ class DomainBoundaryTests(TestCase):
         documents = [
             json.loads(body)
             for body in re.findall(
-                r'<script type="application/ld\+json">(.*?)</script>',
+                r'<script type="application/ld\+json"[^>]*>(.*?)</script>',
                 response.content.decode(),
             )
         ]

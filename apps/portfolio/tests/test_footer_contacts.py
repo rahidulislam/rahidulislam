@@ -117,9 +117,11 @@ class FooterContactTests(StaticLiveServerTestCase):
             expect(
                 page.get_by_role("heading", name="Projects.", exact=True)
             ).to_be_visible()
-            page.wait_for_function(
-                "!document.querySelector('.htmx-settling, .htmx-swapping, .htmx-request')"
-            )
+            # A locator wait, not wait_for_function: string evaluation is eval(),
+            # which the Content Security Policy blocks.
+            expect(
+                page.locator(".htmx-settling, .htmx-swapping, .htmx-request")
+            ).to_have_count(0)
             page.keyboard.press("Tab")
             email = page.locator(".site-footer").get_by_role(
                 "link", name="Email", exact=True

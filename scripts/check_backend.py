@@ -3,6 +3,7 @@
 import os
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -10,6 +11,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main() -> None:
     os.chdir(ROOT)
+    # Settings default to production (DEBUG off). The gate runs the test suite
+    # in development mode unless the caller chose otherwise.
+    os.environ.setdefault("DJANGO_DEBUG", "true")
     commands = [
         [sys.executable, "-m", "ruff", "check", "."],
         [sys.executable, "-m", "black", "--check", "."],
@@ -30,6 +34,19 @@ def main() -> None:
     for command in commands:
         print("+ " + " ".join(command), flush=True)
         subprocess.run(command, check=True)
+    # Production hashes static files; broken CSS url() references fail here.
+    with tempfile.TemporaryDirectory() as static_root:
+        command = [sys.executable, "manage.py", "collectstatic", "--noinput", "-v0"]
+        print("+ DJANGO_STATIC_MANIFEST=true " + " ".join(command), flush=True)
+        subprocess.run(
+            command,
+            check=True,
+            env={
+                **os.environ,
+                "DJANGO_STATIC_MANIFEST": "true",
+                "DJANGO_STATIC_ROOT": static_root,
+            },
+        )
 
 
 if __name__ == "__main__":

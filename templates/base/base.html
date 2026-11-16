@@ -2,6 +2,7 @@
 <html lang="{{ portfolio_language|default:'en' }}">
 <head>
   <meta charset="utf-8">
+  <link rel="alternate" type="application/rss+xml" title="Rahidul Islam — Engineering articles" href="{% url 'home:article_feed' %}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{{ personal_info.name|default:"Md. Rahidul Islam" }} — Python & Django Engineer{% endblock %}</title>
   <meta name="description" content="{% block description %}Python and Django engineer building secure APIs and operational software for recruitment, document management, and hospitality. Open to relocation to Germany and remote roles.{% endblock %}">
@@ -18,30 +19,28 @@
   {% elif project.get_image_url %}{% with social_image=project.get_image_url %}
   <meta property="og:image" content="{{ site_origin }}{{ social_image }}">
   <meta property="og:image:alt" content="{{ project.image_alt }}">
-  {% if project.name == 'TalentBridge' %}<meta property="og:image:width" content="1200"><meta property="og:image:height" content="658">{% else %}<meta property="og:image:width" content="1265"><meta property="og:image:height" content="712">{% endif %}
+  {% with social_size=project.get_image_size %}{% if social_size %}<meta property="og:image:width" content="{{ social_size.0 }}"><meta property="og:image:height" content="{{ social_size.1 }}">{% endif %}{% endwith %}
   {% endwith %}{% else %}
-  <meta property="og:image" content="{{ site_origin }}{% static 'img/og-portfolio-v3.png' %}">
-  <meta property="og:image:width" content="1734">
-  <meta property="og:image:height" content="907">
+  <meta property="og:image" content="{{ site_origin }}{% static 'img/og-portfolio-v3.jpg' %}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="628">
   <meta property="og:image:alt" content="Md. Rahidul Islam — Python and Django Engineer">
   {% endif %}
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{% if article %}{{ article.title }}{% else %}{{ project.name|default:'Rahidul Islam — Python & Django Engineer' }}{% endif %}">
   <meta name="twitter:description" content="{% if article %}{{ article.summary }}{% elif project %}{{ project.short_desc }}{% else %}Python and Django engineer building secure APIs and operational software.{% endif %}">
-  <meta name="twitter:image" content="{% if article %}{{ site_origin }}{{ article.cover_url }}{% elif project.get_image_url %}{{ site_origin }}{{ project.get_image_url }}{% else %}{{ site_origin }}{% static 'img/og-portfolio-v3.png' %}{% endif %}">
+  <meta name="twitter:image" content="{% if article %}{{ site_origin }}{{ article.cover_url }}{% elif project.get_image_url %}{{ site_origin }}{{ project.get_image_url }}{% else %}{{ site_origin }}{% static 'img/og-portfolio-v3.jpg' %}{% endif %}">
   <meta name="twitter:image:alt" content="{% if article %}{{ article.image_alt|default:article.title }}{% elif project.get_image_url %}{{ project.image_alt }}{% else %}Md. Rahidul Islam — Python and Django Engineer{% endif %}">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Md. Rahidul Islam","url":"{{ site_origin }}{% url 'home:home' %}","jobTitle":"Python & Django Engineer"{% if social_items %},"sameAs":[{% for social in social_items %}{% if forloop.first %}{% else %},{% endif %}"{{ social.social_link|escapejs }}"{% endfor %}]{% endif %}}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Rahidul Islam — Python & Django Engineer","url":"{{ site_origin }}{% url 'home:home' %}"}</script>
-  {% if project %}<script type="application/ld+json">{"@context":"https://schema.org","@type":"CreativeWork","name":"{{ project.name|escapejs }}","description":"{{ project.short_desc|default:project.description|escapejs }}","url":"{{ canonical_url|escapejs }}","author":{"@type":"Person","name":"Md. Rahidul Islam"}{% if project.get_image_url %},"image":"{{ site_origin }}{{ project.get_image_url|escapejs }}"{% endif %}}</script>{% endif %}
+  <script type="application/ld+json" nonce="{{ csp_nonce }}">{"@context":"https://schema.org","@type":"Person","name":"Md. Rahidul Islam","url":"{{ site_origin }}{% url 'home:home' %}","jobTitle":"Python & Django Engineer"{% if social_items %},"sameAs":[{% for social in social_items %}{% if forloop.first %}{% else %},{% endif %}"{{ social.social_link|escapejs }}"{% endfor %}]{% endif %}}</script>
+  <script type="application/ld+json" nonce="{{ csp_nonce }}">{"@context":"https://schema.org","@type":"WebSite","name":"Rahidul Islam — Python & Django Engineer","url":"{{ site_origin }}{% url 'home:home' %}"}</script>
+  {% if project %}<script type="application/ld+json" nonce="{{ csp_nonce }}">{"@context":"https://schema.org","@type":"CreativeWork","name":"{{ project.name|escapejs }}","description":"{{ project.short_desc|default:project.description|escapejs }}","url":"{{ canonical_url|escapejs }}","author":{"@type":"Person","name":"Md. Rahidul Islam"}{% if project.get_image_url %},"image":"{{ site_origin }}{{ project.get_image_url|escapejs }}"{% endif %}}</script>{% endif %}
   <meta name="color-scheme" content="light dark">
+  <meta name="htmx-config" content='{"inlineStyleNonce":"{{ csp_nonce }}","allowEval":false,"allowScriptTags":false}'>
   <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#081321" media="(prefers-color-scheme: dark)">
   {% include "layout/site_icon.html" %}
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <script src="{% static 'js/theme.js' %}?v=20261030-navy-amber"></script>
+  <link rel="preload" href="{% static 'fonts/inter-latin-400-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <script src="{% static 'js/theme.js' %}"></script>
   {% include 'base/style.html' %}
 </head>
 <body hx-boost="true" hx-target="#page-shell" hx-select="#page-shell" hx-swap="outerHTML show:window:top" hx-sync="body:queue all" hx-indicator="#navigation-status">
