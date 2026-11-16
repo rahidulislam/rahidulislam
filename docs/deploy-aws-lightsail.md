@@ -76,6 +76,7 @@ source /etc/rahidulislam.env
 set +a
 cd /srv/rahidulislam/current
 /srv/rahidulislam/venv/bin/python manage.py migrate
+/srv/rahidulislam/venv/bin/python manage.py createcachetable
 /srv/rahidulislam/venv/bin/python manage.py collectstatic --noinput
 /srv/rahidulislam/venv/bin/python manage.py check --deploy
 ```
@@ -148,6 +149,7 @@ git pull --ff-only
 /srv/rahidulislam/venv/bin/pip install -r requirements.txt
 set -a; source /etc/rahidulislam.env; set +a
 /srv/rahidulislam/venv/bin/python manage.py migrate
+/srv/rahidulislam/venv/bin/python manage.py createcachetable
 /srv/rahidulislam/venv/bin/python manage.py collectstatic --noinput
 /srv/rahidulislam/venv/bin/python manage.py check --deploy
 sudo systemctl restart rahidulislam
@@ -171,6 +173,7 @@ git checkout PREVIOUS_COMMIT
 /srv/rahidulislam/venv/bin/pip install -r requirements.txt
 set -a; source /etc/rahidulislam.env; set +a
 /srv/rahidulislam/venv/bin/python manage.py migrate
+/srv/rahidulislam/venv/bin/python manage.py createcachetable
 /srv/rahidulislam/venv/bin/python manage.py collectstatic --noinput
 sudo systemctl restart rahidulislam
 ```

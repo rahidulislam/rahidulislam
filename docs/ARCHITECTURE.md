@@ -54,7 +54,7 @@ Required GitHub check: **Backend quality gate**, bound to the GitHub Actions int
 
 1. Back up the database using SQLite's backup API or stop writers before a file copy. Preserve uploaded media independently.
 2. Enter a maintenance window and stop old application workers before migrating; old and new app labels should not serve traffic concurrently during ownership transfer.
-3. Install unchanged runtime requirements, run `python manage.py migrate --noinput`, `python manage.py check`, and `python manage.py collectstatic --noinput`.
+3. Install unchanged runtime requirements, run `python manage.py migrate --noinput`, `python manage.py createcachetable`, `python manage.py check`, and `python manage.py collectstatic --noinput`.
 4. Start workers with the new code. Verify homepage, project/article visibility, CV download, footer contact links, staff permissions, and an enquiry delivery/retry.
 5. Edit footer channels at **Admin → Contacts → Public contact details**. Empty fields are hidden. Telegram takes a username without `@`; phone and WhatsApp use international numbers.
 
