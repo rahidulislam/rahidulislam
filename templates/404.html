@@ -1,3 +1,10 @@
-{% extends "base/base.html" %}
-{% block title %}Page not found — Rahidul Islam{% endblock %}
-{% block content %}<section class="section container"><p class="eyebrow">404 / Not found</p><h1>That page isn’t here.</h1><p>Try returning to the portfolio and choosing another project.</p><a class="button primary" href="{% url 'home:home' %}">Back to home ↗</a></section>{% endblock %}
+{% extends "base/base.html" %}{% load portfolio_language %}
+{% block title %}{% bilingual 'Page not found' 'পেজটি পাওয়া যায়নি' %} — Rahidul Islam{% endblock %}
+{% block content %}
+<section class="section container">
+  <p class="eyebrow">404 / {% bilingual 'Not found' 'পাওয়া যায়নি' %}</p>
+  <h1>{% bilingual 'That page isn’t here.' 'পেজটি এখানে নেই।' %}</h1>
+  <p>{% bilingual 'Try returning to the portfolio and choosing another project.' 'পোর্টফোলিওতে ফিরে অন্য একটি প্রজেক্ট বেছে নিন।' %}</p>
+  <a class="button primary" href="{% url 'home:home' %}">{% bilingual 'Back to home' 'হোমে ফিরুন' %} ↗</a>
+</section>
+{% endblock %}

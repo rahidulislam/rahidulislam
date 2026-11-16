@@ -1,5 +1,7 @@
 """Curated screenshots and montages supplied for the portfolio."""
 
+from .laundry_content import LAUNDRY_PROJECT, LAUNDRY_SCREENSHOTS
+
 PROJECT_SHOWCASES = {
     "portfolio-website": {
         "description": "Captured from the current public portfolio website on desktop and mobile.",
@@ -101,5 +103,10 @@ PROJECT_SHOWCASES = {
         ],
         "video": "video/smart-document-vault-showcase.mp4",
         "poster": "img/projects/smart-document-vault/01-dashboard-light.png",
+    },
+    LAUNDRY_PROJECT["slug"]: {
+        "description": "Captured from the live public site in English and Bangla, "
+        "light and dark themes. The staff view uses an empty demo database.",
+        "screenshots": LAUNDRY_SCREENSHOTS,
     },
 }
