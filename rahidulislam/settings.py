@@ -169,11 +169,6 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = False
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-XS_SHARING_ALLOWED_METHODS = [
-    "GET",
-    "OPTIONS",
-]
-
 # Configure SMTP in production; console backend keeps local development self-contained.
 EMAIL_BACKEND = os.environ.get(
     "DJANGO_EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend"
