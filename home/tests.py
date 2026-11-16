@@ -28,8 +28,8 @@ class PortfolioViewTests(TestCase):
 
     def test_native_responsive_navigation_is_loaded_without_bootstrap(self):
         response = self.client.get(reverse("home:home"))
-        self.assertContains(response, "css/portfolio.css?v=20261031-navigation")
-        self.assertContains(response, "js/portfolio.js?v=20261031-navigation")
+        self.assertContains(response, "css/portfolio.css")
+        self.assertContains(response, "js/portfolio.js")
         self.assertContains(response, 'class="site-header"')
         self.assertContains(response, 'class="menu-toggle"')
         self.assertContains(response, 'aria-controls="site-nav"')
@@ -65,7 +65,7 @@ class PortfolioViewTests(TestCase):
                     "TalentBridge",
                     "Smart Document Vault",
                     "Ilmora — Madrasha Management",
-                    "Portfolio Website",
+                    "Poripati — Laundry Management",
                 }
             ],
         )
@@ -142,7 +142,7 @@ class PortfolioViewTests(TestCase):
                 "TalentBridge",
                 "Smart Document Vault",
                 "Ilmora — Madrasha Management",
-                "Portfolio Website",
+                "Poripati — Laundry Management",
             ],
         )
         self.assertNotContains(response, "TheProperty")
@@ -164,7 +164,7 @@ class PortfolioViewTests(TestCase):
 
     def test_v3_social_metadata_uses_branded_card(self):
         response = self.client.get(reverse("home:home"))
-        self.assertContains(response, "og-portfolio-v3.png")
+        self.assertContains(response, "og-portfolio-v3.jpg")
         self.assertContains(
             response, 'name="twitter:card" content="summary_large_image"'
         )

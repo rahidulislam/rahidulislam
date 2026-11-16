@@ -4,6 +4,8 @@ from django.db import models
 from django.templatetags.static import static
 from django.utils.text import slugify
 
+from core.images import ImageSize, static_image_size, uploaded_image_size
+
 
 def validate_video_size(value):
     if value.size > 50 * 1024 * 1024:
@@ -35,6 +37,10 @@ class Project(models.Model):
         help_text="One technology per line; defaults to source-backed tags when empty.",
     )
     EVIDENCE_IMAGES = {
+        "Poripati — Laundry Management": (
+            "img/projects/poripati/01-home-desktop-en.jpg",
+            "Poripati laundry website homepage",
+        ),
         "Portfolio Website": (
             "img/projects/portfolio-website/01-home-desktop.png",
             "Rahidul Islam portfolio homepage on desktop",
@@ -135,6 +141,12 @@ class Project(models.Model):
         evidence = self.EVIDENCE_IMAGES.get(self.name)
         return static(evidence[0]) if evidence else None
 
+    def get_image_size(self) -> ImageSize | None:
+        if self.image:
+            return uploaded_image_size(self.image)
+        evidence = self.EVIDENCE_IMAGES.get(self.name)
+        return static_image_size(evidence[0]) if evidence else None
+
     @property
     def image_alt(self):
         evidence = self.EVIDENCE_IMAGES.get(self.name)
@@ -166,6 +178,9 @@ class ProjectImage(models.Model):
 
     def get_image_url(self):
         return self.image.url if self.image else None
+
+    def get_image_size(self) -> ImageSize | None:
+        return uploaded_image_size(self.image)
 
     @property
     def image_alt(self):
@@ -244,3 +259,11 @@ class ProjectVideo(models.Model):
 
     def __str__(self):
         return self.project.name
+
+    @property
+    def content_type(self) -> str:
+        """MIME type for <source type>, from the validated file extension."""
+        extension = self.file.name.rsplit(".", 1)[-1].lower()
+        return {"mp4": "video/mp4", "webm": "video/webm", "ogv": "video/ogg"}.get(
+            extension, ""
+        )

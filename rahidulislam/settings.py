@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 
+from django.utils.csp import CSP
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,13 +29,14 @@ SECRET_KEY = os.environ.get(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DJANGO_DEBUG", "true").lower() in ("1", "true", "yes")
+# Off unless explicitly enabled, so a missing variable never exposes debug pages.
+DEBUG = os.environ.get("DJANGO_DEBUG", "false").lower() in ("1", "true", "yes")
 
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.environ.get(
         "DJANGO_ALLOWED_HOSTS",
-        "127.0.0.1,localhost,rahidulislam.pythonanywhere.com,www.rahidulislam.pythonanywhere.com",
+        "127.0.0.1,localhost",
     ).split(",")
     if host.strip()
 ]
@@ -66,6 +69,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "core.language.LanguageVaryMiddleware",
     "apps.dashboard.middleware.PrivateDashboardMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -73,6 +77,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.csp.ContentSecurityPolicyMiddleware",
     "apps.analytics.middleware.NavigationAnalyticsMiddleware",
 ]
 
@@ -89,6 +94,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.csp",
             ],
         },
     },
@@ -144,7 +150,23 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = Path(os.environ.get("DJANGO_STATIC_ROOT", BASE_DIR / "staticfiles"))
+# Hashed filenames let the web server cache static files for a year; a changed
+# file gets a new URL on the next collectstatic, so no manual ?v= markers.
+# Off by default while DEBUG so local runs and tests need no manifest.
+STATIC_MANIFEST = os.environ.get(
+    "DJANGO_STATIC_MANIFEST", "false" if DEBUG else "true"
+).lower() in ("1", "true", "yes")
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": (
+            "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
+            if STATIC_MANIFEST
+            else "django.contrib.staticfiles.storage.StaticFilesStorage"
+        )
+    },
+}
 MEDIA_URL = "/media/"
 MEDIA_ROOT = Path(os.environ.get("DJANGO_MEDIA_ROOT", BASE_DIR / "media"))
 # Default primary key field type
@@ -154,10 +176,29 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 X_FRAME_OPTIONS = "DENY"
 
+# Everything is served from this origin; inline <script>/<style> elements need
+# the per-request nonce. Inline style *attributes* stay allowed for data-driven
+# sizes such as dashboard chart bars; they cannot run script.
+SECURE_CSP = {
+    "default-src": [CSP.SELF],
+    "script-src": [CSP.SELF, CSP.NONCE],
+    "style-src": [CSP.SELF, CSP.NONCE],
+    "style-src-attr": [CSP.UNSAFE_INLINE],
+    "img-src": [CSP.SELF, "data:"],
+    "font-src": [CSP.SELF],
+    "media-src": [CSP.SELF],
+    "connect-src": [CSP.SELF],
+    "object-src": [CSP.NONE],
+    "base-uri": [CSP.NONE],
+    "form-action": [CSP.SELF],
+    "frame-ancestors": [CSP.NONE],
+}
+
 if not DEBUG:
     if SECRET_KEY.startswith("django-insecure-"):
         raise RuntimeError(
-            "DJANGO_SECRET_KEY must be set to a strong production value."
+            "DJANGO_SECRET_KEY must be set to a strong production value "
+            "(for local development, set DJANGO_DEBUG=true instead)."
         )
     SECURE_SSL_REDIRECT = os.environ.get(
         "DJANGO_SECURE_SSL_REDIRECT", "true"
@@ -168,11 +209,6 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = False
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-
-XS_SHARING_ALLOWED_METHODS = [
-    "GET",
-    "OPTIONS",
-]
 
 # Configure SMTP in production; console backend keeps local development self-contained.
 EMAIL_BACKEND = os.environ.get(
@@ -198,6 +234,11 @@ CONTACT_NOTIFICATION_EMAIL = os.environ.get(
     "CONTACT_NOTIFICATION_EMAIL", "rahidulislam247@gmail.com"
 )
 TEMPLATES[0]["OPTIONS"]["context_processors"].append("core.language.language_context")
+TEMPLATES[0]["OPTIONS"]["context_processors"].append("core.seo.seo_context")
+
+# Public origin (scheme + host, no trailing slash) for canonical, social and
+# sitemap URLs. Empty falls back to the request host for local development.
+SITE_URL = os.environ.get("DJANGO_SITE_URL", "")
 
 TEMPLATES[0]["OPTIONS"]["context_processors"].append(
     "apps.contacts.context_processors.public_contact"
@@ -209,13 +250,43 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",  # Keep existing sessions valid.
 ]
 
-# Only exact proxy addresses under our control may supply analytics client IPs.
-ANALYTICS_TRUSTED_PROXIES = [
-    value.strip()
-    for value in os.environ.get("ANALYTICS_TRUSTED_PROXIES", "").split(",")
+# Only exact proxy addresses under our control may supply client IPs. The token
+# "unix" trusts a local reverse proxy connected over a unix socket.
+TRUSTED_PROXIES = [
+    "" if value.strip() == "unix" else value.strip()
+    for value in os.environ.get(
+        "DJANGO_TRUSTED_PROXIES", os.environ.get("ANALYTICS_TRUSTED_PROXIES", "")
+    ).split(",")
     if value.strip()
 ]
+
+# Shared by every worker so per-visitor limits hold across processes. Run
+# `manage.py createcachetable` once per database before serving traffic.
+CACHES = {
+    "default": {
+        "BACKEND": os.environ.get(
+            "DJANGO_CACHE_BACKEND", "django.core.cache.backends.db.DatabaseCache"
+        ),
+        "LOCATION": os.environ.get("DJANGO_CACHE_LOCATION", "django_cache"),
+    }
+}
 
 TEMPLATES[0]["OPTIONS"]["context_processors"].append(
     "apps.portfolio.context_processors.site_branding"
 )
+
+# Warnings from services (failed notifications, cache outages) and server
+# errors go to stderr, which Gunicorn/systemd capture in the journal.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "plain": {"format": "%(asctime)s %(levelname)s %(name)s: %(message)s"}
+    },
+    "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "plain"}},
+    "root": {"handlers": ["console"], "level": "WARNING"},
+}
+
+# HSTS preload is deliberately off until HTTPS on every subdomain has been stable
+# (docs/deploy-aws-lightsail.md); `check --deploy` should not fail on that choice.
+SILENCED_SYSTEM_CHECKS = ["security.W021"]

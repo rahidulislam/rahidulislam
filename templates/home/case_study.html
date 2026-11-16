@@ -1,3 +1,35 @@
 {% extends 'base/base.html' %}{% load portfolio_language %}
 {% block title %}{{ project.name }} — Rahidul Islam{% endblock %}
-{% block content %}{% if managed_project %}{% include "home/managed_case_study.html" %}{% else %}<article class="container section project-detail"><a class="text-link" href="{% url 'home:home' %}#portfolio">← Selected work</a><div class="detail-heading"><p class="eyebrow">{{ project.category }} / Project case study</p><h1>{{ project.name }}</h1><p class="detail-intro">{{ project.description }}</p></div><div class="project-links">{% if project.url %}<a class="button primary" href="{{ project.url }}" target="_blank" rel="noopener noreferrer">Live project ↗</a>{% endif %}</div><div class="detail-facts">{% for tag in project.tags %}<span class="tags"><span>{{ tag }}</span></span>{% endfor %}</div>{% include "home/case_study_facts.html" %}{% include "home/case_study_sections.html" %}<div class="case-layout"><div><h2>Technical focus</h2><p class="case-intro">A public overview of the implementation.</p><ul class="technical-list">{% for note in project.technical_notes %}<li>{{ note }}</li>{% endfor %}</ul></div><aside class="case-note"><p class="eyebrow">Public case study</p><h3>{{ project.visual_label }}</h3><p>This overview intentionally omits internal workflows, business rules, policy details, and confidential implementation logic.</p></aside></div>{% include "home/static_screenshots.html" %}{% include "home/project_media.html" %}<div class="detail-contact"><h2>Let’s talk about the work.</h2><p>Interested in my approach to backend engineering? Get in touch.</p><a class="text-link" href="{% url 'home:home' %}#contact">Start a conversation ↗</a></div></article>{% endif %}{% endblock %}
+{% block content %}{% if managed_project %}{% include "home/managed_case_study.html" %}{% else %}
+<article class="container section project-detail">
+  <a class="text-link" href="{% url 'home:home' %}#portfolio">← {% bilingual 'Selected work' 'নির্বাচিত কাজ' %}</a>
+  <div class="detail-heading">
+    <p class="eyebrow">{{ project.category }} / {% bilingual 'Project case study' 'প্রজেক্ট কেস স্টাডি' %}</p>
+    <h1>{{ project.name }}</h1>
+    <p class="detail-intro">{{ project.description }}</p>
+  </div>
+  <div class="project-links">{% if project.url %}<a class="button primary" href="{{ project.url }}" target="_blank" rel="noopener noreferrer">{% bilingual 'Live project' 'লাইভ প্রজেক্ট' %} ↗</a>{% endif %}</div>
+  <div class="detail-facts">{% for tag in project.tags %}<span class="tags"><span>{{ tag }}</span></span>{% endfor %}</div>
+  {% include "home/case_study_facts.html" %}
+  {% include "home/case_study_sections.html" %}
+  <div class="case-layout">
+    <div>
+      <h2>{% bilingual 'Technical focus' 'প্রযুক্তিগত দিক' %}</h2>
+      <p class="case-intro">{% bilingual 'A public overview of the implementation.' 'বাস্তবায়নের একটি পাবলিক সারসংক্ষেপ।' %}</p>
+      <ul class="technical-list">{% for note in project.technical_notes %}<li>{{ note }}</li>{% endfor %}</ul>
+    </div>
+    <aside class="case-note">
+      <p class="eyebrow">{% bilingual 'Public case study' 'পাবলিক কেস স্টাডি' %}</p>
+      <h3>{{ project.visual_label }}</h3>
+      <p>{% bilingual 'This overview intentionally omits internal workflows, business rules, policy details, and confidential implementation logic.' 'এই সারসংক্ষেপে অভ্যন্তরীণ ওয়ার্কফ্লো, ব্যবসায়িক নিয়ম, নীতিমালার বিস্তারিত ও গোপনীয় বাস্তবায়ন ইচ্ছাকৃতভাবে বাদ রাখা হয়েছে।' %}</p>
+    </aside>
+  </div>
+  {% include "home/static_screenshots.html" %}
+  {% include "home/project_media.html" %}
+  <div class="detail-contact">
+    <h2>{% bilingual 'Let’s talk about the work.' 'কাজটি নিয়ে কথা বলি।' %}</h2>
+    <p>{% bilingual 'Interested in my approach to backend engineering? Get in touch.' 'আমার ব্যাকএন্ড ইঞ্জিনিয়ারিংয়ের পদ্ধতি নিয়ে আগ্রহী? যোগাযোগ করুন।' %}</p>
+    <a class="text-link" href="{% url 'home:home' %}#contact">{% bilingual 'Start a conversation' 'কথা শুরু করুন' %} ↗</a>
+  </div>
+</article>
+{% endif %}{% endblock %}

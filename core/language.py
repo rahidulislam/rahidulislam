@@ -1,4 +1,7 @@
-from django.http import HttpRequest, HttpResponseRedirect
+from collections.abc import Callable
+
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.utils.cache import patch_vary_headers
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
@@ -30,3 +33,16 @@ def set_language(request: HttpRequest) -> HttpResponseRedirect:
         secure=request.is_secure(),
     )
     return response
+
+
+class LanguageVaryMiddleware:
+    """Pages differ by the language cookie; tell caches not to mix them."""
+
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
+        self.get_response = get_response
+
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        response = self.get_response(request)
+        if response.get("Content-Type", "").startswith("text/html"):
+            patch_vary_headers(response, ("Cookie",))
+        return response
