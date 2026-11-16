@@ -37,6 +37,10 @@ class Project(models.Model):
         help_text="One technology per line; defaults to source-backed tags when empty.",
     )
     EVIDENCE_IMAGES = {
+        "Poripati — Laundry Management": (
+            "img/projects/poripati/01-home-desktop-en.jpg",
+            "Poripati laundry website homepage",
+        ),
         "Portfolio Website": (
             "img/projects/portfolio-website/01-home-desktop.png",
             "Rahidul Islam portfolio homepage on desktop",
