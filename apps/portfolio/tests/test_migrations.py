@@ -183,8 +183,10 @@ class DomainMigrationTests(TransactionTestCase):
                 # Only ownership transfers must avoid DDL. New additive domain
                 # migrations (such as branding) legitimately create new tables.
                 moved = self.migrate([(domain, "0001_initial") for domain in DOMAINS])
-            moved = self.migrate(latest)
+            # Compare right after the ownership transfer; later data migrations
+            # (such as newly published case studies) legitimately add rows.
             self.assertEqual(self.snapshot(moved, legacy=False), before)
+            moved = self.migrate(latest)
             for domain, names in DOMAINS.items():
                 for name in names:
                     self.assertEqual(

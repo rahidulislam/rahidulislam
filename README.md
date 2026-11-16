@@ -24,6 +24,7 @@ Live site: [rahidulislam.dev](https://rahidulislam.dev/) · [Django admin](https
 | [TheProperty](https://github.com/rahidulislam/realestate_property) | Multi-role marketplace with reviewed listings, buyer engagement, seller and agent workspaces, private identity documents, and production operations. Python, Django, and PostgreSQL. |
 | [Homeopathic Management API](https://github.com/rahidulislam/homeopathic_ms) | Role-aware clinic backend for appointments, medical histories, prescriptions, medicine inventory, and billing. Python, Django REST Framework, and JWT. |
 | [Ilmora — Madrasha Management](https://madrasha-backend.vercel.app/) | Completed bilingual React/TypeScript frontend with 58 management routes for admissions, students, attendance, fees, funds and administration. Browser-persisted demo with a future Django API adapter. |
+| [Poripati — Laundry Management](https://laundry-ms.rauhnova.com/) | Live bilingual laundry ordering and operations app: catalogue, bag and atomic checkout, cash-on-delivery and verified online payments, refunds, role-based staff workspace and content editor. Python, Django, HTMX, PostgreSQL, and Celery. |
 | [Developer portfolio](https://github.com/rahidulislam/rahidulislam) | Django website with project case studies, admin-managed content, contact forms, and a downloadable CV. |
 
 ## Core skills

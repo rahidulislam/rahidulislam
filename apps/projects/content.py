@@ -6,6 +6,7 @@ from .case_study_content import (
     PROJECT_IMAGES,
     PROJECT_METRICS,
 )
+from .laundry_content import LAUNDRY_PROJECT
 from .madrasha_content import MADRASHA_PROJECT
 
 fallback_projects = [
@@ -110,6 +111,7 @@ fallback_projects = [
 
 
 fallback_projects.append(MADRASHA_PROJECT.copy())
+fallback_projects.append(LAUNDRY_PROJECT.copy())
 
 
 for project in fallback_projects:
