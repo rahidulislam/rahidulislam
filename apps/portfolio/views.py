@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.views.generic import FormView
+from django.views.generic import FormView, TemplateView
 
 from apps.contacts.forms import ContactForm
 from apps.contacts.services import EnquiryInput, submit_enquiry
@@ -34,3 +34,7 @@ class HomeView(FormView):
         )
         messages.success(self.request, "Your message was saved. Thank you!")
         return super().form_valid(form)
+
+
+class PrivacyView(TemplateView):
+    template_name = "home/privacy.html"

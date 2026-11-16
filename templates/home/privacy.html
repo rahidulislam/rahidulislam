@@ -1,0 +1,20 @@
+{% extends 'base/base.html' %}{% load portfolio_language %}
+{% block title %}{% bilingual 'Privacy' 'গোপনীয়তা' %} — Rahidul Islam{% endblock %}
+{% block description %}How this portfolio handles contact messages and privacy-limited visit statistics.{% endblock %}
+{% block content %}
+<article class="container section reading-page">
+  <p class="eyebrow">{% bilingual 'Privacy' 'গোপনীয়তা' %}</p>
+  <h1>{% bilingual 'How this site handles your data.' 'এই সাইট আপনার তথ্য কীভাবে ব্যবহার করে।' %}</h1>
+  <section class="reading-body">
+    <h2>{% bilingual 'Contact messages' 'যোগাযোগের বার্তা' %}</h2>
+    <p>{% bilingual 'When you send the contact form, your name, email address, subject, message and the time you sent it are stored on this site’s server so I can read and answer your enquiry. I also receive an email notification about it. Messages are not shared with anyone else or used for marketing, and I delete them on request.' 'যোগাযোগ ফর্ম পাঠালে আপনার নাম, ইমেইল, বিষয়, বার্তা ও পাঠানোর সময় এই সাইটের সার্ভারে সংরক্ষিত হয়, যাতে আমি বার্তাটি পড়ে উত্তর দিতে পারি। এ বিষয়ে আমি একটি ইমেইল নোটিফিকেশনও পাই। বার্তা অন্য কারও সাথে শেয়ার বা মার্কেটিংয়ে ব্যবহার করা হয় না, এবং অনুরোধ করলে মুছে ফেলা হয়।' %}</p>
+    <p>{% bilingual 'To limit spam, the form briefly counts submissions per network address. These counters expire after five minutes.' 'স্প্যাম ঠেকাতে ফর্মটি অল্প সময়ের জন্য প্রতিটি নেটওয়ার্ক ঠিকানা থেকে কতবার পাঠানো হলো তা গোনে। এই হিসাব পাঁচ মিনিট পর মুছে যায়।' %}</p>
+    <h2>{% bilingual 'Visit statistics' 'ভিজিটের পরিসংখ্যান' %}</h2>
+    <p>{% bilingual 'This site sets no tracking cookies and uses no third-party analytics. To count visits, it records the page path, the referring website’s domain, and a one-way hash of your network address and browser name that changes every day. The address itself is never stored. Daily hashes and per-visit details are deleted after 90 days; only daily totals are kept.' 'এই সাইট কোনো ট্র্যাকিং কুকি বা তৃতীয় পক্ষের অ্যানালিটিক্স ব্যবহার করে না। ভিজিট গোনার জন্য পেজের ঠিকানা, যে ওয়েবসাইট থেকে এসেছেন তার ডোমেইন, এবং আপনার নেটওয়ার্ক ঠিকানা ও ব্রাউজারের একটি একমুখী হ্যাশ রাখা হয়, যা প্রতিদিন বদলায়। আসল ঠিকানা কখনো সংরক্ষণ করা হয় না। দৈনিক হ্যাশ ও প্রতিটি ভিজিটের বিস্তারিত ৯০ দিন পর মুছে ফেলা হয়; শুধু দৈনিক মোট সংখ্যা থাকে।' %}</p>
+    <h2>{% bilingual 'Cookies and fonts' 'কুকি ও ফন্ট' %}</h2>
+    <p>{% bilingual 'The only cookies are functional: your language choice, a security token for forms, and a sign-in session for the site owner. The light/dark theme choice stays in your browser. Fonts are served from this site, so your browser does not contact a font provider.' 'শুধু প্রয়োজনীয় কুকি ব্যবহার করা হয়: আপনার ভাষা নির্বাচন, ফর্মের নিরাপত্তা টোকেন, এবং সাইটের মালিকের লগইন সেশন। লাইট/ডার্ক থিমের পছন্দ আপনার ব্রাউজারেই থাকে। ফন্ট এই সাইট থেকেই দেওয়া হয়, তাই আপনার ব্রাউজার কোনো ফন্ট সরবরাহকারীর সাথে যোগাযোগ করে না।' %}</p>
+    <h2>{% bilingual 'Your requests' 'আপনার অনুরোধ' %}</h2>
+    <p>{% bilingual 'To see, correct or delete a message you sent, write to me' 'আপনার পাঠানো বার্তা দেখতে, সংশোধন বা মুছতে আমাকে লিখুন' %}{% if public_contact.email %}: <a href="mailto:{{ public_contact.email }}">{{ public_contact.email }}</a>{% else %} <a href="{% url 'home:home' %}#contact">{% bilingual 'through the contact form' 'যোগাযোগ ফর্মের মাধ্যমে' %}</a>{% endif %}.</p>
+  </section>
+</article>
+{% endblock %}

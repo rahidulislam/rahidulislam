@@ -15,6 +15,7 @@ def sitemap_xml(request: HttpRequest) -> HttpResponse:
         reverse("home:projects"),
         reverse("home:articles"),
         reverse("home:experience"),
+        reverse("home:privacy"),
     ]
     paths += [
         reverse("home:case_study", args=[item.slug])
