@@ -61,6 +61,7 @@ DJANGO_SECRET_KEY=PASTE_THE_GENERATED_KEY_HERE
 DJANGO_DEBUG=false
 DJANGO_ALLOWED_HOSTS=USERNAME.pythonanywhere.com
 DJANGO_CSRF_TRUSTED_ORIGINS=https://USERNAME.pythonanywhere.com
+DJANGO_SITE_URL=https://USERNAME.pythonanywhere.com
 DJANGO_DATABASE_PATH=/home/USERNAME/var/rahidulislam/db.sqlite3
 DJANGO_MEDIA_ROOT=/home/USERNAME/var/rahidulislam/media
 ```
