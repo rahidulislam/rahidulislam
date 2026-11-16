@@ -4,7 +4,7 @@ This guide deploys the portfolio to an Ubuntu Lightsail instance with Nginx,
 Gunicorn, systemd, SQLite, persistent media, and Let's Encrypt HTTPS. Local
 development and the existing PythonAnywhere deployment remain unchanged.
 
-The examples use `rahidulislam.com`, the `ubuntu` instance user, and
+The examples use `rahidulislam.dev`, the `ubuntu` instance user, and
 `/srv/rahidulislam`. Replace the domain if necessary before copying the Nginx
 and environment templates.
 
@@ -108,7 +108,7 @@ Verify both services before requesting a certificate:
 ```bash
 sudo systemctl --no-pager --full status rahidulislam
 sudo systemctl --no-pager --full status nginx
-curl -I -H 'Host: rahidulislam.com' http://127.0.0.1/
+curl -I -H 'Host: rahidulislam.dev' http://127.0.0.1/
 ```
 
 Use `sudo journalctl -u rahidulislam -n 100 --no-pager` if Gunicorn does not
@@ -119,7 +119,7 @@ start.
 After DNS resolves to the static IP:
 
 ```bash
-sudo certbot --nginx -d rahidulislam.com -d www.rahidulislam.com
+sudo certbot --nginx -d rahidulislam.dev -d www.rahidulislam.dev
 sudo certbot renew --dry-run
 sudo sed -i 's/DJANGO_SECURE_SSL_REDIRECT=false/DJANGO_SECURE_SSL_REDIRECT=true/' /etc/rahidulislam.env
 sudo systemctl restart rahidulislam

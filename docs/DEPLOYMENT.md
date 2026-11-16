@@ -34,8 +34,9 @@ admin login, uploaded images/videos, project pages, and CV download after every
 deployment. HSTS begins at one hour; raise it only after HTTPS and subdomains are
 stable.
 
-`rahidulislam.com` is the clearest primary domain if available. Redirect the
-`www` hostname to the primary domain so employers see one canonical address.
+The live primary domain is `rahidulislam.dev`; set `DJANGO_SITE_URL=https://rahidulislam.dev`
+so canonical, social and sitemap URLs use it. The `www` hostname redirects to the
+primary domain (see `deploy/lightsail/nginx.conf`) so employers see one address.
 
 ## Domain app migration
 
