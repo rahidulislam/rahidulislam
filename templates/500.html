@@ -1,3 +1,25 @@
-{% extends "base/base.html" %}
-{% block title %}Something went wrong — Rahidul Islam{% endblock %}
-{% block content %}<section class="section container"><p class="eyebrow">500 / Server error</p><h1>Something went wrong.</h1><p>Please try again in a moment.</p><a class="button primary" href="{% url 'home:home' %}">Back to home ↗</a></section>{% endblock %}
+{% load static %}<!doctype html>
+{% comment %}Standalone on purpose: no base template, context processors or database
+queries, so this page still renders when the database is the thing that failed.{% endcomment %}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Something went wrong — Rahidul Islam</title>
+  <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+  <link rel="stylesheet" href="{% static 'css/portfolio.css' %}">
+  <link rel="stylesheet" href="{% static 'css/theme-tokens.css' %}">
+  <link rel="stylesheet" href="{% static 'css/color-scheme.css' %}">
+</head>
+<body>
+  <main id="main">
+    <section class="section container">
+      <p class="eyebrow">500 / Server error</p>
+      <h1>Something went wrong.</h1>
+      <p>Please try again in a moment.</p>
+      <a class="button primary" href="/">Back to home ↗</a>
+    </section>
+  </main>
+</body>
+</html>
