@@ -144,7 +144,23 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = Path(os.environ.get("DJANGO_STATIC_ROOT", BASE_DIR / "staticfiles"))
+# Hashed filenames let the web server cache static files for a year; a changed
+# file gets a new URL on the next collectstatic, so no manual ?v= markers.
+# Off by default while DEBUG so local runs and tests need no manifest.
+STATIC_MANIFEST = os.environ.get(
+    "DJANGO_STATIC_MANIFEST", "false" if DEBUG else "true"
+).lower() in ("1", "true", "yes")
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": (
+            "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
+            if STATIC_MANIFEST
+            else "django.contrib.staticfiles.storage.StaticFilesStorage"
+        )
+    },
+}
 MEDIA_URL = "/media/"
 MEDIA_ROOT = Path(os.environ.get("DJANGO_MEDIA_ROOT", BASE_DIR / "media"))
 # Default primary key field type
