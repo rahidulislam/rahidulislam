@@ -21,7 +21,7 @@ filesystem.
    settings. Generate `DJANGO_SECRET_KEY` with Django's
    `get_random_secret_key()` and never commit the generated value.
 3. Point `DJANGO_DATABASE_PATH` and `DJANGO_MEDIA_ROOT` at persistent storage.
-4. Run `python manage.py migrate` and `python manage.py collectstatic --noinput`.
+4. Run `python manage.py migrate`, `python manage.py createcachetable` (shared rate-limit cache), and `python manage.py collectstatic --noinput`.
 5. Configure the host to serve `/static/` from `staticfiles/` and `/media/` from
    the persistent media directory. Start the WSGI app at `rahidulislam.wsgi`.
 6. Attach the custom domain, enable HTTPS, and set both allowed-host and trusted-

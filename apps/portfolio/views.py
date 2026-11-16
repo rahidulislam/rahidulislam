@@ -3,6 +3,7 @@ from django.views.generic import FormView, TemplateView
 
 from apps.contacts.forms import ContactForm
 from apps.contacts.services import EnquiryInput, submit_enquiry
+from core.client_ip import client_ip
 
 from .presentation import homepage_context
 
@@ -17,7 +18,7 @@ class HomeView(FormView):
         kwargs["request_language"] = self.request.COOKIES.get(
             "portfolio_language", "en"
         )
-        kwargs["request_ip"] = self.request.META.get("REMOTE_ADDR", "unknown")
+        kwargs["request_ip"] = client_ip(self.request)
         return kwargs
 
     def get_context_data(self, **kwargs):

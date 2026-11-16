@@ -52,7 +52,7 @@ class AnalyticsTests(TestCase):
         self.assertNotEqual(
             visitor_key(request, "2026-01-01"), visitor_key(request, "2026-01-02")
         )
-        with override_settings(ANALYTICS_TRUSTED_PROXIES=["192.0.2.10"]):
+        with override_settings(TRUSTED_PROXIES=["192.0.2.10"]):
             self.assertNotEqual(
                 visitor_key(request, "2026-01-01"),
                 visitor_key(self.request(), "2026-01-01"),
