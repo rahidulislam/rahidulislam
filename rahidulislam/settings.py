@@ -209,12 +209,26 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",  # Keep existing sessions valid.
 ]
 
-# Only exact proxy addresses under our control may supply analytics client IPs.
-ANALYTICS_TRUSTED_PROXIES = [
-    value.strip()
-    for value in os.environ.get("ANALYTICS_TRUSTED_PROXIES", "").split(",")
+# Only exact proxy addresses under our control may supply client IPs. The token
+# "unix" trusts a local reverse proxy connected over a unix socket.
+TRUSTED_PROXIES = [
+    "" if value.strip() == "unix" else value.strip()
+    for value in os.environ.get(
+        "DJANGO_TRUSTED_PROXIES", os.environ.get("ANALYTICS_TRUSTED_PROXIES", "")
+    ).split(",")
     if value.strip()
 ]
+
+# Shared by every worker so per-visitor limits hold across processes. Run
+# `manage.py createcachetable` once per database before serving traffic.
+CACHES = {
+    "default": {
+        "BACKEND": os.environ.get(
+            "DJANGO_CACHE_BACKEND", "django.core.cache.backends.db.DatabaseCache"
+        ),
+        "LOCATION": os.environ.get("DJANGO_CACHE_LOCATION", "django_cache"),
+    }
+}
 
 TEMPLATES[0]["OPTIONS"]["context_processors"].append(
     "apps.portfolio.context_processors.site_branding"

@@ -1,8 +1,8 @@
 from django import forms
-from django.core.cache import cache
 from django.core.exceptions import ValidationError
 
 from .models import Contact
+from .services import consume_submission_slot
 
 
 class ContactForm(forms.ModelForm):
@@ -55,29 +55,16 @@ class ContactForm(forms.ModelForm):
 
     def clean(self):
         cleaned = super().clean()
-        ip = self.request_ip
-        if cleaned.get("website") or not self._within_rate_limit(ip):
+        # Only complete submissions use the visitor's budget; typos do not.
+        if cleaned.get("website") or (
+            not self.errors and not consume_submission_slot(client_ip=self.request_ip)
+        ):
             raise ValidationError(
-                "এই বার্তাটি গ্রহণ করা যায়নি। পরে আবার চেষ্টা করুন।"
+                "এই বার্তাটি গ্রহণ করা যায়নি। পরে আবার চেষ্টা করুন।"
                 if self.request_language == "bn"
                 else "We couldn't accept that message. Please try again later."
             )
         return cleaned
-
-    @staticmethod
-    def _within_rate_limit(ip):
-        key = f"contact-submit:{ip}"
-        try:
-            count = cache.get(key)
-            if count is None:
-                cache.add(key, 1, 300)
-                return True
-            if int(count) >= 3:
-                return False
-            cache.incr(key)
-            return True
-        except (ValueError, TypeError):
-            return True
 
     class Meta:
         model = Contact
