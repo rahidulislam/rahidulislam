@@ -168,6 +168,7 @@ main <- staging <- dev <- isolated feature/fix branch
 ## Project architecture
 
 - Domain apps live in `apps/`: profiles, projects, articles, contacts, portfolio, resumes.
+- Supporting apps: `apps/dashboard` (owner-only workspace over domain services), `apps/analytics` (privacy-limited page counts), and `core` (cross-cutting helpers such as audit records, client IP resolution, language, uploads and error views).
 - Keep HTTP handling in views, read queries in selectors, business writes in services, and external clients in integrations.
 - Use typed boundaries and focused functions; avoid generic base services or ORM repository wrappers.
 - `home` retains historical migrations and compatibility imports only. Do not add new business logic there.
