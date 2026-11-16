@@ -66,6 +66,21 @@ The vendored library and Zero-Clause BSD license are in `static/vendor/htmx/`.
 Run `python manage.py test apps.portfolio.tests.test_htmx_navigation` after
 installing the development requirements and Playwright Chromium.
 
+### Local development
+
+Settings default to production mode (`DEBUG` off, a real secret key required).
+Enable development mode explicitly for local runs:
+
+```bash
+export DJANGO_DEBUG=true
+python manage.py migrate
+python manage.py createcachetable
+python manage.py runserver
+```
+
+`python scripts/check_backend.py` sets `DJANGO_DEBUG=true` for its own commands
+when the variable is unset.
+
 ### Automatic Git delivery
 
 Task completion includes checks, a meaningful commit, push, and GitHub PR creation

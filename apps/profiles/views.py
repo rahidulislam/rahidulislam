@@ -1,6 +1,8 @@
 from django.http import Http404
 from django.views.generic import TemplateView
 
+from apps.projects.presentation import case_study_link
+
 from .presentation import profile_context
 
 
@@ -28,4 +30,6 @@ class ExperienceDetailView(ExperienceListView):
         )
         if not data["experience"]:
             raise Http404("Experience not found")
+        # A published case study sharing the experience's slug is its related work.
+        data["related_project"] = case_study_link(slug=data["experience"]["slug"])
         return data

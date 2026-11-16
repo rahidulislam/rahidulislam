@@ -2,12 +2,20 @@
 
 from django.apps import apps
 from django.contrib.admin import AdminSite
+from django.contrib.admin.forms import AdminAuthenticationForm
 from django.urls import path
 
 from .compatibility import LEGACY_MODEL_APPS
+from .login_throttle import ThrottledLoginMixin
+
+
+class ThrottledAdminAuthenticationForm(ThrottledLoginMixin, AdminAuthenticationForm):
+    pass
 
 
 class PortfolioAdminSite(AdminSite):
+    login_form = ThrottledAdminAuthenticationForm
+
     def get_urls(self):
         aliases = []
         for model_name, app in LEGACY_MODEL_APPS.items():
