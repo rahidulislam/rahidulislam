@@ -8,9 +8,10 @@ from typing import Literal
 
 from django.contrib.admin.models import ADDITION, CHANGE
 from django.contrib.auth.models import AbstractBaseUser
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.mail import BadHeaderError
-from django.db import transaction
+from django.db import DatabaseError, transaction
 from django.db.models import QuerySet
 
 from core.audit import record_change
@@ -22,6 +23,8 @@ from .selectors import failed_enquiries
 
 logger = logging.getLogger(__name__)
 DeliveryStatus = Literal["sent", "failed"]
+SUBMISSION_LIMIT = 3
+SUBMISSION_WINDOW_SECONDS = 300
 
 
 @dataclass(frozen=True)
@@ -30,6 +33,23 @@ class EnquiryInput:
     email: str
     subject: str
     message: str
+
+
+def consume_submission_slot(*, client_ip: str) -> bool:
+    """Count one accepted-looking submission per visitor in a shared window."""
+    key = f"contact-submit:{client_ip}"
+    try:
+        cache.add(key, 0, SUBMISSION_WINDOW_SECONDS)
+        try:
+            count = cache.incr(key)
+        except ValueError:  # The window expired between add() and incr().
+            cache.set(key, 1, SUBMISSION_WINDOW_SECONDS)
+            count = 1
+    except DatabaseError:
+        # Spam throttling must not take the contact form down with the cache.
+        logger.warning("Contact rate-limit cache unavailable; submission allowed.")
+        return True
+    return count <= SUBMISSION_LIMIT
 
 
 def notify_contact(contact: Contact) -> DeliveryStatus:
