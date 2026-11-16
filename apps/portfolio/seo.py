@@ -14,7 +14,13 @@ def sitemap_xml(request: HttpRequest) -> HttpResponse:
     # (path, last modified date or None)
     entries = [
         (reverse(name), None)
-        for name in ("home:home", "home:projects", "home:articles", "home:experience")
+        for name in (
+            "home:home",
+            "home:projects",
+            "home:articles",
+            "home:experience",
+            "home:privacy",
+        )
     ]
     entries += [
         (reverse("home:case_study", args=[item.slug]), None)

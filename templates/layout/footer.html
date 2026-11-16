@@ -12,6 +12,7 @@
       <a href="{% url 'home:home' %}#about">{{ 'About'|translate:portfolio_language }}</a>
       <a href="{% url 'home:home' %}#contact">{{ 'Contact'|translate:portfolio_language }}</a>
       <a href="{% url 'home:articles' %}">{{ 'Articles'|translate:portfolio_language }}</a>
+      <a href="{% url 'home:privacy' %}">{% bilingual "Privacy" "গোপনীয়তা" %}</a>
     </nav>
     <div class="footer-contact">
       <h2 class="footer-heading">{% bilingual "Get in touch" "যোগাযোগ করুন" %}</h2>
