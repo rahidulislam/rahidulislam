@@ -27,7 +27,7 @@
           const response = await fetch(editor.dataset.previewUrl, {method: 'POST', credentials: 'same-origin', headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value}, body: new URLSearchParams({body: editor.value})});
           if (!response.ok) throw new Error('Preview unavailable');
           const data = await response.json(); preview.innerHTML = data.html; preview.hidden = false; editor.hidden = true; previewButton.textContent = 'Edit';
-        } catch (_) { status.textContent = 'Preview unavailable. Your text is preserved; please try again.'; }
+        } catch { status.textContent = 'Preview unavailable. Your text is preserved; please try again.'; }
         finally { previewButton.disabled = false; }
       });
       const update = () => { status.textContent = `${editor.value.trim().split(/\s+/).filter(Boolean).length} words · Markdown · Image: replace the URL with your uploaded cover URL or an HTTPS image URL.`; };

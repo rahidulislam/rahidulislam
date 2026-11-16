@@ -11,6 +11,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main() -> None:
     os.chdir(ROOT)
+    # Settings default to production (DEBUG off). The gate runs the test suite
+    # in development mode unless the caller chose otherwise.
+    os.environ.setdefault("DJANGO_DEBUG", "true")
     commands = [
         [sys.executable, "-m", "ruff", "check", "."],
         [sys.executable, "-m", "black", "--check", "."],
