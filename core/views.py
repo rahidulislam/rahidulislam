@@ -1,5 +1,6 @@
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseServerError
 from django.shortcuts import render
+from django.template import loader
 
 
 def error_404(request: HttpRequest, exception: Exception) -> HttpResponse:
@@ -7,4 +8,5 @@ def error_404(request: HttpRequest, exception: Exception) -> HttpResponse:
 
 
 def error_500(request: HttpRequest) -> HttpResponse:
-    return render(request, "500.html", status=500)
+    # Render without the request so no context processor touches the database.
+    return HttpResponseServerError(loader.get_template("500.html").render())

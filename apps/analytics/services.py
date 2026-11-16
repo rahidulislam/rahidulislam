@@ -1,33 +1,21 @@
 """Persist privacy-limited events and increment aggregates atomically."""
 
 from datetime import timedelta
-from ipaddress import ip_address
 from urllib.parse import urlsplit
 
-from django.conf import settings
 from django.db import transaction
 from django.db.models import F
 from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.crypto import salted_hmac
 
+from core.client_ip import client_ip
+
 from .models import DailyPage, DailyReferrer, DailyTraffic, DailyVisitor, PageView
 
 
 def visitor_key(request: HttpRequest, day: str) -> str:
-    address = request.META.get("REMOTE_ADDR", "")
-    trusted = settings.ANALYTICS_TRUSTED_PROXIES
-    if address in trusted:
-        chain = request.META.get("HTTP_X_FORWARDED_FOR", "").split(",")
-        for candidate in reversed(chain):
-            candidate = candidate.strip()
-            try:
-                ip_address(candidate)
-            except ValueError:
-                break
-            address = candidate
-            if address not in trusted:
-                break
+    address = client_ip(request)
     return salted_hmac(
         f"portfolio.analytics.{day}",
         address + "\n" + request.META.get("HTTP_USER_AGENT", "")[:512],

@@ -30,6 +30,17 @@ def project_context() -> dict[str, Any]:
     return {"projects": projects, "fallback_projects": curated}
 
 
+def case_study_link(*, slug: str) -> dict[str, str] | None:
+    """Name and slug of the public case study at this slug, if one exists."""
+    project = project_by_slug(slug=slug)
+    if project:
+        return {"slug": project.slug, "name": project.name}
+    fallback = next((item for item in fallback_projects if item["slug"] == slug), None)
+    if fallback and not project_name_is_private(name=fallback["name"]):
+        return {"slug": fallback["slug"], "name": fallback["name"]}
+    return None
+
+
 def case_study_context(*, slug: str) -> dict[str, Any]:
     data = {}
     asset = f"img/architecture/{slug}.svg"
