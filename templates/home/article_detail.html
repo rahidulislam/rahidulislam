@@ -2,6 +2,7 @@
 {% block title %}{{ article.title }} — Rahidul Islam{% endblock %}
 {% block description %}{{ article.summary }}{% endblock %}
 {% block content %}
+<script type="application/ld+json" nonce="{{ csp_nonce }}">{{ article_schema }}</script>
 <link rel="stylesheet" href="{% static 'css/articles.css' %}">
 <article class="container section reading-page editorial-reading">
 <a class="text-link" href="{% url 'home:articles' %}">← {{ 'Back to articles'|translate:portfolio_language }}</a>

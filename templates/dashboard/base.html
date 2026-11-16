@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<meta name="htmx-config" content='{"historyCacheSize":0}'>
+<meta name="htmx-config" content='{"historyCacheSize":0,"inlineStyleNonce":"{{ csp_nonce }}","allowEval":false}'>
 <title>{{ title|default:"Sign in" }} · Portfolio workspace</title>
 {% include "layout/site_icon.html" %}
 <meta name="color-scheme" content="light dark">
-<script src="{% static 'js/theme.js' %}?v=20261030-navy-amber"></script>
-<link rel="stylesheet" href="{% static 'css/theme-tokens.css' %}?v=20261031">
-<link rel="stylesheet" href="{% static 'dashboard/dashboard.css' %}?v=20261031">
-<link rel="stylesheet" href="{% static 'css/select-controls.css' %}?v=20261031">
+<script src="{% static 'js/theme.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/theme-tokens.css' %}">
+<link rel="stylesheet" href="{% static 'dashboard/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/select-controls.css' %}">
 <script defer src="{% static 'vendor/htmx/htmx.min.js' %}">
 </script>
 <script defer src="{% static 'dashboard/dashboard.js' %}">

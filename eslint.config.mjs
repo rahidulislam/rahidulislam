@@ -1,8 +1,9 @@
 import js from "@eslint/js";
 
 export default [
+  { ignores: ["static/vendor/**", "staticfiles/**"] },
   {
-    files: ["static/dashboard/dashboard.js", "static/js/navigation.js", "static/js/theme.js", "static/js/footer-contact.js"],
+    files: ["static/**/*.js"],
     ...js.configs.recommended,
     languageOptions: {
       ecmaVersion: 2022,
@@ -10,7 +11,7 @@ export default [
       globals: Object.fromEntries([
         "Node", "localStorage", "htmx", "DOMParser", "window", "document", "HTMLElement", "HTMLFormElement", "HTMLDetailsElement",
         "HTMLButtonElement", "Element", "HTMLTextAreaElement", "HTMLInputElement",
-        "AbortController", "DOMException", "URLSearchParams", "fetch"
+        "AbortController", "DOMException", "URLSearchParams", "fetch", "Event"
       ].map(name => [name, "readonly"]))
     },
     rules: { ...js.configs.recommended.rules, eqeqeq: "error", "no-var": "error", "prefer-const": "error" }
