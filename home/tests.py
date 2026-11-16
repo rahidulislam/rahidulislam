@@ -164,7 +164,7 @@ class PortfolioViewTests(TestCase):
 
     def test_v3_social_metadata_uses_branded_card(self):
         response = self.client.get(reverse("home:home"))
-        self.assertContains(response, "og-portfolio-v3.png")
+        self.assertContains(response, "og-portfolio-v3.jpg")
         self.assertContains(
             response, 'name="twitter:card" content="summary_large_image"'
         )

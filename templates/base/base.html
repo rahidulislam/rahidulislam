@@ -18,17 +18,17 @@
   {% elif project.get_image_url %}{% with social_image=project.get_image_url %}
   <meta property="og:image" content="{{ site_origin }}{{ social_image }}">
   <meta property="og:image:alt" content="{{ project.image_alt }}">
-  {% if project.name == 'TalentBridge' %}<meta property="og:image:width" content="1200"><meta property="og:image:height" content="658">{% else %}<meta property="og:image:width" content="1265"><meta property="og:image:height" content="712">{% endif %}
+  {% with social_size=project.get_image_size %}{% if social_size %}<meta property="og:image:width" content="{{ social_size.0 }}"><meta property="og:image:height" content="{{ social_size.1 }}">{% endif %}{% endwith %}
   {% endwith %}{% else %}
-  <meta property="og:image" content="{{ site_origin }}{% static 'img/og-portfolio-v3.png' %}">
-  <meta property="og:image:width" content="1734">
-  <meta property="og:image:height" content="907">
+  <meta property="og:image" content="{{ site_origin }}{% static 'img/og-portfolio-v3.jpg' %}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="628">
   <meta property="og:image:alt" content="Md. Rahidul Islam — Python and Django Engineer">
   {% endif %}
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{% if article %}{{ article.title }}{% else %}{{ project.name|default:'Rahidul Islam — Python & Django Engineer' }}{% endif %}">
   <meta name="twitter:description" content="{% if article %}{{ article.summary }}{% elif project %}{{ project.short_desc }}{% else %}Python and Django engineer building secure APIs and operational software.{% endif %}">
-  <meta name="twitter:image" content="{% if article %}{{ site_origin }}{{ article.cover_url }}{% elif project.get_image_url %}{{ site_origin }}{{ project.get_image_url }}{% else %}{{ site_origin }}{% static 'img/og-portfolio-v3.png' %}{% endif %}">
+  <meta name="twitter:image" content="{% if article %}{{ site_origin }}{{ article.cover_url }}{% elif project.get_image_url %}{{ site_origin }}{{ project.get_image_url }}{% else %}{{ site_origin }}{% static 'img/og-portfolio-v3.jpg' %}{% endif %}">
   <meta name="twitter:image:alt" content="{% if article %}{{ article.image_alt|default:article.title }}{% elif project.get_image_url %}{{ project.image_alt }}{% else %}Md. Rahidul Islam — Python and Django Engineer{% endif %}">
   <script type="application/ld+json" nonce="{{ csp_nonce }}">{"@context":"https://schema.org","@type":"Person","name":"Md. Rahidul Islam","url":"{{ site_origin }}{% url 'home:home' %}","jobTitle":"Python & Django Engineer"{% if social_items %},"sameAs":[{% for social in social_items %}{% if forloop.first %}{% else %},{% endif %}"{{ social.social_link|escapejs }}"{% endfor %}]{% endif %}}</script>
   <script type="application/ld+json" nonce="{{ csp_nonce }}">{"@context":"https://schema.org","@type":"WebSite","name":"Rahidul Islam — Python & Django Engineer","url":"{{ site_origin }}{% url 'home:home' %}"}</script>
