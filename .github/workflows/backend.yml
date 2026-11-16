@@ -34,7 +34,7 @@ jobs:
           if base == 'dev' and head in {'main', 'staging'}:
               raise SystemExit('dev accepts isolated feature/fix branches, not release branches')
           PYCODE
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6.5.0
         with:
           node-version: '24'
           cache: npm
@@ -48,3 +48,11 @@ jobs:
         env:
           DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,testserver
           DJANGO_EMAIL_BACKEND: django.core.mail.backends.locmem.EmailBackend
+      - name: Production deployment checks
+        run: |
+          export DJANGO_SECRET_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(50))')"
+          python manage.py check --deploy --fail-level WARNING
+        env:
+          DJANGO_DEBUG: 'false'
+          DJANGO_ALLOWED_HOSTS: example.com
+          DJANGO_SITE_URL: https://example.com

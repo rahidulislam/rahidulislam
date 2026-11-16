@@ -27,7 +27,8 @@ SECRET_KEY = os.environ.get(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DJANGO_DEBUG", "true").lower() in ("1", "true", "yes")
+# Off unless explicitly enabled, so a missing variable never exposes debug pages.
+DEBUG = os.environ.get("DJANGO_DEBUG", "false").lower() in ("1", "true", "yes")
 
 ALLOWED_HOSTS = [
     host.strip()
@@ -157,7 +158,8 @@ X_FRAME_OPTIONS = "DENY"
 if not DEBUG:
     if SECRET_KEY.startswith("django-insecure-"):
         raise RuntimeError(
-            "DJANGO_SECRET_KEY must be set to a strong production value."
+            "DJANGO_SECRET_KEY must be set to a strong production value "
+            "(for local development, set DJANGO_DEBUG=true instead)."
         )
     SECURE_SSL_REDIRECT = os.environ.get(
         "DJANGO_SECURE_SSL_REDIRECT", "true"
@@ -219,3 +221,19 @@ ANALYTICS_TRUSTED_PROXIES = [
 TEMPLATES[0]["OPTIONS"]["context_processors"].append(
     "apps.portfolio.context_processors.site_branding"
 )
+
+# Warnings from services (failed notifications, cache outages) and server
+# errors go to stderr, which Gunicorn/systemd capture in the journal.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "plain": {"format": "%(asctime)s %(levelname)s %(name)s: %(message)s"}
+    },
+    "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "plain"}},
+    "root": {"handlers": ["console"], "level": "WARNING"},
+}
+
+# HSTS preload is deliberately off until HTTPS on every subdomain has been stable
+# (docs/deploy-aws-lightsail.md); `check --deploy` should not fail on that choice.
+SILENCED_SYSTEM_CHECKS = ["security.W021"]
