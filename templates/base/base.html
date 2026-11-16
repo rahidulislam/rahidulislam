@@ -2,6 +2,7 @@
 <html lang="{{ portfolio_language|default:'en' }}">
 <head>
   <meta charset="utf-8">
+  <link rel="alternate" type="application/rss+xml" title="Rahidul Islam — Engineering articles" href="{% url 'home:article_feed' %}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{{ personal_info.name|default:"Md. Rahidul Islam" }} — Python & Django Engineer{% endblock %}</title>
   <meta name="description" content="{% block description %}Python and Django engineer building secure APIs and operational software for recruitment, document management, and hospitality. Open to relocation to Germany and remote roles.{% endblock %}">

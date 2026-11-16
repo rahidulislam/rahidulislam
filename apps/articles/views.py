@@ -7,6 +7,7 @@ from .selectors import (
     published_articles,
     related_articles,
 )
+from .seo import article_schema
 
 
 class ArticleListView(TemplateView):
@@ -35,5 +36,6 @@ class ArticleDetailView(TemplateView):
         return {
             **super().get_context_data(**kwargs),
             "article": article,
+            "article_schema": article_schema(article=article, request=self.request),
             "related_articles": related_articles(article=article),
         }
