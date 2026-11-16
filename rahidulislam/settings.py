@@ -66,6 +66,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "core.language.LanguageVaryMiddleware",
     "apps.dashboard.middleware.PrivateDashboardMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -209,6 +210,11 @@ CONTACT_NOTIFICATION_EMAIL = os.environ.get(
     "CONTACT_NOTIFICATION_EMAIL", "rahidulislam247@gmail.com"
 )
 TEMPLATES[0]["OPTIONS"]["context_processors"].append("core.language.language_context")
+TEMPLATES[0]["OPTIONS"]["context_processors"].append("core.seo.seo_context")
+
+# Public origin (scheme + host, no trailing slash) for canonical, social and
+# sitemap URLs. Empty falls back to the request host for local development.
+SITE_URL = os.environ.get("DJANGO_SITE_URL", "")
 
 TEMPLATES[0]["OPTIONS"]["context_processors"].append(
     "apps.contacts.context_processors.public_contact"
