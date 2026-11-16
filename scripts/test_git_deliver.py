@@ -114,6 +114,21 @@ class DeliveryTests(unittest.TestCase):
             "",
         )
 
+    def test_python_checks_use_the_running_interpreter(self):
+        marker = self.root / "interpreter.txt"
+        self.config["checks"] = [
+            [
+                "python",
+                "-c",
+                f"import sys; open({str(marker)!r}, 'w').write(sys.executable)",
+            ]
+        ]
+        (self.repo / ".git-deliver.json").write_text(json.dumps(self.config))
+        self.changed()
+        result = self.deliver("--all", "--message", "fix: portable python checks")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(marker.read_text(), sys.executable)
+
     def test_secret_file_is_rejected_before_commit(self):
         (self.repo / ".env").write_text("SOME_SECRET=not-a-real-secret\n")
         result = self.deliver("--all", "--message", "feat: configure app")
