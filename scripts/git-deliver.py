@@ -78,6 +78,13 @@ def guard_staged(root):
         )
 
 
+def check_argv(command):
+    """Run portable `python` checks with this interpreter, even if PATH lacks it."""
+    if command and command[0] == "python":
+        return [sys.executable, *command[1:]]
+    return command
+
+
 def initialize(root, base):
     path = root / CONFIG
     if path.exists():
@@ -572,7 +579,7 @@ def main():
         )
     index_before_checks = git(root, "write-tree")
     for command in config["checks"]:
-        run(command, root)
+        run(check_argv(command), root)
     if (
         git(root, "diff", "--name-only")
         or git(root, "ls-files", "--others", "--exclude-standard")

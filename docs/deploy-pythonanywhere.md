@@ -86,6 +86,7 @@ set -a
 set +a
 python manage.py check --deploy
 python manage.py migrate
+python manage.py createcachetable
 python manage.py collectstatic --noinput
 python manage.py createsuperuser  # run once, if needed
 ```
@@ -173,6 +174,7 @@ set -a
 set +a
 python manage.py check --deploy
 python manage.py migrate
+python manage.py createcachetable
 python manage.py collectstatic --noinput
 ```
 

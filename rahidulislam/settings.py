@@ -145,7 +145,23 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = Path(os.environ.get("DJANGO_STATIC_ROOT", BASE_DIR / "staticfiles"))
+# Hashed filenames let the web server cache static files for a year; a changed
+# file gets a new URL on the next collectstatic, so no manual ?v= markers.
+# Off by default while DEBUG so local runs and tests need no manifest.
+STATIC_MANIFEST = os.environ.get(
+    "DJANGO_STATIC_MANIFEST", "false" if DEBUG else "true"
+).lower() in ("1", "true", "yes")
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": (
+            "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
+            if STATIC_MANIFEST
+            else "django.contrib.staticfiles.storage.StaticFilesStorage"
+        )
+    },
+}
 MEDIA_URL = "/media/"
 MEDIA_ROOT = Path(os.environ.get("DJANGO_MEDIA_ROOT", BASE_DIR / "media"))
 # Default primary key field type
@@ -169,11 +185,6 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = False
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-
-XS_SHARING_ALLOWED_METHODS = [
-    "GET",
-    "OPTIONS",
-]
 
 # Configure SMTP in production; console backend keeps local development self-contained.
 EMAIL_BACKEND = os.environ.get(
@@ -215,12 +226,26 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",  # Keep existing sessions valid.
 ]
 
-# Only exact proxy addresses under our control may supply analytics client IPs.
-ANALYTICS_TRUSTED_PROXIES = [
-    value.strip()
-    for value in os.environ.get("ANALYTICS_TRUSTED_PROXIES", "").split(",")
+# Only exact proxy addresses under our control may supply client IPs. The token
+# "unix" trusts a local reverse proxy connected over a unix socket.
+TRUSTED_PROXIES = [
+    "" if value.strip() == "unix" else value.strip()
+    for value in os.environ.get(
+        "DJANGO_TRUSTED_PROXIES", os.environ.get("ANALYTICS_TRUSTED_PROXIES", "")
+    ).split(",")
     if value.strip()
 ]
+
+# Shared by every worker so per-visitor limits hold across processes. Run
+# `manage.py createcachetable` once per database before serving traffic.
+CACHES = {
+    "default": {
+        "BACKEND": os.environ.get(
+            "DJANGO_CACHE_BACKEND", "django.core.cache.backends.db.DatabaseCache"
+        ),
+        "LOCATION": os.environ.get("DJANGO_CACHE_LOCATION", "django_cache"),
+    }
+}
 
 TEMPLATES[0]["OPTIONS"]["context_processors"].append(
     "apps.portfolio.context_processors.site_branding"
