@@ -16,7 +16,8 @@ class ContactForm(forms.ModelForm):
                 "class": "contact-trap",
                 "autocomplete": "off",
                 "tabindex": "-1",
-                "style": "display:none",
+                # hidden instead of an inline style keeps the CSP strict.
+                "hidden": True,
             }
         ),
     )
