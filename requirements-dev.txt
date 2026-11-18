@@ -1,4 +1,4 @@
 -r requirements.txt
 black==26.10.1
-ruff==0.17.1
+ruff==0.17.5
 playwright==1.65.2
